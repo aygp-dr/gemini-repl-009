@@ -1,0 +1,70 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Sessions and history
+.sessions/
+.gemini_history
+workspace/
+
+# Build artifacts
+dist/
+build/
+
+# Testing
+tarpaulin-report.html
+cobertura.xml
+coverage/
+
+# Profiling
+perf.data
+perf.data.old
+flamegraph.svg
+
+# Documentation
+/target/doc/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Python (for scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Node (for potential web interface)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Project-specific
+/experiments/*/output/
+/change-requests/*/build/
+/.ai/cache/

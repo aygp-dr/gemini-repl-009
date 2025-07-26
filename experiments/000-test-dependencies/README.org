@@ -1,0 +1,108 @@
+#+TITLE: Experiment 000: Test Dependencies
+#+AUTHOR: gemini-repl-009
+#+DATE: 2025-07-26
+
+* Purpose
+
+Test basic Rust dependencies and build system for the Gemini REPL project.
+
+* Dependencies to Test
+
+- tokio (async runtime)
+- reqwest (HTTP client for API calls)
+- serde/serde_json (JSON serialization)
+- clap (command-line parsing)
+- colored (terminal colors)
+- dirs (user directories)
+- env_logger (logging)
+
+* Test Program
+
+#+BEGIN_SRC rust :tangle test_deps.rs
+use colored::*;
+use serde::{Deserialize, Serialize};
+use tokio;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct TestMessage {
+    id: u32,
+    message: String,
+}
+
+#[tokio::main]
+async fn main() {
+    env_logger::init();
+    
+    println!("{}", "Testing Gemini REPL Dependencies".green().bold());
+    println!("================================");
+    
+    // Test serde
+    let msg = TestMessage {
+        id: 1,
+        message: "Hello from Rust!".to_string(),
+    };
+    
+    let json = serde_json::to_string_pretty(&msg).unwrap();
+    println!("\n{}", "Serde JSON Test:".yellow());
+    println!("{}", json);
+    
+    // Test async runtime
+    println!("\n{}", "Tokio Async Test:".yellow());
+    let result = async_test().await;
+    println!("Async result: {}", result.blue());
+    
+    // Test directories
+    println!("\n{}", "Directories Test:".yellow());
+    if let Some(home) = dirs::home_dir() {
+        println!("Home directory: {}", home.display());
+    }
+    
+    println!("\n{}", "All dependencies working! ✓".green().bold());
+}
+
+async fn async_test() -> String {
+    tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+    "Async operation completed".to_string()
+}
+#+END_SRC
+
+* Cargo.toml for Testing
+
+#+BEGIN_SRC toml :tangle Cargo.toml
+[package]
+name = "test-dependencies"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.40", features = ["full"] }
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+colored = "2.1"
+dirs = "5.0"
+env_logger = "0.11"
+log = "0.4"
+#+END_SRC
+
+* Running the Test
+
+#+BEGIN_SRC bash
+cd experiments/000-test-dependencies
+cargo build
+cargo run
+#+END_SRC
+
+* Expected Output
+
+The program should:
+1. Display colored text
+2. Serialize/deserialize JSON
+3. Run an async function
+4. Find the home directory
+5. Show all dependencies are working
+
+* Results
+
+[To be filled after running the test]

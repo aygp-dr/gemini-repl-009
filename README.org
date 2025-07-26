@@ -1,0 +1,361 @@
+#+TITLE: Gemini REPL 009: Rust Implementation
+#+AUTHOR: AYGP-DR
+#+DATE: 2025-07-26
+
+[[https://www.rust-lang.org/][file:https://img.shields.io/badge/Rust-1.80+-orange.svg?logo=rust]]
+[[https://crates.io/][file:https://img.shields.io/badge/crates.io-latest-blue.svg]]
+[[https://opensource.org/licenses/MIT][file:https://img.shields.io/badge/License-MIT-yellow.svg]]
+[[https://github.com/aygp-dr/gemini-repl-009][file:https://img.shields.io/badge/Type-Educational-green.svg]]
+
+* Overview
+
+This repository contains a *Rust implementation* of the Gemini REPL, continuing the evolution of interactive AI conversation tools. It provides a fast, memory-safe command-line interface for conversing with Google's Gemini AI models.
+
+** Key Features
+
+- 🚀 Fast startup with compiled Rust binary
+- 💬 Interactive REPL with slash commands
+- 🔧 Extensible tool system with sandboxing
+- 📝 Structured logging with multiple outputs
+- 🔐 Memory-safe execution environment
+- 💾 Session persistence and resume
+- 🎨 Colored terminal output
+- 📊 Token usage tracking and statistics
+- ⚡ Async/concurrent operations
+
+** Evolution History
+
+This is version 009 in the gemini-repl series:
+- [[https://github.com/aygp-dr/gemini-repl][Original]]: ClojureScript implementation
+- [[https://github.com/aygp-dr/gemini-repl-001][001]]: Added formal methods (TLA+, Alloy)
+- [[https://github.com/aygp-dr/gemini-repl-002][002]]: Enhanced architecture
+- [[https://github.com/aygp-dr/gemini-repl-003][003]]: Improved tooling and CI/CD
+- [[https://github.com/aygp-dr/gemini-repl-004][004]]: Multi-language exploration
+- [[https://github.com/aygp-dr/gemini-repl-005][005]]: Python port with literate programming
+- [[https://github.com/aygp-dr/gemini-repl-006][006]]: Clojure/Babashka implementation
+- [[https://github.com/aygp-dr/gemini-repl-007][007]]: Python refinement
+- [[https://github.com/aygp-dr/gemini-repl-008][008]]: Ruby implementation
+- [[https://github.com/aygp-dr/gemini-repl-009][009]]: Rust implementation (this version)
+
+* Quick Start
+
+** Prerequisites
+
+- Rust 1.80 or higher
+- Cargo (comes with Rust)
+- Gemini API key from [[https://makersuite.google.com/app/apikey][Google AI Studio]]
+
+** Installation
+
+*** From Source
+
+#+BEGIN_SRC bash
+# Clone the repository
+git clone https://github.com/aygp-dr/gemini-repl-009.git
+cd gemini-repl-009
+
+# Copy environment file
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY
+
+# Build and install
+cargo build --release
+cargo install --path .
+
+# Run the REPL
+gemini-repl
+#+END_SRC
+
+*** From Crates.io (Coming Soon)
+
+#+BEGIN_SRC bash
+cargo install gemini-repl
+#+END_SRC
+
+** Basic Usage
+
+#+BEGIN_SRC bash
+# Start interactive REPL
+gemini-repl
+
+# One-shot query
+gemini-repl "What is the capital of France?"
+
+# With specific model
+gemini-repl --model gemini-2.0-flash-exp
+
+# Resume a session
+gemini-repl --resume my-session
+#+END_SRC
+
+* Features
+
+** Interactive Commands
+
+| Command | Description | Example |
+|---------+-------------+---------|
+| =/help= | Show all commands | =/help= |
+| =/exit= | Exit the REPL | =/exit= |
+| =/clear= | Clear screen | =/clear= |
+| =/context= | Show conversation | =/context= |
+| =/stats= | Usage statistics | =/stats= |
+| =/save= | Save conversation | =/save chat.json= |
+| =/load= | Load conversation | =/load chat.json= |
+| =/tools= | List available tools | =/tools= |
+| =/workspace= | Show workspace path | =/workspace= |
+| =/model= | Change model | =/model gemini-pro= |
+
+** Tool System
+
+Built-in tools that Gemini can use:
+
+*** File Operations
+- =read_file= - Read file contents
+- =write_file= - Write content to files
+- =list_files= - List directory contents
+- =search_files= - Search with regex patterns
+
+*** System Operations
+- =execute_command= - Run shell commands (sandboxed)
+- =get_env= - Read environment variables
+
+** Architecture
+
+#+BEGIN_SRC
+┌─────────────────────────────────────────────────┐
+│                   CLI Entry                      │
+│                 src/main.rs                      │
+└────────────────────┬────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────┐
+│                REPL Core                         │
+│              src/repl/mod.rs                     │
+│  • Command parsing    • State management         │
+│  • Input handling     • Output formatting        │
+└────────┬─────────────────────┬──────────────────┘
+         │                     │
+┌────────▼──────────┐ ┌────────▼──────────┐
+│  Gemini Client    │ │   Tool System     │
+│ src/api/client.rs │ │ src/tools/mod.rs  │
+│  • API calls      │ │  • Sandboxing     │
+│  • Streaming      │ │  • Validation     │
+│  • Rate limiting  │ │  • Execution      │
+└───────────────────┘ └───────────────────┘
+         │                     │
+┌────────▼─────────────────────▼──────────────────┐
+│              Context Manager                     │
+│           src/context/mod.rs                     │
+│  • History tracking   • Token management         │
+│  • Persistence       • Session handling          │
+└─────────────────────────────────────────────────┘
+#+END_SRC
+
+* Development
+
+** Project Structure
+
+#+BEGIN_SRC
+gemini-repl-009/
+├── src/
+│   ├── main.rs           # Entry point
+│   ├── repl/             # REPL core logic
+│   ├── api/              # Gemini API client
+│   ├── tools/            # Tool implementations
+│   ├── context/          # Context management
+│   └── utils/            # Utilities
+├── tests/                # Integration tests
+├── benches/              # Benchmarks
+├── experiments/          # Experimental features
+├── change-requests/      # Feature requests
+├── .ai/                  # AI-related docs
+├── Cargo.toml           # Dependencies
+├── README.org           # This file
+├── SETUP.org            # Setup guide
+└── REQUIREMENTS.org     # Detailed requirements
+#+END_SRC
+
+** Building
+
+#+BEGIN_SRC bash
+# Debug build
+cargo build
+
+# Release build (optimized)
+cargo build --release
+
+# Run tests
+cargo test
+
+# Run with logging
+RUST_LOG=debug cargo run
+
+# Run benchmarks
+cargo bench
+#+END_SRC
+
+** Code Style
+
+We use standard Rust formatting:
+
+#+BEGIN_SRC bash
+# Format code
+cargo fmt
+
+# Check linting
+cargo clippy
+
+# Fix linting issues
+cargo clippy --fix
+#+END_SRC
+
+* Advanced Usage
+
+** Custom Tools
+
+Create custom tools by implementing the Tool trait:
+
+#+BEGIN_SRC rust
+use gemini_repl::tools::{Tool, ToolResult};
+use async_trait::async_trait;
+
+pub struct MyTool;
+
+#[async_trait]
+impl Tool for MyTool {
+    fn name(&self) -> &str {
+        "my_tool"
+    }
+    
+    fn description(&self) -> &str {
+        "My custom tool"
+    }
+    
+    async fn execute(&self, args: serde_json::Value) -> ToolResult {
+        // Implementation here
+        Ok(serde_json::json!({
+            "result": "Tool executed successfully"
+        }))
+    }
+}
+#+END_SRC
+
+** Configuration
+
+Configuration via =~/.gemini_repl/config.toml=:
+
+#+BEGIN_SRC toml
+[api]
+model = "gemini-2.0-flash-exp"
+timeout = 30
+max_retries = 3
+
+[repl]
+prompt = "> "
+history_size = 1000
+color = true
+
+[logging]
+level = "info"
+file = "~/.gemini_repl/gemini.log"
+format = "json"
+
+[tools]
+enabled = true
+sandbox_dir = "workspace"
+allowed_commands = ["ls", "cat", "echo"]
+#+END_SRC
+
+* Performance
+
+** Benchmarks
+
+| Operation | Target | Typical | Notes |
+|-----------+--------+---------+-------|
+| Startup | <50ms | 30ms | Compiled binary |
+| Command | <10ms | 5ms | Excluding API |
+| API Call | <2s | 1.5s | Network dependent |
+| Tool Exec | <100ms | 50ms | Sandboxed |
+
+** Memory Usage
+
+- Base memory: ~10MB
+- Per conversation: ~1MB per 1000 tokens
+- Tool workspace: Configurable limit
+
+* Security
+
+** Sandboxing
+
+- All file operations restricted to workspace
+- Command execution in isolated environment
+- Network access controlled
+- Resource limits enforced
+
+** Best Practices
+
+1. Use =.env= for API keys (never commit)
+2. Enable audit logging for production
+3. Restrict tool permissions
+4. Regular dependency updates
+5. Use read-only mode when appropriate
+
+* Troubleshooting
+
+** Common Issues
+
+*** API Key Not Found
+#+BEGIN_EXAMPLE
+Error: GEMINI_API_KEY not set
+Solution: Add to .env file or export GEMINI_API_KEY=your-key
+#+END_EXAMPLE
+
+*** Rate Limiting
+#+BEGIN_EXAMPLE
+Error: 429 Too Many Requests
+Solution: Built-in exponential backoff will retry automatically
+#+END_EXAMPLE
+
+*** Build Errors
+#+BEGIN_EXAMPLE
+Error: Could not compile
+Solution: Ensure Rust 1.80+ is installed: rustup update
+#+END_EXAMPLE
+
+* Contributing
+
+1. Fork the repository
+2. Create feature branch (=git checkout -b feature/amazing=)
+3. Write tests for changes
+4. Ensure all tests pass (=cargo test=)
+5. Format code (=cargo fmt=)
+6. Commit changes
+7. Push to branch
+8. Open Pull Request
+
+* License
+
+MIT License - see LICENSE file for details.
+
+* Acknowledgments
+
+- Google for the Gemini API
+- The Rust community for excellent tooling
+- Contributors to all previous gemini-repl versions
+- The async Rust ecosystem
+
+* Resources
+
+- [[https://ai.google.dev/gemini-api/docs][Gemini API Documentation]]
+- [[https://doc.rust-lang.org/book/][The Rust Programming Language]]
+- [[https://github.com/aygp-dr/gemini-repl-008][Previous Version (Ruby)]]
+- [[https://tokio.rs/][Tokio Async Runtime]]
+
+* Support
+
+- 📋 [[https://github.com/aygp-dr/gemini-repl-009/issues][Issue Tracker]]
+- 💬 [[https://github.com/aygp-dr/gemini-repl-009/discussions][Discussions]]
+- 📖 [[https://github.com/aygp-dr/gemini-repl-009/wiki][Wiki]]
+
+---
+
+Happy chatting with Gemini! 🦀🤖
