@@ -1,0 +1,41 @@
+#+TITLE: Gemini REPL 009 - Changelog
+#+AUTHOR: AYGP-DR
+#+DATE: 2025-07-26
+
+* Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [[https://keepachangelog.com/en/1.0.0/][Keep a Changelog]], and this project adheres to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
+
+** [Unreleased]
+
+*** Added
+- Initial Rust implementation of Gemini REPL
+- Basic REPL loop with readline support
+- Gemini API client with async operations
+- Slash command system (/help, /exit, /clear, etc.)
+- Conversation context management
+- Configuration system (env vars, config files)
+- Structured project layout
+- Comprehensive requirements documentation
+- Literate programming setup with org-mode
+
+*** Changed
+- Migrated from Ruby (008) to Rust for better performance
+
+*** Security
+- Sandboxed file operations (planned)
+- API key security measures
+
+** [0.1.0] - 2025-07-26
+
+*** Added
+- Project initialization
+- Basic project structure
+- Documentation framework
+
+---
+
+[Unreleased]: https://github.com/aygp-dr/gemini-repl-009/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/aygp-dr/gemini-repl-009/releases/tag/v0.1.0
