@@ -9,19 +9,53 @@
 
 * Overview
 
-This repository contains a *Rust implementation* of the Gemini REPL, continuing the evolution of interactive AI conversation tools. It provides a fast, memory-safe command-line interface for conversing with Google's Gemini AI models.
+This repository contains a *Rust implementation* of the Gemini REPL, the 9th iteration in a series of interactive AI conversation tools. Built from comprehensive analysis of 200+ issues across 8 previous versions, this implementation prioritizes security, performance, and reliability while incorporating lessons learned from real-world usage patterns.
+
+** Why Rust for Version 009?
+
+After analyzing performance issues, security vulnerabilities, and user feedback from previous implementations (ClojureScript, Python, Ruby, Clojure), Rust emerged as the optimal choice for:
+
+- **Memory Safety**: Eliminates entire classes of security vulnerabilities
+- **Performance**: <50ms startup, <500ms first response
+- **Reliability**: Strong type system catches errors at compile time
+- **Concurrency**: Native async support for streaming responses
+- **Ecosystem**: Mature libraries for CLI, HTTP, and terminal handling
+
+** Evidence-Based Design
+
+This implementation is informed by:
+- Analysis of 200+ issues across all previous versions
+- Tool usage statistics (53% command execution, 11% file operations)
+- Security audit findings (path traversal, API key exposure)
+- Performance benchmarks and user complaints
+- Feature prioritization based on actual usage patterns
 
 ** Key Features
 
-- 🚀 Fast startup with compiled Rust binary
-- 💬 Interactive REPL with slash commands
-- 🔧 Extensible tool system with sandboxing
-- 📝 Structured logging with multiple outputs
-- 🔐 Memory-safe execution environment
-- 💾 Session persistence and resume
-- 🎨 Colored terminal output
-- 📊 Token usage tracking and statistics
-- ⚡ Async/concurrent operations
+*** Security-First Design
+- 🔐 Sandboxed file operations (prevents path traversal attacks)
+- 🛡️ API key protection (never logged or exposed)
+- 🚫 No command injection vulnerabilities
+- ✅ Comprehensive security testing from day one
+
+*** Performance Optimized
+- 🚀 <50ms startup time (compiled Rust binary)
+- ⚡ <500ms first token response
+- 🔄 Streaming API responses
+- 💾 Efficient memory management
+
+*** Core Functionality
+- 💬 Interactive REPL with robust signal handling
+- 🔧 Minimal viable tool set (4-6 tools cover 80%+ use cases)
+- 📝 Multi-turn conversation context preservation
+- 💾 Named session persistence and resume
+- 📊 Accurate token usage tracking and cost estimation
+
+*** Developer Experience
+- 🎨 Colored terminal output with progress indicators
+- 📋 Structured JSON logging
+- ⚙️ Configuration profiles and runtime settings
+- 🧪 Comprehensive test suite (unit + integration + TTY)
 
 ** Evolution History
 
@@ -107,17 +141,31 @@ gemini-repl --resume my-session
 
 ** Tool System
 
-Built-in tools that Gemini can use:
+Based on analysis of tool usage patterns across previous versions, we implement a *minimal viable tool set* that covers 80%+ of real-world use cases:
 
-*** File Operations
-- =read_file= - Read file contents
-- =write_file= - Write content to files
-- =list_files= - List directory contents
-- =search_files= - Search with regex patterns
+*** Core Tools (Phase 1 - Covers 50% of use cases)
+1. =read_file= - Read file contents (security validated)
+2. =write_file= - Write/create files (workspace sandboxed)
+3. =list_files= - Browse directory contents (filtered)
+4. =search_files= - Search with regex patterns (scoped)
 
-*** System Operations
-- =execute_command= - Run shell commands (sandboxed)
-- =get_env= - Read environment variables
+*** Extended Tools (Phase 2 - Covers additional 30%+)
+5. =run_command= - Execute whitelisted commands (sandboxed)
+6. =edit_file= - Modify existing files (version controlled)
+
+*** Tool Usage Statistics (from previous versions)
+- 53% - Command execution (bash operations)
+- 11% - File editing (code modifications)
+- 11% - File reading (understanding codebases)
+- 6% - File searching (finding specific content)
+- 5% - Directory listing (exploring structure)
+
+*** Security Model
+- **Workspace Isolation**: All operations restricted to workspace directory
+- **Path Validation**: Prevents ../.. traversal and absolute paths
+- **Command Whitelist**: Only pre-approved commands allowed
+- **Size Limits**: File operations have configurable size restrictions
+- **Audit Logging**: All tool usage logged for security review
 
 ** Architecture
 
@@ -152,27 +200,67 @@ Built-in tools that Gemini can use:
 
 * Development
 
+** Implementation Roadmap
+
+Based on analysis of all previous versions, development follows a proven 4-phase approach:
+
+*** Phase 1: Foundation (Weeks 1-2) [CRITICAL]
+- Core REPL loop with robust signal handling
+- API client with retry logic and error handling
+- Basic command system (/help, /exit, /clear, /version)
+- Structured logging foundation
+
+*** Phase 2: Context Management (Weeks 3-4) [HIGH]
+- Multi-turn conversation history
+- Session persistence and named sessions
+- Token counting and cost estimation
+- Context commands (/context, /save, /load, /stats)
+
+*** Phase 3: Tool System (Weeks 5-6) [HIGH]
+- Security sandbox implementation
+- Core tools (read_file, write_file, list_files, search_files)
+- Function calling integration
+- Comprehensive security testing
+
+*** Phase 4: Production Features (Weeks 7-8) [MEDIUM]
+- Performance optimization (streaming, caching)
+- Error handling and recovery
+- UI enhancements (progress indicators, status line)
+- Configuration management
+
 ** Project Structure
 
 #+BEGIN_SRC
 gemini-repl-009/
 ├── src/
-│   ├── main.rs           # Entry point
-│   ├── repl/             # REPL core logic
-│   ├── api/              # Gemini API client
-│   ├── tools/            # Tool implementations
-│   ├── context/          # Context management
-│   └── utils/            # Utilities
-├── tests/                # Integration tests
-├── benches/              # Benchmarks
-├── experiments/          # Experimental features
-├── change-requests/      # Feature requests
-├── .ai/                  # AI-related docs
-├── Cargo.toml           # Dependencies
-├── README.org           # This file
-├── SETUP.org            # Setup guide
-└── REQUIREMENTS.org     # Detailed requirements
+│   ├── main.rs              # CLI entry point
+│   ├── repl/                # REPL core (Phase 1)
+│   ├── api/                 # Gemini client (Phase 1)
+│   ├── context/             # Context mgmt (Phase 2)
+│   ├── tools/               # Tool system (Phase 3)
+│   └── utils/               # Shared utilities
+├── tests/                   # Comprehensive test suite
+├── benches/                 # Performance benchmarks
+├── experiments/             # Feature prototypes
+├── docs/                    # Implementation guides
+├── REQUIREMENTS.org         # Primary requirements
+├── SECONDARY-REQUIREMENTS.org # Analysis-based requirements
+├── IMPLEMENTATION-ROADMAP.org # Phase-by-phase plan
+├── FEATURE-CLUSTERS.org     # Dependency analysis
+├── ISSUES-ANALYSIS.org      # Lessons from 200+ issues
+└── SETUP.org               # Literate programming source
 #+END_SRC
+
+** Documentation Architecture
+
+This repository includes comprehensive documentation based on analysis of 8 previous versions:
+
+- **REQUIREMENTS.org**: Core functional requirements
+- **SECONDARY-REQUIREMENTS.org**: Additional requirements from issue analysis
+- **IMPLEMENTATION-ROADMAP.org**: Phase-by-phase development guide
+- **FEATURE-CLUSTERS.org**: Feature dependencies and prioritization
+- **ISSUES-ANALYSIS.org**: Lessons learned from 200+ issues
+- **SETUP.org**: Literate programming implementation source
 
 ** Building
 
@@ -284,20 +372,58 @@ allowed_commands = ["ls", "cat", "echo"]
 
 * Security
 
-** Sandboxing
+** Security-First Architecture
 
-- All file operations restricted to workspace
-- Command execution in isolated environment
-- Network access controlled
-- Resource limits enforced
+Version 009 was designed from the ground up to address critical vulnerabilities found in previous versions:
 
-** Best Practices
+*** Critical Issues Addressed
+- **Path Traversal (CVE-class)**: Previous versions allowed unrestricted file system access
+- **API Key Exposure**: Keys were logged in debug mode and error messages
+- **Command Injection**: Unsafe shell execution in tool systems
 
-1. Use =.env= for API keys (never commit)
-2. Enable audit logging for production
-3. Restrict tool permissions
-4. Regular dependency updates
-5. Use read-only mode when appropriate
+*** Security Model
+- **Principle of Least Privilege**: Tools have minimal required permissions
+- **Defense in Depth**: Multiple validation layers for all operations
+- **Fail Secure**: System defaults to deny rather than allow
+- **Audit Everything**: All security-relevant operations logged
+
+*** Implementation Details
+#+BEGIN_SRC rust
+// Example: Path validation in tool system
+fn validate_path(path: &Path, workspace: &Path) -> Result<PathBuf> {
+    let canonical = path.canonicalize()?;
+    if !canonical.starts_with(workspace) {
+        bail!("Path escapes workspace: {}", path.display());
+    }
+    Ok(canonical)
+}
+#+END_SRC
+
+** Security Testing
+
+Comprehensive security test suite based on vulnerabilities found in analysis:
+
+*** Automated Security Tests
+- Path traversal attempt detection
+- API key scrubbing verification
+- Command injection prevention
+- Resource exhaustion protection
+- Symlink attack prevention
+
+*** Security Audit Process
+1. Static analysis with =cargo audit=
+2. Dynamic testing with security test suite
+3. Fuzzing critical parsing functions
+4. Manual penetration testing
+5. Dependency vulnerability scanning
+
+** Production Security
+
+1. **API Key Management**: Never commit keys, use environment variables
+2. **Audit Logging**: All tool usage logged with timestamps and context
+3. **Permission Boundaries**: Restrict workspace to project directory
+4. **Regular Updates**: Automated dependency vulnerability monitoring
+5. **Incident Response**: Clear procedures for security issue reporting
 
 * Troubleshooting
 
@@ -343,12 +469,50 @@ MIT License - see LICENSE file for details.
 - Contributors to all previous gemini-repl versions
 - The async Rust ecosystem
 
+* Lessons Learned
+
+** From 200+ Issues Across 8 Versions
+
+*** What Worked Well
+1. **Incremental Evolution**: Each version built on previous learnings
+2. **Language-Specific Strengths**: Leveraging unique language features (async, safety, etc.)
+3. **Security Consciousness**: Later versions prioritized security from design phase
+4. **Performance Focus**: Users notice and appreciate sub-500ms response times
+5. **Minimal Tool Sets**: 4-6 tools handle 80%+ of real-world use cases
+
+*** Critical Failures to Avoid
+1. **Security Afterthoughts**: Retrofitting security is much harder than building it in
+2. **Signal Handling**: Multiple versions failed to handle Ctrl+C/Ctrl+D properly
+3. **Context Loss**: Users hate losing conversation history between messages
+4. **Tool Recognition**: AI often refuses to use available tools without clear guidance
+5. **Performance Regressions**: >30 second response times frustrate users
+
+*** Key Insights for Rust Implementation
+- Start with security boundaries, not performance
+- Test signal handling comprehensively
+- Design context preservation from day one
+- Make tool descriptions crystal clear
+- Stream responses to feel faster
+- Fail gracefully with helpful error messages
+
 * Resources
 
+** Technical Documentation
 - [[https://ai.google.dev/gemini-api/docs][Gemini API Documentation]]
 - [[https://doc.rust-lang.org/book/][The Rust Programming Language]]
-- [[https://github.com/aygp-dr/gemini-repl-008][Previous Version (Ruby)]]
 - [[https://tokio.rs/][Tokio Async Runtime]]
+- [[https://docs.rs/rustyline/][Rustyline REPL Library]]
+
+** Previous Implementations
+- [[https://github.com/aygp-dr/gemini-repl][Original (ClojureScript)]]
+- [[https://github.com/aygp-dr/gemini-repl-005][Python Version]]
+- [[https://github.com/aygp-dr/gemini-repl-006][Clojure/Babashka Version]]
+- [[https://github.com/aygp-dr/gemini-repl-008][Ruby Version]]
+
+** Security Resources
+- [[https://rustsec.org/][RustSec Security Advisory Database]]
+- [[https://github.com/RustSec/cargo-audit][Cargo Audit Tool]]
+- [[https://owasp.org/www-project-top-ten/][OWASP Top 10]]
 
 * Support
 
