@@ -1,0 +1,36 @@
+Context and Details for Formal Verification Scaffold
+
+BACKGROUND:
+Issue #12 requested adding formal verification tools (TLA+ and Alloy) to verify
+protocol correctness, state machines, and system invariants. The issue already
+had the Makefile infrastructure in place with downloaded tools.
+
+CHANGES MADE:
+1. Created specs/GeminiProtocol.tla - Models REPL request/response flow
+2. Created specs/ConnectionStateMachine.tla - Models connection lifecycle
+3. Created specs/ResponseCodes.als - Models API response transitions
+4. Created specs/SessionManagement.als - Models session state consistency
+5. Created specs/Makefile - Enables gmake -C specs all from project root
+6. Created FORMAL-VERIFICATION-FINDINGS.md - Documents implementation
+
+TESTING:
+- Ran gmake verify from root - downloads tools and verifies specs
+- Fixed TLA+ syntax error (used @@ instead of proper function syntax)
+- All TLA+ specs pass tla2sany.SANY syntax checking
+- Alloy specs created but require X11 GUI for verification
+- Added 10s timeouts to prevent terminal hangs
+- Verification completes in ~1 second
+
+EXPERIMENTS:
+None - this was a direct implementation of issue requirements
+
+DEVIATIONS:
+- Created specs/Makefile for better organization (not in original plan)
+- Added FORMAL-VERIFICATION-FINDINGS.md to document the work
+- Kept specs minimal as requested (just scaffolding)
+
+FOLLOW-UP:
+- Run Alloy verification when X11 is available
+- Add TLC model checking for runtime verification
+- Expand specifications as REPL features grow
+- Consider property-based testing integration
