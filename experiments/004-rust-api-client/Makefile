@@ -15,7 +15,7 @@ build:
 
 run: build
 	@echo "Running Rust API client..."
-	cargo run -- --proxy
+	@. ../../.env && cargo run -- --proxy
 
 test: run
 

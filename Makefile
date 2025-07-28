@@ -38,3 +38,8 @@ clean:
 build:
 	@echo "Building..."
 	cargo build
+
+# Push all changes
+push-all:
+	@echo "Pushing all changes to GitHub..."
+	@git push origin HEAD

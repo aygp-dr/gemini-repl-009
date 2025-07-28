@@ -14,7 +14,7 @@ build:
 
 run: build
 	@echo "Testing API integration..."
-	cargo run
+	@. ../../.env && cargo run
 
 clean:
 	@echo "Cleaning..."
