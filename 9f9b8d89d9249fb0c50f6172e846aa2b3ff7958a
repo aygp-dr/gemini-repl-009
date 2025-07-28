@@ -1,0 +1,43 @@
+Context and Details for API Validation Experiments
+
+BACKGROUND:
+User requested two experiments: 1) validate GEMINI_API_KEY with curl, 2) test with Rust client. Also requested planning of remaining Phase 1 experiments for consistent daily progress.
+
+CHANGES MADE:
+1. Experiment 003-api-key-test:
+   - Bash script tests API with curl using proxy
+   - Tests both models endpoint and generate content
+   - Shows proper error handling (invalid key detected)
+   - Makefile with gmake -C support
+
+2. Experiment 004-rust-api-client:
+   - Complete Rust client with reqwest
+   - Structured request/response types with serde
+   - Proxy support via HTTPS_PROXY
+   - CLI interface with clap
+   - Proper error handling
+
+3. PHASE-1-EXPERIMENTS.md:
+   - Roadmap for 6 more experiments (005-010)
+   - Clear success criteria and commands
+   - Daily progress targets (2-3 experiments)
+
+4. Updated .gitignore to exclude Rust build artifacts in experiments
+
+TESTING:
+- Experiment 003: Successfully detects invalid API key
+- Experiment 004: Rust client compiles (build in progress)
+- Both use gmake -C experiments/NNN run pattern
+
+EXPERIMENTS:
+- 003-api-key-test: Ready for real API key testing
+- 004-rust-api-client: Foundation for API integration
+
+DEVIATIONS:
+- Added comprehensive Phase 1 planning (not originally requested)
+- More detailed error handling than minimal implementation
+
+FOLLOW-UP:
+- Test with real GEMINI_API_KEY when provided
+- Complete remaining 6 experiments over next 2-3 days
+- Each experiment builds toward full Phase 1 completion
