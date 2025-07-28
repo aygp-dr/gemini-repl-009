@@ -1,0 +1,57 @@
+[package]
+name = "gemini-repl"
+version = "0.1.0"
+edition = "2021"
+authors = ["AYGP-DR"]
+license = "MIT"
+repository = "https://github.com/aygp-dr/gemini-repl-009"
+readme = "README.org"
+
+[[bin]]
+name = "gemini-repl"
+path = "src/main.rs"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.39", features = ["full"] }
+
+# CLI and terminal handling
+rustyline = "14.0"
+clap = { version = "4.5", features = ["derive", "env"] }
+
+# Error handling and logging
+anyhow = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# HTTP client for API
+reqwest = { version = "0.12", features = ["json", "stream"] }
+
+# Security and validation
+secrecy = "0.8"
+validator = { version = "0.18", features = ["derive"] }
+
+# Utilities
+directories = "5.0"
+once_cell = "1.19"
+crossterm = "0.28"
+async-trait = "0.1"
+
+[dev-dependencies]
+# Testing utilities
+mockall = "0.13"
+tempfile = "3.10"
+proptest = "1.4"
+criterion = "0.5"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
+panic = "abort"
