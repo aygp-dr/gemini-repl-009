@@ -75,3 +75,7 @@ yarn-error.log*
 
 # Ignore crates directory for now
 /crates/
+
+# Rust build artifacts in experiments
+experiments/*/target/
+experiments/*/Cargo.lock
