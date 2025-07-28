@@ -68,3 +68,10 @@ yarn-error.log*
 /experiments/*/output/
 /change-requests/*/build/
 /.ai/cache/
+
+# Added by cargo
+
+/target
+
+# Ignore crates directory for now
+/crates/
