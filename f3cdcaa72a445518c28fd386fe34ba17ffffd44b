@@ -1,0 +1,22 @@
+Context and Details for Gitignore Update
+
+BACKGROUND:
+User requested not to remove crates/ directory when I was cleaning up the workspace structure. The directory contains planned multi-crate architecture for Phase 2.
+
+CHANGES MADE:
+1. Added /crates/ to .gitignore to exclude from version control
+2. Preserves directory structure for future use without cluttering commits
+
+TESTING:
+- Verified crates/ directory no longer shows in git status
+- Confirmed existing crate structure remains on disk
+
+EXPERIMENTS:
+- Workspace structure (gemini-core, gemini-cli, gemini-api, gemini-tools) created but not used in Phase 1
+
+DEVIATIONS:
+- Originally planned to use workspace immediately, but simplified to single crate for rapid Phase 1 delivery
+
+FOLLOW-UP:
+- Will un-ignore and properly implement workspace structure in Phase 2
+- Crate separation will improve modularity and testing
