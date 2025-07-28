@@ -1,0 +1,29 @@
+Context and Details for Frequency Analysis Tools
+
+BACKGROUND:
+User requested frequency analysis tools based on a letter frequency example,
+specifically wanting to analyze top committers and create formal specs.
+
+CHANGES MADE:
+1. Created scripts/freq-analysis/top-committers.sh - Shows top K committers
+2. Created scripts/freq-analysis/freq-analyze.sh - Generic frequency tool
+3. Created scripts/freq-analysis/letter-freq.sh - Letter frequency (example)
+4. Created specs/FrequencyAnalysis.tla - TLA+ formal specification
+5. Created specs/FrequencyAnalysis.als - Alloy formal specification
+
+TESTING:
+- Tested top-committers.sh - correctly shows Aidan Pace at 100%
+- Scripts are composable and follow Unix philosophy
+- Formal specs define invariants, guards, and composability
+
+EXPERIMENTS:
+None - direct implementation of requirements
+
+DEVIATIONS:
+- Added generic freq-analyze.sh for flexibility
+- Created both TLA+ and Alloy specs for completeness
+
+FOLLOW-UP:
+- Could add Lean4 specification as mentioned
+- Consider adding more statistical analysis features
+- Test with larger datasets for performance
