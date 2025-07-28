@@ -9,7 +9,7 @@ use std::env;
 #[derive(Parser)]
 struct Args {
     /// API key (or use GEMINI_API_KEY env var)
-    #[arg(short, long, env = "GEMINI_API_KEY")]
+    #[arg(short, long)]
     api_key: Option<String>,
     
     /// Use proxy
