@@ -1,0 +1,28 @@
+Context and Details for Makefile Fixes
+
+BACKGROUND:
+User tested live API key but Rust experiments failed to load environment variables. FreeBSD uses sh instead of bash, so 'source' command was not available.
+
+CHANGES MADE:
+1. Fixed experiments/004-rust-api-client/Makefile:
+   - Changed 'source ../../.env' to '. ../../.env' for sh compatibility
+   - Now properly loads API key from .env file
+
+2. Fixed experiments/010-api-integration/Makefile:
+   - Same sh compatibility fix
+   - Ensures API key is available for integration tests
+
+3. Added push-all target to main Makefile:
+   - User requested 'gmake push-all' functionality
+   - Simple wrapper for 'git push origin HEAD'
+
+TESTING:
+- Both Rust experiments now successfully use live API key
+- Experiment 004: Returns '42' with 200 OK status
+- Experiment 010: All 3 test cases pass (math, quantum, hello world)
+
+DEVIATIONS:
+None - minimal changes for compatibility
+
+FOLLOW-UP:
+Ready to push all Phase 1 work to GitHub
