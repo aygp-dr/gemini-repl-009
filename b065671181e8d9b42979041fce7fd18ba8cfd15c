@@ -1,0 +1,34 @@
+Context and Details for Environment Configuration
+
+BACKGROUND:
+User pointed out original .env.example had many more configuration options. Also requested testing of HTTP proxy on port 3129 for potential API request routing.
+
+CHANGES MADE:
+1. Updated .env.example with all original config sections:
+   - API, REPL, Logging, Tools, Rate Limiting configurations
+   - Added proxy configuration section
+   - Restored all secondary features from original design
+2. Created GH_SECRETS.md documenting GitHub CLI commands
+3. Created experiment 001-http-proxy-testing:
+   - Tests proxy connectivity on port 3129
+   - Confirms HTTPS tunneling works
+   - Provides Rust integration example
+   - Makefile for easy testing
+
+TESTING:
+- Verified .env remains gitignored
+- Proxy test shows port 3129 active and working
+- HTTPS requests successfully tunnel through proxy
+- Gemini API endpoint reachable (returns 404 without auth)
+
+EXPERIMENTS:
+- 001-http-proxy-testing: Confirmed local proxy can route API requests
+
+DEVIATIONS:
+- Added proxy configuration not in original plan
+- More comprehensive env vars than initially planned
+
+FOLLOW-UP:
+- Integrate proxy support into Rust client
+- User will provide real GEMINI_API_KEY when ready
+- Implement configuration loading in main app
