@@ -1,0 +1,361 @@
+{
+  "ollama_generate_response": {
+    "description": "Response from /api/generate endpoint",
+    "properties": {
+      "model": {
+        "title": "Model",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "response": {
+        "title": "Response",
+        "type": "string"
+      },
+      "done": {
+        "title": "Done",
+        "type": "boolean"
+      },
+      "context": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Context"
+      },
+      "total_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Total Duration"
+      },
+      "load_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Load Duration"
+      },
+      "prompt_eval_count": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Prompt Eval Count"
+      },
+      "prompt_eval_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Prompt Eval Duration"
+      },
+      "eval_count": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Eval Count"
+      },
+      "eval_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Eval Duration"
+      }
+    },
+    "required": [
+      "model",
+      "created_at",
+      "response",
+      "done"
+    ],
+    "title": "OllamaGenerateResponse",
+    "type": "object"
+  },
+  "ollama_chat_request": {
+    "$defs": {
+      "Message": {
+        "description": "Chat message format",
+        "properties": {
+          "role": {
+            "pattern": "^(system|user|assistant)$",
+            "title": "Role",
+            "type": "string"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "Message",
+        "type": "object"
+      }
+    },
+    "description": "Request format for /api/chat endpoint",
+    "properties": {
+      "model": {
+        "title": "Model",
+        "type": "string"
+      },
+      "messages": {
+        "items": {
+          "$ref": "#/$defs/Message"
+        },
+        "title": "Messages",
+        "type": "array"
+      },
+      "stream": {
+        "default": false,
+        "title": "Stream",
+        "type": "boolean"
+      },
+      "format": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Format"
+      },
+      "options": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Options"
+      },
+      "tools": {
+        "anyOf": [
+          {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Tools"
+      }
+    },
+    "required": [
+      "model",
+      "messages"
+    ],
+    "title": "ChatRequest",
+    "type": "object"
+  },
+  "ollama_chat_response": {
+    "$defs": {
+      "ChatMessage": {
+        "description": "Response message with potential tool calls",
+        "properties": {
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "tool_calls": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/ToolCall"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tool Calls"
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "ChatMessage",
+        "type": "object"
+      },
+      "ToolCall": {
+        "description": "Tool call in response",
+        "properties": {
+          "function": {
+            "additionalProperties": true,
+            "title": "Function",
+            "type": "object"
+          }
+        },
+        "required": [
+          "function"
+        ],
+        "title": "ToolCall",
+        "type": "object"
+      }
+    },
+    "description": "Response from /api/chat endpoint",
+    "properties": {
+      "model": {
+        "title": "Model",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "message": {
+        "$ref": "#/$defs/ChatMessage"
+      },
+      "done": {
+        "title": "Done",
+        "type": "boolean"
+      },
+      "total_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Total Duration"
+      },
+      "load_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Load Duration"
+      },
+      "prompt_eval_count": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Prompt Eval Count"
+      },
+      "prompt_eval_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Prompt Eval Duration"
+      },
+      "eval_count": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Eval Count"
+      },
+      "eval_duration": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Eval Duration"
+      }
+    },
+    "required": [
+      "model",
+      "created_at",
+      "message",
+      "done"
+    ],
+    "title": "ChatResponse",
+    "type": "object"
+  }
+}
