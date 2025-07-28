@@ -142,6 +142,18 @@ dashboard:
 dashboard-restart:
 	./scripts/tmux-dashboard.sh --restart
 
+# File extension frequency analysis
+file-freq:
+	@echo "=== Top 10 File Types by Frequency ==="
+	@timeout 20 time sh -c "find . -type f -name '*.*' \
+		-not -path './target/*' \
+		-not -path './.git/*' \
+		-not -path './tools/*' \
+		-not -path './.gemini-repl/*' | \
+		sed 's/.*\.//' | \
+		scripts/freq-analysis/freq-analyze.sh -p -k 10" || \
+		echo "Error: freq-analyze.sh not found or command timed out."
+
 # Generate ASCII art banner
 resources/:
 	mkdir -p $@
