@@ -1,0 +1,35 @@
+Context and Details for GitHub Actions Setup
+
+BACKGROUND:
+User successfully added GEMINI_API_KEY to GitHub secrets and requested experiment to track workflow status. Created comprehensive CI/CD setup.
+
+CHANGES MADE:
+1. Created experiment 002-github-actions with:
+   - Makefile for checking workflow status
+   - Status check script
+   - CI workflow template
+   - Documentation of secret addition
+2. Added .github/workflows/ci.yml with:
+   - Multi-OS testing (Ubuntu, macOS)
+   - Multi-Rust version (stable, beta)
+   - Security auditing
+   - Integration testing with expect
+   - Proper secret usage
+
+TESTING:
+- Verified GEMINI_API_KEY exists in repository secrets
+- Confirmed gmake -C experiments/002-github-actions run works
+- Workflow ready to run on next push
+
+EXPERIMENTS:
+- 002-github-actions: Tracks CI/CD status and provides tooling
+
+DEVIATIONS:
+- Added security audit job (not in original plan)
+- More comprehensive matrix testing than minimal setup
+
+FOLLOW-UP:
+- Workflow will trigger on push to GitHub
+- Monitor first runs for any issues
+- Consider adding Windows to test matrix
+- Add release workflow for tagged versions
