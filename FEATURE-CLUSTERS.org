@@ -114,19 +114,19 @@
 * Risk Assessment by Cluster
 
 ** High Risk (⚠️)
-- **Signal Handling**: Multiple versions failed here
-- **Security Sandbox**: Critical vulnerability if wrong
-- **API Integration**: External dependency, can change
+- /Signal Handling/: Multiple versions failed here
+- /Security Sandbox/: Critical vulnerability if wrong
+- /API Integration/: External dependency, can change
 
 ** Medium Risk (⚡)
-- **Context Management**: Easy to lose user data
-- **Tool Integration**: Complex Gemini function calling
-- **Session Persistence**: Data corruption risks
+- /Context Management/: Easy to lose user data
+- /Tool Integration/: Complex Gemini function calling
+- /Session Persistence/: Data corruption risks
 
 ** Low Risk (✅)
-- **Command System**: Well-understood patterns
-- **Logging**: Standard libraries available
-- **UI Enhancements**: Nice-to-have features
+- /Command System/: Well-understood patterns
+- /Logging/: Standard libraries available
+- /UI Enhancements/: Nice-to-have features
 
 * Feature Usage Statistics (from Analysis)
 

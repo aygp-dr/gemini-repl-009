@@ -176,13 +176,13 @@ Adding 2 more covers 80-85%:
 
 * Lessons Learned
 
-1. **Security is Critical**: Multiple versions had severe vulnerabilities
-2. **Simple Tools Win**: 4-6 tools handle most use cases
-3. **Context is Essential**: Users hate losing conversation history
-4. **Performance Matters**: >500ms delays frustrate users
-5. **Signal Handling is Hard**: Multiple versions got it wrong
-6. **Tool Dispatch is Tricky**: AI needs clear guidance
-7. **Testing Prevents Regression**: Same bugs appeared across versions
+1. /Security is Critical/: Multiple versions had severe vulnerabilities
+2. /Simple Tools Win/: 4-6 tools handle most use cases
+3. /Context is Essential/: Users hate losing conversation history
+4. /Performance Matters/: >500ms delays frustrate users
+5. /Signal Handling is Hard/: Multiple versions got it wrong
+6. /Tool Dispatch is Tricky/: AI needs clear guidance
+7. /Testing Prevents Regression/: Same bugs appeared across versions
 
 * Recommendations for gemini-repl-009
 

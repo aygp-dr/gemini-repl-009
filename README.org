@@ -15,11 +15,11 @@ This repository contains a *Rust implementation* of the Gemini REPL, the 9th ite
 
 After analyzing performance issues, security vulnerabilities, and user feedback from previous implementations (ClojureScript, Python, Ruby, Clojure), Rust emerged as the optimal choice for:
 
-- **Memory Safety**: Eliminates entire classes of security vulnerabilities
-- **Performance**: <50ms startup, <500ms first response
-- **Reliability**: Strong type system catches errors at compile time
-- **Concurrency**: Native async support for streaming responses
-- **Ecosystem**: Mature libraries for CLI, HTTP, and terminal handling
+- /Memory Safety/: Eliminates entire classes of security vulnerabilities
+- /Performance/: <50ms startup, <500ms first response
+- /Reliability/: Strong type system catches errors at compile time
+- /Concurrency/: Native async support for streaming responses
+- /Ecosystem/: Mature libraries for CLI, HTTP, and terminal handling
 
 ** Evidence-Based Design
 
@@ -161,11 +161,11 @@ Based on analysis of tool usage patterns across previous versions, we implement 
 - 5% - Directory listing (exploring structure)
 
 *** Security Model
-- **Workspace Isolation**: All operations restricted to workspace directory
-- **Path Validation**: Prevents ../.. traversal and absolute paths
-- **Command Whitelist**: Only pre-approved commands allowed
-- **Size Limits**: File operations have configurable size restrictions
-- **Audit Logging**: All tool usage logged for security review
+- /Workspace Isolation/: All operations restricted to workspace directory
+- /Path Validation/: Prevents ../.. traversal and absolute paths
+- /Command Whitelist/: Only pre-approved commands allowed
+- /Size Limits/: File operations have configurable size restrictions
+- /Audit Logging/: All tool usage logged for security review
 
 ** Architecture
 
@@ -255,12 +255,12 @@ gemini-repl-009/
 
 This repository includes comprehensive documentation based on analysis of 8 previous versions:
 
-- **REQUIREMENTS.org**: Core functional requirements
-- **SECONDARY-REQUIREMENTS.org**: Additional requirements from issue analysis
-- **IMPLEMENTATION-ROADMAP.org**: Phase-by-phase development guide
-- **FEATURE-CLUSTERS.org**: Feature dependencies and prioritization
-- **ISSUES-ANALYSIS.org**: Lessons learned from 200+ issues
-- **SETUP.org**: Literate programming implementation source
+- /REQUIREMENTS.org/: Core functional requirements
+- /SECONDARY-REQUIREMENTS.org/: Additional requirements from issue analysis
+- /IMPLEMENTATION-ROADMAP.org/: Phase-by-phase development guide
+- /FEATURE-CLUSTERS.org/: Feature dependencies and prioritization
+- /ISSUES-ANALYSIS.org/: Lessons learned from 200+ issues
+- /SETUP.org/: Literate programming implementation source
 
 ** Building
 
@@ -377,15 +377,15 @@ allowed_commands = ["ls", "cat", "echo"]
 Version 009 was designed from the ground up to address critical vulnerabilities found in previous versions:
 
 *** Critical Issues Addressed
-- **Path Traversal (CVE-class)**: Previous versions allowed unrestricted file system access
-- **API Key Exposure**: Keys were logged in debug mode and error messages
-- **Command Injection**: Unsafe shell execution in tool systems
+- /Path Traversal (CVE-class)/: Previous versions allowed unrestricted file system access
+- /API Key Exposure/: Keys were logged in debug mode and error messages
+- /Command Injection/: Unsafe shell execution in tool systems
 
 *** Security Model
-- **Principle of Least Privilege**: Tools have minimal required permissions
-- **Defense in Depth**: Multiple validation layers for all operations
-- **Fail Secure**: System defaults to deny rather than allow
-- **Audit Everything**: All security-relevant operations logged
+- /Principle of Least Privilege/: Tools have minimal required permissions
+- /Defense in Depth/: Multiple validation layers for all operations
+- /Fail Secure/: System defaults to deny rather than allow
+- /Audit Everything/: All security-relevant operations logged
 
 *** Implementation Details
 #+BEGIN_SRC rust
@@ -419,11 +419,11 @@ Comprehensive security test suite based on vulnerabilities found in analysis:
 
 ** Production Security
 
-1. **API Key Management**: Never commit keys, use environment variables
-2. **Audit Logging**: All tool usage logged with timestamps and context
-3. **Permission Boundaries**: Restrict workspace to project directory
-4. **Regular Updates**: Automated dependency vulnerability monitoring
-5. **Incident Response**: Clear procedures for security issue reporting
+1. /API Key Management/: Never commit keys, use environment variables
+2. /Audit Logging/: All tool usage logged with timestamps and context
+3. /Permission Boundaries/: Restrict workspace to project directory
+4. /Regular Updates/: Automated dependency vulnerability monitoring
+5. /Incident Response/: Clear procedures for security issue reporting
 
 * Troubleshooting
 
@@ -474,18 +474,18 @@ MIT License - see LICENSE file for details.
 ** From 200+ Issues Across 8 Versions
 
 *** What Worked Well
-1. **Incremental Evolution**: Each version built on previous learnings
-2. **Language-Specific Strengths**: Leveraging unique language features (async, safety, etc.)
-3. **Security Consciousness**: Later versions prioritized security from design phase
-4. **Performance Focus**: Users notice and appreciate sub-500ms response times
-5. **Minimal Tool Sets**: 4-6 tools handle 80%+ of real-world use cases
+1. /Incremental Evolution/: Each version built on previous learnings
+2. /Language-Specific Strengths/: Leveraging unique language features (async, safety, etc.)
+3. /Security Consciousness/: Later versions prioritized security from design phase
+4. /Performance Focus/: Users notice and appreciate sub-500ms response times
+5. /Minimal Tool Sets/: 4-6 tools handle 80%+ of real-world use cases
 
 *** Critical Failures to Avoid
-1. **Security Afterthoughts**: Retrofitting security is much harder than building it in
-2. **Signal Handling**: Multiple versions failed to handle Ctrl+C/Ctrl+D properly
-3. **Context Loss**: Users hate losing conversation history between messages
-4. **Tool Recognition**: AI often refuses to use available tools without clear guidance
-5. **Performance Regressions**: >30 second response times frustrate users
+1. /Security Afterthoughts/: Retrofitting security is much harder than building it in
+2. /Signal Handling/: Multiple versions failed to handle Ctrl+C/Ctrl+D properly
+3. /Context Loss/: Users hate losing conversation history between messages
+4. /Tool Recognition/: AI often refuses to use available tools without clear guidance
+5. /Performance Regressions/: >30 second response times frustrate users
 
 *** Key Insights for Rust Implementation
 - Start with security boundaries, not performance
