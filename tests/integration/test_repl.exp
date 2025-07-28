@@ -1,0 +1,64 @@
+#!/usr/bin/expect -f
+# Test script for Gemini REPL event loop
+# Tests basic interaction and arithmetic query
+
+set timeout 10
+
+# Start the REPL
+spawn ./target/debug/gemini-repl
+
+# Wait for prompt
+expect {
+    "gemini>" { send_user "\n✓ REPL started successfully\n" }
+    timeout { send_user "\n✗ Failed to start REPL\n"; exit 1 }
+}
+
+# Test help command
+send "/help\r"
+expect {
+    "Available commands:" { send_user "✓ Help command works\n" }
+    timeout { send_user "✗ Help command failed\n"; exit 1 }
+}
+
+expect "gemini>"
+
+# Test arithmetic query (noop mode will echo)
+send "What is 2 + 40?\r"
+expect {
+    "You said: What is 2 + 40?" { send_user "✓ Input echoed correctly\n" }
+    timeout { send_user "✗ Input echo failed\n"; exit 1 }
+}
+expect {
+    "(Running in noop mode - no API calls made)" { send_user "✓ Noop mode confirmed\n" }
+    timeout { send_user "✗ Noop mode message missing\n"; exit 1 }
+}
+
+expect "gemini>"
+
+# Test model command
+send "/model\r"
+expect {
+    "Current model: gemini-1.5-flash" { send_user "✓ Model command works\n" }
+    timeout { send_user "✗ Model command failed\n"; exit 1 }
+}
+
+expect "gemini>"
+
+# Test Ctrl-C handling
+send "\003"
+expect {
+    "^C" { send_user "✓ Ctrl-C handled gracefully\n" }
+    timeout { send_user "✗ Ctrl-C handling failed\n"; exit 1 }
+}
+
+expect "gemini>"
+
+# Exit cleanly
+send "/exit\r"
+expect {
+    "Goodbye!" { send_user "✓ Clean exit\n" }
+    timeout { send_user "✗ Exit failed\n"; exit 1 }
+}
+
+expect eof
+send_user "\n✅ All tests passed!\n"
