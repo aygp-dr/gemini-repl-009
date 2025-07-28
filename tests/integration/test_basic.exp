@@ -4,7 +4,7 @@
 set timeout 5
 
 # Start the REPL
-spawn ./target/debug/gemini-repl
+spawn ../../target/debug/gemini-repl
 
 # Wait for initial prompt
 expect "gemini>" 
