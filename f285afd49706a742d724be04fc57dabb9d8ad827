@@ -1,0 +1,32 @@
+Context and Details for Rust Project Initialization
+
+BACKGROUND:
+User requested a quick gmake install/run setup for a noop REPL as the first phase of implementation. Starting with Rust based on comprehensive analysis showing it as optimal for security, performance, and reliability requirements.
+
+CHANGES MADE:
+1. Created Cargo.toml with essential dependencies for Phase 1:
+   - tokio for async runtime (required for streaming API responses)
+   - rustyline for REPL with history support
+   - clap for CLI argument parsing
+   - tracing/tracing-subscriber for structured logging
+   - anyhow/thiserror for error handling
+   - Basic serde/json for future API integration
+   - Security-focused deps (secrecy, validator) for API key handling
+
+TESTING:
+- Verified Cargo.toml syntax is valid
+- Dependencies chosen based on production use and security audit results
+- All deps use stable versions with security features enabled
+
+EXPERIMENTS:
+- Originally attempted workspace structure (crates/gemini-core, etc.) but simplified to single crate for Phase 1 rapid iteration
+- Workspace structure preserved in crates/ directory for Phase 2 expansion
+
+DEVIATIONS:
+- Simplified from planned multi-crate workspace to single binary for faster initial development
+- Added Makefile immediately (not in original plan) for gmake workflow requested by user
+
+FOLLOW-UP:
+- Need GEMINI_API_KEY from user when ready (can be env var or GH secret)
+- Will implement basic REPL loop next
+- Phase 2 will expand to full workspace structure
