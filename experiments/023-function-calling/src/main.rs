@@ -9,6 +9,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::env;
+use std::fs;
+use std::path::Path;
 use tracing::{info, warn, debug};
 
 // === Gemini API Types ===
@@ -184,48 +186,140 @@ fn create_core_tools() -> Vec<Tool> {
 // === Function Execution (NOOP for now) ===
 
 fn execute_function(function_call: &FunctionCall) -> Result<Value> {
-    info!("NOOP: Executing function '{}' with args: {}", 
+    info!("Executing function '{}' with args: {}", 
           function_call.name, 
           serde_json::to_string_pretty(&function_call.args)?);
     
-    // NOOP implementations that return mock data
     match function_call.name.as_str() {
         "read_file" => {
-            let file_path = function_call.args["file_path"].as_str().unwrap_or("unknown");
-            Ok(json!({
-                "content": format!("# Mock content of {}\n\nThis is a NOOP implementation.", file_path),
-                "size": 42,
-                "exists": true
-            }))
+            let file_path = function_call.args["file_path"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing file_path parameter"))?;
+            
+            // Read actual file
+            match fs::read_to_string(file_path) {
+                Ok(content) => {
+                    let size = content.len();
+                    Ok(json!({
+                        "content": content,
+                        "size": size,
+                        "exists": true,
+                        "file_path": file_path
+                    }))
+                },
+                Err(e) => {
+                    Ok(json!({
+                        "content": null,
+                        "exists": false,
+                        "error": format!("Failed to read file: {}", e),
+                        "file_path": file_path
+                    }))
+                }
+            }
         },
         "write_file" => {
-            let file_path = function_call.args["file_path"].as_str().unwrap_or("unknown");
-            Ok(json!({
-                "success": true,
-                "bytes_written": 100,
-                "message": format!("NOOP: Would write to {}", file_path)
-            }))
+            let file_path = function_call.args["file_path"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing file_path parameter"))?;
+            let content = function_call.args["content"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing content parameter"))?;
+            
+            // Create parent directories if needed
+            if let Some(parent) = Path::new(file_path).parent() {
+                fs::create_dir_all(parent)?;
+            }
+            
+            // Write actual file
+            match fs::write(file_path, content) {
+                Ok(_) => {
+                    Ok(json!({
+                        "success": true,
+                        "bytes_written": content.len(),
+                        "file_path": file_path
+                    }))
+                },
+                Err(e) => {
+                    Ok(json!({
+                        "success": false,
+                        "error": format!("Failed to write file: {}", e),
+                        "file_path": file_path
+                    }))
+                }
+            }
         },
         "list_files" => {
             let pattern = function_call.args["pattern"].as_str().unwrap_or("*");
+            
+            // Simple implementation - list current directory
+            let mut files = Vec::new();
+            let mut directories = Vec::new();
+            
+            if let Ok(entries) = fs::read_dir(".") {
+                for entry in entries.flatten() {
+                    if let Ok(metadata) = entry.metadata() {
+                        let name = entry.file_name().to_string_lossy().to_string();
+                        
+                        // Simple pattern matching
+                        if pattern == "*" || 
+                           (pattern.ends_with("*") && name.starts_with(&pattern[..pattern.len()-1])) ||
+                           (pattern.starts_with("*") && name.ends_with(&pattern[1..])) {
+                            if metadata.is_dir() {
+                                directories.push(name);
+                            } else {
+                                files.push(name);
+                            }
+                        }
+                    }
+                }
+            }
+            
             Ok(json!({
                 "pattern": pattern,
-                "files": ["README.md", "src/main.rs", "Cargo.toml"],
-                "directories": ["src", "tests", "docs"],
-                "total": 6
+                "files": files,
+                "directories": directories,
+                "total": files.len() + directories.len()
             }))
         },
         "search_code" => {
-            let pattern = function_call.args["pattern"].as_str().unwrap_or("");
-            let file_pattern = function_call.args["file_pattern"].as_str().unwrap_or("*.rs");
+            let pattern = function_call.args["pattern"].as_str()
+                .ok_or_else(|| anyhow::anyhow!("Missing pattern parameter"))?;
+            let file_pattern = function_call.args.get("file_pattern")
+                .and_then(|v| v.as_str())
+                .unwrap_or("*.rs");
+            
+            let mut matches = Vec::new();
+            
+            // Simple search in current directory
+            if let Ok(entries) = fs::read_dir(".") {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    if path.is_file() {
+                        let name = path.to_string_lossy().to_string();
+                        
+                        // Simple file pattern matching
+                        let matches_pattern = file_pattern == "*" || 
+                            (file_pattern.starts_with("*") && name.ends_with(&file_pattern[1..]));
+                        
+                        if matches_pattern {
+                            if let Ok(content) = fs::read_to_string(&path) {
+                                for (line_num, line) in content.lines().enumerate() {
+                                    if line.contains(pattern) {
+                                        matches.push(json!({
+                                            "file": name.clone(),
+                                            "line": line_num + 1,
+                                            "content": line.trim()
+                                        }));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
             Ok(json!({
                 "pattern": pattern,
                 "file_pattern": file_pattern,
-                "matches": [
-                    {"file": "src/main.rs", "line": 42, "content": "// Pattern match here"},
-                    {"file": "tests/test.rs", "line": 10, "content": "// Another match"}
-                ],
-                "total_matches": 2
+                "matches": matches,
+                "total_matches": matches.len()
             }))
         },
         _ => Err(anyhow::anyhow!("Unknown function: {}", function_call.name))

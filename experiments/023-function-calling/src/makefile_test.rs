@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::env;
+use std::fs;
 use tracing::{info, warn, debug};
 
 // Import types from main (in real impl, these would be in a shared module)
@@ -182,6 +183,15 @@ async fn main() -> Result<()> {
                                                 if func_call["name"] == "read_file" &&
                                                    func_call["args"]["file_path"] == "Makefile" {
                                                     info!("✅ CORRECT: Would read Makefile!");
+                                                    
+                                                    // Execute the function to show result
+                                                    if let Ok(result) = execute_function_call(func_call) {
+                                                        info!("Function result preview:");
+                                                        if let Some(content) = result["content"].as_str() {
+                                                            let preview = content.lines().take(5).collect::<Vec<_>>().join("\n");
+                                                            info!("First 5 lines of Makefile:\n{}", preview);
+                                                        }
+                                                    }
                                                 } else {
                                                     warn!("⚠️  Unexpected function or args");
                                                 }
@@ -235,4 +245,39 @@ async fn make_api_call(request: &GenerateRequest, api_key: &str) -> Result<Strin
     }
     
     Ok(text)
+}
+
+// Execute function call locally to show what would happen
+fn execute_function_call(func_call: &Value) -> Result<Value> {
+    let name = func_call["name"].as_str().unwrap_or("unknown");
+    let args = &func_call["args"];
+    
+    match name {
+        "read_file" => {
+            let file_path = args["file_path"].as_str().unwrap_or("unknown");
+            info!("Executing read_file for: {}", file_path);
+            
+            match fs::read_to_string(file_path) {
+                Ok(content) => {
+                    info!("✅ Successfully read {} bytes from {}", content.len(), file_path);
+                    Ok(json!({
+                        "content": content,
+                        "size": content.len(),
+                        "exists": true,
+                        "file_path": file_path
+                    }))
+                },
+                Err(e) => {
+                    warn!("❌ Failed to read {}: {}", file_path, e);
+                    Ok(json!({
+                        "content": null,
+                        "exists": false,
+                        "error": format!("{}", e),
+                        "file_path": file_path
+                    }))
+                }
+            }
+        },
+        _ => Err(anyhow::anyhow!("Unknown function: {}", name))
+    }
 }
