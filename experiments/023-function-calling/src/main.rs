@@ -1,232 +1,403 @@
 //! Function Calling Experiment for Gemini API
 //! 
-//! Tests function calling capabilities with various example functions
+//! Implements Gemini API function calling with core file tools (Phase 1)
+//! Follows the OpenAPI schema format for function declarations
 
 use anyhow::Result;
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
-use tracing::{info, warn};
+use std::env;
+use tracing::{info, warn, debug};
 
-// Function registry type
-type FunctionHandler = Box<dyn Fn(&Value) -> Result<Value> + Send + Sync>;
+// === Gemini API Types ===
 
-struct FunctionRegistry {
-    functions: HashMap<String, FunctionHandler>,
-    declarations: Vec<FunctionDeclaration>,
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct GenerateRequest {
+    contents: Vec<Content>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tools: Option<Vec<Tool>>,
 }
 
-impl std::fmt::Debug for FunctionRegistry {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("FunctionRegistry")
-            .field("declarations", &self.declarations)
-            .field("functions_count", &self.functions.len())
-            .finish()
-    }
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Content {
+    role: String,
+    parts: Vec<Part>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+enum Part {
+    Text { text: String },
+    FunctionCall { 
+        #[serde(rename = "functionCall")]
+        function_call: FunctionCall 
+    },
+    FunctionResponse { 
+        #[serde(rename = "functionResponse")]
+        function_response: FunctionResponse 
+    },
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Tool {
+    #[serde(rename = "functionDeclarations")]
+    function_declarations: Vec<FunctionDeclaration>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct FunctionDeclaration {
     name: String,
     description: String,
-    parameters: Option<Value>,
+    parameters: FunctionParameters,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct FunctionParameters {
+    #[serde(rename = "type")]
+    param_type: String,
+    properties: HashMap<String, ParameterProperty>,
+    required: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ParameterProperty {
+    #[serde(rename = "type")]
+    prop_type: String,
+    description: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    items: Option<Box<ParameterProperty>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct FunctionCall {
     name: String,
-    args: Option<Value>,
+    args: Value,
 }
 
-impl FunctionRegistry {
-    fn new() -> Self {
-        Self {
-            functions: HashMap::new(),
-            declarations: Vec::new(),
-        }
-    }
-
-    fn register<F>(&mut self, name: &str, description: &str, parameters: Option<Value>, handler: F)
-    where
-        F: Fn(&Value) -> Result<Value> + Send + Sync + 'static,
-    {
-        self.declarations.push(FunctionDeclaration {
-            name: name.to_string(),
-            description: description.to_string(),
-            parameters,
-        });
-        self.functions.insert(name.to_string(), Box::new(handler));
-    }
-
-    fn call(&self, name: &str, args: &Value) -> Result<Value> {
-        match self.functions.get(name) {
-            Some(handler) => handler(args),
-            None => Err(anyhow::anyhow!("Function '{}' not found", name)),
-        }
-    }
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct FunctionResponse {
+    name: String,
+    response: Value,
 }
 
-// Example functions
-fn calculator(args: &Value) -> Result<Value> {
-    let a = args["a"].as_f64().ok_or(anyhow::anyhow!("Missing parameter 'a'"))?;
-    let b = args["b"].as_f64().ok_or(anyhow::anyhow!("Missing parameter 'b'"))?;
-    let operation = args["operation"].as_str().ok_or(anyhow::anyhow!("Missing parameter 'operation'"))?;
+#[derive(Deserialize, Debug)]
+struct GenerateResponse {
+    candidates: Option<Vec<Candidate>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error: Option<ApiError>,
+}
+
+#[derive(Deserialize, Debug)]
+struct Candidate {
+    content: Content,
+}
+
+#[derive(Deserialize, Debug)]
+struct ApiError {
+    code: i32,
+    message: String,
+}
+
+// === Core File Tools (Phase 1) ===
+// Based on gemini-repl-007/src/gemini_repl/tools/codebase_tools.py
+// Matches the CODEBASE_TOOL_DECLARATIONS format for compatibility
+
+fn create_core_tools() -> Vec<Tool> {
+    vec![Tool {
+        function_declarations: vec![
+            FunctionDeclaration {
+                name: "read_file".to_string(),
+                description: "Read the contents of a file from the filesystem.".to_string(),
+                parameters: FunctionParameters {
+                    param_type: "object".to_string(),
+                    properties: HashMap::from([
+                        ("file_path".to_string(), ParameterProperty {
+                            prop_type: "string".to_string(),
+                            description: "Path to the file to read (relative or absolute)".to_string(),
+                            items: None,
+                        }),
+                    ]),
+                    required: vec!["file_path".to_string()],
+                },
+            },
+            FunctionDeclaration {
+                name: "write_file".to_string(),
+                description: "Write content to a file on the filesystem.".to_string(),
+                parameters: FunctionParameters {
+                    param_type: "object".to_string(),
+                    properties: HashMap::from([
+                        ("file_path".to_string(), ParameterProperty {
+                            prop_type: "string".to_string(),
+                            description: "Path to the file to write (relative or absolute)".to_string(),
+                            items: None,
+                        }),
+                        ("content".to_string(), ParameterProperty {
+                            prop_type: "string".to_string(),
+                            description: "Content to write to the file".to_string(),
+                            items: None,
+                        }),
+                    ]),
+                    required: vec!["file_path".to_string(), "content".to_string()],
+                },
+            },
+            FunctionDeclaration {
+                name: "list_files".to_string(),
+                description: "List files matching a glob pattern (supports ** for recursive).".to_string(),
+                parameters: FunctionParameters {
+                    param_type: "object".to_string(),
+                    properties: HashMap::from([
+                        ("pattern".to_string(), ParameterProperty {
+                            prop_type: "string".to_string(),
+                            description: "Glob pattern to match files (e.g., '*.rs', 'src/**/*.rs')".to_string(),
+                            items: None,
+                        }),
+                    ]),
+                    required: vec![],  // pattern is optional with default "*"
+                },
+            },
+            FunctionDeclaration {
+                name: "search_code".to_string(),
+                description: "Search for patterns in code using ripgrep.".to_string(),
+                parameters: FunctionParameters {
+                    param_type: "object".to_string(),
+                    properties: HashMap::from([
+                        ("pattern".to_string(), ParameterProperty {
+                            prop_type: "string".to_string(),
+                            description: "Regular expression pattern to search for".to_string(),
+                            items: None,
+                        }),
+                        ("file_pattern".to_string(), ParameterProperty {
+                            prop_type: "string".to_string(),
+                            description: "File pattern to search in (e.g., '*.rs', '*.toml')".to_string(),
+                            items: None,
+                        }),
+                    ]),
+                    required: vec!["pattern".to_string()],
+                },
+            },
+        ],
+    }]
+}
+
+// === Function Execution (NOOP for now) ===
+
+fn execute_function(function_call: &FunctionCall) -> Result<Value> {
+    info!("NOOP: Executing function '{}' with args: {}", 
+          function_call.name, 
+          serde_json::to_string_pretty(&function_call.args)?);
     
-    let result = match operation {
-        "add" => a + b,
-        "subtract" => a - b,
-        "multiply" => a * b,
-        "divide" => {
-            if b == 0.0 {
-                return Err(anyhow::anyhow!("Division by zero"));
-            }
-            a / b
+    // NOOP implementations that return mock data
+    match function_call.name.as_str() {
+        "read_file" => {
+            let file_path = function_call.args["file_path"].as_str().unwrap_or("unknown");
+            Ok(json!({
+                "content": format!("# Mock content of {}\n\nThis is a NOOP implementation.", file_path),
+                "size": 42,
+                "exists": true
+            }))
+        },
+        "write_file" => {
+            let file_path = function_call.args["file_path"].as_str().unwrap_or("unknown");
+            Ok(json!({
+                "success": true,
+                "bytes_written": 100,
+                "message": format!("NOOP: Would write to {}", file_path)
+            }))
+        },
+        "list_files" => {
+            let pattern = function_call.args["pattern"].as_str().unwrap_or("*");
+            Ok(json!({
+                "pattern": pattern,
+                "files": ["README.md", "src/main.rs", "Cargo.toml"],
+                "directories": ["src", "tests", "docs"],
+                "total": 6
+            }))
+        },
+        "search_code" => {
+            let pattern = function_call.args["pattern"].as_str().unwrap_or("");
+            let file_pattern = function_call.args["file_pattern"].as_str().unwrap_or("*.rs");
+            Ok(json!({
+                "pattern": pattern,
+                "file_pattern": file_pattern,
+                "matches": [
+                    {"file": "src/main.rs", "line": 42, "content": "// Pattern match here"},
+                    {"file": "tests/test.rs", "line": 10, "content": "// Another match"}
+                ],
+                "total_matches": 2
+            }))
+        },
+        _ => Err(anyhow::anyhow!("Unknown function: {}", function_call.name))
+    }
+}
+
+// === API Testing ===
+
+async fn test_function_calling_flow() -> Result<()> {
+    info!("=== Testing Gemini API Function Calling Flow ===");
+    
+    // Create API client
+    let api_key = env::var("GEMINI_API_KEY")
+        .unwrap_or_else(|_| "mock-api-key".to_string());
+    let model = env::var("GEMINI_MODEL")
+        .unwrap_or_else(|_| "gemini-1.5-flash".to_string());
+    
+    let client = Client::new();
+    let tools = create_core_tools();
+    
+    // Display available tools
+    info!("\n--- Available Tools ---");
+    for tool in &tools {
+        for func in &tool.function_declarations {
+            info!("  {} - {}", func.name, func.description);
         }
-        _ => return Err(anyhow::anyhow!("Unknown operation: {}", operation)),
+    }
+    
+    // Example conversation with function calling
+    let mut conversation = vec![
+        Content {
+            role: "user".to_string(),
+            parts: vec![Part::Text { 
+                text: "Read the README.md file and tell me what this project is about.".to_string() 
+            }],
+        }
+    ];
+    
+    // Create request with tools
+    let request = GenerateRequest {
+        contents: conversation.clone(),
+        tools: Some(tools.clone()),
     };
     
-    Ok(json!({ "result": result }))
-}
-
-fn get_weather(args: &Value) -> Result<Value> {
-    let location = args["location"].as_str().ok_or(anyhow::anyhow!("Missing parameter 'location'"))?;
+    info!("\n--- Request Structure ---");
+    debug!("{}", serde_json::to_string_pretty(&request)?);
     
-    // Mock weather data
-    Ok(json!({
-        "location": location,
-        "temperature": 72,
-        "conditions": "Partly cloudy",
-        "humidity": 65,
-        "wind_speed": 8
-    }))
+    // Simulate API response with function call
+    let simulated_response = GenerateResponse {
+        candidates: Some(vec![Candidate {
+            content: Content {
+                role: "model".to_string(),
+                parts: vec![Part::FunctionCall {
+                    function_call: FunctionCall {
+                        name: "read_file".to_string(),
+                        args: json!({ "file_path": "README.md" }),
+                    }
+                }],
+            },
+        }]),
+        error: None,
+    };
+    
+    info!("\n--- Simulated API Response ---");
+    if let Some(candidates) = &simulated_response.candidates {
+        for candidate in candidates {
+            for part in &candidate.content.parts {
+                match part {
+                    Part::FunctionCall { function_call } => {
+                        info!("Model requested function: {}", function_call.name);
+                        info!("With arguments: {}", serde_json::to_string_pretty(&function_call.args)?);
+                        
+                        // Execute the function
+                        let result = execute_function(function_call)?;
+                        info!("\nFunction result: {}", serde_json::to_string_pretty(&result)?);
+                        
+                        // Add function response to conversation
+                        conversation.push(Content {
+                            role: "function".to_string(),
+                            parts: vec![Part::FunctionResponse {
+                                function_response: FunctionResponse {
+                                    name: function_call.name.clone(),
+                                    response: result,
+                                }
+                            }],
+                        });
+                    },
+                    Part::Text { text } => {
+                        info!("Model said: {}", text);
+                    },
+                    _ => {}
+                }
+            }
+        }
+    }
+    
+    // Show how to continue the conversation
+    info!("\n--- Continuing Conversation ---");
+    info!("Would send back to API with function response included");
+    info!("Model would then provide final answer based on file content");
+    
+    // Show the actual API request format
+    info!("\n--- Actual API Request Format ---");
+    let full_request = GenerateRequest {
+        contents: conversation.clone(),
+        tools: Some(tools.clone()),
+    };
+    info!("Request JSON:");
+    println!("{}", serde_json::to_string_pretty(&full_request)?);
+    
+    // Try actual API call if key is available
+    if api_key != "mock-api-key" {
+        info!("\n--- Making Real API Call ---");
+        match make_api_call(&client, &model, &api_key, &full_request).await {
+            Ok(response) => {
+                info!("API Response: {:?}", response);
+            }
+            Err(e) => {
+                warn!("API call failed (expected in test): {}", e);
+            }
+        }
+    }
+    
+    Ok(())
 }
 
-fn get_current_time(_args: &Value) -> Result<Value> {
-    let now = chrono::Local::now();
-    Ok(json!({
-        "time": now.format("%H:%M:%S").to_string(),
-        "date": now.format("%Y-%m-%d").to_string(),
-        "timezone": "local"
-    }))
+async fn make_api_call(
+    client: &Client,
+    model: &str,
+    api_key: &str,
+    request: &GenerateRequest,
+) -> Result<GenerateResponse> {
+    let url = format!(
+        "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
+        model, api_key
+    );
+    
+    let response = client
+        .post(&url)
+        .json(request)
+        .send()
+        .await?;
+    
+    let status = response.status();
+    if !status.is_success() {
+        let error_text = response.text().await?;
+        return Err(anyhow::anyhow!("API error {}: {}", status, error_text));
+    }
+    
+    let result: GenerateResponse = response.json().await?;
+    Ok(result)
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_target(false)
+        .with_env_filter("function_calling=debug,info")
         .init();
 
-    info!("=== Function Calling Experiment ===");
+    info!("=== Gemini Function Calling Experiment ===");
+    info!("Implementing core file tools (Phase 1)");
+    info!("NOOP mode - functions return mock data\n");
 
-    // Create function registry
-    let mut registry = FunctionRegistry::new();
+    test_function_calling_flow().await?;
     
-    // Register calculator function
-    registry.register(
-        "calculator",
-        "Perform basic arithmetic operations",
-        Some(json!({
-            "type": "object",
-            "properties": {
-                "a": {"type": "number", "description": "First number"},
-                "b": {"type": "number", "description": "Second number"},
-                "operation": {
-                    "type": "string",
-                    "enum": ["add", "subtract", "multiply", "divide"],
-                    "description": "Operation to perform"
-                }
-            },
-            "required": ["a", "b", "operation"]
-        })),
-        calculator
-    );
-
-    // Register weather function
-    registry.register(
-        "get_weather",
-        "Get current weather for a location",
-        Some(json!({
-            "type": "object",
-            "properties": {
-                "location": {"type": "string", "description": "City name or location"}
-            },
-            "required": ["location"]
-        })),
-        get_weather
-    );
-
-    // Register time function
-    registry.register(
-        "get_current_time",
-        "Get the current time and date",
-        None,
-        get_current_time
-    );
-
-    info!("Registered {} functions:", registry.declarations.len());
-    for decl in &registry.declarations {
-        info!("  - {}: {}", decl.name, decl.description);
-    }
-
-    // Test function calls
-    info!("\n--- Testing Function Calls ---");
-    
-    // Test calculator
-    let calc_args = json!({"a": 10, "b": 5, "operation": "multiply"});
-    match registry.call("calculator", &calc_args) {
-        Ok(result) => info!("calculator({}) = {}", calc_args, result),
-        Err(e) => warn!("calculator error: {}", e),
-    }
-
-    // Test weather
-    let weather_args = json!({"location": "San Francisco"});
-    match registry.call("get_weather", &weather_args) {
-        Ok(result) => info!("get_weather({}) = {}", weather_args, result),
-        Err(e) => warn!("get_weather error: {}", e),
-    }
-
-    // Test time
-    match registry.call("get_current_time", &json!({})) {
-        Ok(result) => info!("get_current_time() = {}", result),
-        Err(e) => warn!("get_current_time error: {}", e),
-    }
-
-    // Test error handling
-    info!("\n--- Testing Error Handling ---");
-    
-    // Unknown function
-    match registry.call("unknown_function", &json!({})) {
-        Ok(_) => warn!("Unexpected success"),
-        Err(e) => info!("✓ Correctly caught error: {}", e),
-    }
-
-    // Missing parameters
-    match registry.call("calculator", &json!({"a": 10})) {
-        Ok(_) => warn!("Unexpected success"),
-        Err(e) => info!("✓ Correctly caught error: {}", e),
-    }
-
-    // Division by zero
-    let div_zero_args = json!({"a": 10, "b": 0, "operation": "divide"});
-    match registry.call("calculator", &div_zero_args) {
-        Ok(_) => warn!("Unexpected success"),
-        Err(e) => info!("✓ Correctly caught error: {}", e),
-    }
-
-    info!("\n=== Function Calling Test Complete ===");
-    
-    // TODO: Integration with Gemini API
-    // This would involve:
-    // 1. Sending function declarations with the prompt
-    // 2. Parsing function calls from the response
-    // 3. Executing functions and sending results back
-    // 4. Getting final response incorporating function results
-    
+    info!("\n=== Experiment Complete ===");
     info!("\nNext steps:");
-    info!("1. Integrate with Gemini API client");
-    info!("2. Parse function_call from API responses");
-    info!("3. Execute functions and return results");
-    info!("4. Handle multi-turn function calling");
-
+    info!("1. Implement actual file operations with security");
+    info!("2. Add real API calls to Gemini");
+    info!("3. Handle multi-turn function calling");
+    info!("4. Integrate into main REPL");
+    
     Ok(())
 }
