@@ -4,6 +4,7 @@ use anyhow::{Result, anyhow};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::env;
+use crate::logging::ApiLogger;
 
 #[derive(Serialize)]
 pub struct GenerateRequest {
@@ -48,10 +49,31 @@ pub struct ApiError {
     pub message: String,
 }
 
+// Function calling support
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct FunctionDeclaration {
+    pub name: String,
+    pub description: String,
+    pub parameters: Option<serde_json::Value>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct FunctionCall {
+    pub name: String,
+    pub args: Option<serde_json::Value>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct FunctionResponse {
+    pub name: String,
+    pub response: serde_json::Value,
+}
+
 pub struct GeminiClient {
     client: Client,
     api_key: String,
     model: String,
+    logger: Option<ApiLogger>,
 }
 
 impl GeminiClient {
@@ -66,10 +88,19 @@ impl GeminiClient {
         
         let client = client_builder.build()?;
         
+        // Create logger if logging is enabled
+        let logger = if env::var("GEMINI_API_LOGGING").unwrap_or_default() == "true" {
+            let log_dir = env::var("GEMINI_LOG_DIR").unwrap_or_else(|_| "logs".to_string());
+            Some(ApiLogger::new(log_dir, true)?)
+        } else {
+            None
+        };
+        
         Ok(Self {
             client,
             api_key,
             model,
+            logger,
         })
     }
     
@@ -83,14 +114,41 @@ impl GeminiClient {
             self.model, self.api_key
         );
         
+        // Log request if logger is enabled
+        if let Some(ref logger) = self.logger {
+            let host = "generativelanguage.googleapis.com";
+            let path = format!("/v1beta/models/{}:generateContent", self.model);
+            logger.log_request(
+                host,
+                &path,
+                "POST",
+                &[("Content-Type".to_string(), "application/json".to_string())],
+                &serde_json::to_value(&request).unwrap_or_default(),
+            )?;
+        }
+        
         let response = self.client
             .post(&url)
             .json(&request)
             .send()
             .await?;
         
-        let _status = response.status();
+        let status = response.status();
         let response_text = response.text().await?;
+        
+        // Log response if logger is enabled
+        if let Some(ref logger) = self.logger {
+            let host = "generativelanguage.googleapis.com";
+            let path = format!("/v1beta/models/{}:generateContent", self.model);
+            logger.log_response(
+                host,
+                &path,
+                status.as_u16(),
+                &serde_json::from_str::<serde_json::Value>(&response_text).unwrap_or_default(),
+                100, // TODO: track actual duration
+            )?;
+        }
+        
         let parsed: GenerateResponse = serde_json::from_str(&response_text)?;
         
         if let Some(error) = parsed.error {
