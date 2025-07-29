@@ -1,72 +1,62 @@
 # Experiment 023: Function Calling
 
 ## Purpose
-Explore and implement function calling capabilities for the Gemini REPL, allowing the LLM to invoke predefined functions and use their results.
+Implement Gemini API function calling capabilities for the REPL, enabling tool use for file operations and code analysis.
 
 ## Status
-✅ **Basic Implementation** - Function registry and local testing complete
+🚧 **Work in Progress** - API format implemented, testing function call triggering
 
 ## Implementation Details
 
-### Function Registry
-- Dynamic function registration with type-safe handlers
-- JSON Schema parameter validation support
-- Error handling and result formatting
-
-### Example Functions
-1. **calculator** - Basic arithmetic operations (add, subtract, multiply, divide)
-2. **get_weather** - Mock weather data retrieval
-3. **get_current_time** - Current time and date
+### Core File Tools (Phase 1)
+Based on gemini-repl-007 CODEBASE_TOOL_DECLARATIONS:
+1. **read_file** - Read file contents from filesystem
+2. **write_file** - Write content to files  
+3. **list_files** - List files matching glob patterns
+4. **search_code** - Search for patterns in codebase
 
 ### Architecture
 ```
-User Query → Gemini API → Function Call → Execute → Result → Gemini API → Final Answer
+User Query → Gemini API → Function Call Detection → Tool Execution → Response
+                ↑                                            ↓
+                └────────── Function Results ←───────────────┘
 ```
 
 ## Running the Experiment
 
 ```bash
-# From project root
-gmake -C experiments/023-function-calling run
+# Run the main demo
+make run
 
-# Or directly
-cd experiments/023-function-calling
-cargo run
+# Run Makefile dependency test
+make makefile-test
+
+# Run full test suite
+make test
 ```
 
-## Integration Plan
+## Test Suite
+- **40+ test cases** across 6 categories
+- Validates function call triggering vs text generation
+- Key test: "What are the target dependencies of Makefile?" → read_file("Makefile")
 
-### Phase 1: API Integration
-1. Update GenerateRequest to include function declarations
-2. Parse function_call from API responses
-3. Execute functions and return results
-4. Handle continuation prompts
+## Current Challenge
+Gemini API responds with "I don't have filesystem access" instead of using provided tools. Need to investigate:
+1. API version compatibility
+2. Model capabilities (gemini-1.5-flash vs gemini-1.5-pro)
+3. Request format variations
 
-### Phase 2: REPL Integration
-1. Add /functions command to list available functions
-2. Allow dynamic function registration
-3. Add function result caching
-4. Implement function call history
-
-### Phase 3: Advanced Features
-1. Multi-step function calling
-2. Parallel function execution
-3. Function composition
-4. Custom function definitions via config
-
-## Example Usage (Future)
+## Example Usage
 
 ```
-gemini> What's the weather like in San Francisco and what's 25 * 4?
+gemini> Show me the contents of README.md
 
-[Function Call: get_weather({"location": "San Francisco"})]
-[Function Result: {"temperature": 72, "conditions": "Partly cloudy", ...}]
+[Function Call: read_file({"file_path": "README.md"})]
+[Function Result: "# Gemini REPL 009\n\nA Rust implementation..."]
 
-[Function Call: calculator({"a": 25, "b": 4, "operation": "multiply"})]
-[Function Result: {"result": 100}]
-
-The weather in San Francisco is currently 72°F with partly cloudy conditions. 
-And 25 multiplied by 4 equals 100.
+Here are the contents of README.md:
+# Gemini REPL 009
+A Rust implementation...
 ```
 
 ## API Format (Gemini)
