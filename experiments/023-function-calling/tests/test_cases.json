@@ -1,0 +1,307 @@
+{
+  "test_suite": {
+    "name": "Function Calling Test Suite",
+    "description": "Test cases that should invoke tool calling rather than text generation",
+    "version": "1.0.0",
+    "categories": [
+      {
+        "name": "read_file",
+        "description": "Test cases that should trigger read_file function",
+        "test_cases": [
+          {
+            "id": "read_001",
+            "prompt": "Read the README.md file",
+            "expected_function": "read_file",
+            "expected_args": {
+              "file_path": "README.md"
+            },
+            "description": "Direct request to read a specific file"
+          },
+          {
+            "id": "read_002",
+            "prompt": "What's in the Cargo.toml file?",
+            "expected_function": "read_file",
+            "expected_args": {
+              "file_path": "Cargo.toml"
+            },
+            "description": "Indirect request to read file contents"
+          },
+          {
+            "id": "read_003",
+            "prompt": "Show me the contents of src/main.rs",
+            "expected_function": "read_file",
+            "expected_args": {
+              "file_path": "src/main.rs"
+            },
+            "description": "Show/display variant"
+          },
+          {
+            "id": "read_004",
+            "prompt": "Can you check what's in the .env.example file?",
+            "expected_function": "read_file",
+            "expected_args": {
+              "file_path": ".env.example"
+            },
+            "description": "Question form request"
+          },
+          {
+            "id": "read_005",
+            "prompt": "I need to see the configuration in config/settings.json",
+            "expected_function": "read_file",
+            "expected_args": {
+              "file_path": "config/settings.json"
+            },
+            "description": "Need/requirement phrasing"
+          }
+        ]
+      },
+      {
+        "name": "write_file",
+        "description": "Test cases that should trigger write_file function",
+        "test_cases": [
+          {
+            "id": "write_001",
+            "prompt": "Create a new file called test.txt with the content 'Hello World'",
+            "expected_function": "write_file",
+            "expected_args": {
+              "file_path": "test.txt",
+              "content": "Hello World"
+            },
+            "description": "Direct file creation request"
+          },
+          {
+            "id": "write_002",
+            "prompt": "Write a Python script hello.py that prints 'Hello, World!'",
+            "expected_function": "write_file",
+            "expected_args": {
+              "file_path": "hello.py",
+              "content": "print('Hello, World!')"
+            },
+            "description": "Code file creation"
+          },
+          {
+            "id": "write_003",
+            "prompt": "Save the following JSON to data.json: {\"name\": \"test\", \"value\": 42}",
+            "expected_function": "write_file",
+            "expected_args": {
+              "file_path": "data.json",
+              "content": "{\"name\": \"test\", \"value\": 42}"
+            },
+            "description": "Save data to file"
+          },
+          {
+            "id": "write_004",
+            "prompt": "Update the README.md file to include '# My Project'",
+            "expected_function": "write_file",
+            "expected_args": {
+              "file_path": "README.md",
+              "content": "# My Project"
+            },
+            "description": "Update existing file"
+          },
+          {
+            "id": "write_005",
+            "prompt": "Create a .gitignore file with node_modules and .env",
+            "expected_function": "write_file",
+            "expected_args": {
+              "file_path": ".gitignore",
+              "content": "node_modules\n.env"
+            },
+            "description": "Multi-line content creation"
+          }
+        ]
+      },
+      {
+        "name": "list_files",
+        "description": "Test cases that should trigger list_files function",
+        "test_cases": [
+          {
+            "id": "list_001",
+            "prompt": "List all files in the current directory",
+            "expected_function": "list_files",
+            "expected_args": {
+              "pattern": "*"
+            },
+            "description": "Basic directory listing"
+          },
+          {
+            "id": "list_002",
+            "prompt": "Show me all Python files",
+            "expected_function": "list_files",
+            "expected_args": {
+              "pattern": "*.py"
+            },
+            "description": "File type filtering"
+          },
+          {
+            "id": "list_003",
+            "prompt": "What Rust files are in the src directory?",
+            "expected_function": "list_files",
+            "expected_args": {
+              "pattern": "src/*.rs"
+            },
+            "description": "Directory-specific listing"
+          },
+          {
+            "id": "list_004",
+            "prompt": "Find all markdown files recursively",
+            "expected_function": "list_files",
+            "expected_args": {
+              "pattern": "**/*.md"
+            },
+            "description": "Recursive search"
+          },
+          {
+            "id": "list_005",
+            "prompt": "Show me all test files in the project",
+            "expected_function": "list_files",
+            "expected_args": {
+              "pattern": "**/*test*"
+            },
+            "description": "Pattern matching across project"
+          }
+        ]
+      },
+      {
+        "name": "search_code",
+        "description": "Test cases that should trigger search_code function",
+        "test_cases": [
+          {
+            "id": "search_001",
+            "prompt": "Search for 'TODO' in the codebase",
+            "expected_function": "search_code",
+            "expected_args": {
+              "pattern": "TODO"
+            },
+            "description": "Basic text search"
+          },
+          {
+            "id": "search_002",
+            "prompt": "Find all occurrences of 'function_call' in Rust files",
+            "expected_function": "search_code",
+            "expected_args": {
+              "pattern": "function_call",
+              "file_pattern": "*.rs"
+            },
+            "description": "Search with file type filter"
+          },
+          {
+            "id": "search_003",
+            "prompt": "Look for any async functions in the code",
+            "expected_function": "search_code",
+            "expected_args": {
+              "pattern": "async fn"
+            },
+            "description": "Code pattern search"
+          },
+          {
+            "id": "search_004",
+            "prompt": "Find where 'ApiLogger' is used",
+            "expected_function": "search_code",
+            "expected_args": {
+              "pattern": "ApiLogger"
+            },
+            "description": "Class/struct usage search"
+          },
+          {
+            "id": "search_005",
+            "prompt": "Search for error handling patterns like 'Result<' in the source",
+            "expected_function": "search_code",
+            "expected_args": {
+              "pattern": "Result<",
+              "file_pattern": "*.rs"
+            },
+            "description": "Pattern search with special characters"
+          }
+        ]
+      },
+      {
+        "name": "multi_step",
+        "description": "Test cases requiring multiple function calls",
+        "test_cases": [
+          {
+            "id": "multi_001",
+            "prompt": "Read the Cargo.toml file and create a summary.md with its contents",
+            "expected_functions": ["read_file", "write_file"],
+            "expected_sequence": [
+              {
+                "function": "read_file",
+                "args": {"file_path": "Cargo.toml"}
+              },
+              {
+                "function": "write_file",
+                "args": {"file_path": "summary.md", "content": "*"}
+              }
+            ],
+            "description": "Read then write workflow"
+          },
+          {
+            "id": "multi_002",
+            "prompt": "Find all TODO comments in Rust files and list the files containing them",
+            "expected_functions": ["search_code", "list_files"],
+            "expected_sequence": [
+              {
+                "function": "search_code",
+                "args": {"pattern": "TODO", "file_pattern": "*.rs"}
+              }
+            ],
+            "description": "Search and report workflow"
+          },
+          {
+            "id": "multi_003",
+            "prompt": "Check if README.md exists, and if not, create one",
+            "expected_functions": ["list_files", "write_file"],
+            "expected_sequence": [
+              {
+                "function": "list_files",
+                "args": {"pattern": "README.md"}
+              },
+              {
+                "function": "write_file",
+                "args": {"file_path": "README.md", "content": "*"},
+                "conditional": true
+              }
+            ],
+            "description": "Conditional file creation"
+          }
+        ]
+      },
+      {
+        "name": "negative_cases",
+        "description": "Cases that should NOT trigger function calls",
+        "test_cases": [
+          {
+            "id": "neg_001",
+            "prompt": "What is the purpose of a README file?",
+            "expected_function": null,
+            "description": "General knowledge question"
+          },
+          {
+            "id": "neg_002",
+            "prompt": "Explain how to write good Python code",
+            "expected_function": null,
+            "description": "Explanatory request"
+          },
+          {
+            "id": "neg_003",
+            "prompt": "What's the difference between async and sync functions?",
+            "expected_function": null,
+            "description": "Conceptual question"
+          },
+          {
+            "id": "neg_004",
+            "prompt": "Tell me about best practices for file organization",
+            "expected_function": null,
+            "description": "Best practices discussion"
+          },
+          {
+            "id": "neg_005",
+            "prompt": "How do I use git?",
+            "expected_function": null,
+            "description": "How-to question not requiring file access"
+          }
+        ]
+      }
+    ]
+  }
+}
