@@ -335,7 +335,7 @@ async fn test_function_calling_flow() -> Result<()> {
     let api_key = env::var("GEMINI_API_KEY")
         .unwrap_or_else(|_| "mock-api-key".to_string());
     let model = env::var("GEMINI_MODEL")
-        .unwrap_or_else(|_| "gemini-1.5-flash".to_string());
+        .unwrap_or_else(|_| "gemini-2.0-flash-lite".to_string());
     
     let client = Client::new();
     let tools = create_core_tools();
@@ -348,8 +348,20 @@ async fn test_function_calling_flow() -> Result<()> {
         }
     }
     
-    // Example conversation with function calling
+    // Example conversation with function calling - add system instruction
     let mut conversation = vec![
+        Content {
+            role: "user".to_string(),
+            parts: vec![Part::Text { 
+                text: "You have access to file system tools including read_file, write_file, list_files, and search_code. Use these tools immediately when asked about file contents or operations. When asked about files like 'What are the target dependencies of Makefile?', use read_file with the appropriate file path.".to_string() 
+            }],
+        },
+        Content {
+            role: "model".to_string(),
+            parts: vec![Part::Text { 
+                text: "I understand. I have access to file system tools and will use them immediately when needed to read files, write files, list files, or search code.".to_string() 
+            }],
+        },
         Content {
             role: "user".to_string(),
             parts: vec![Part::Text { 

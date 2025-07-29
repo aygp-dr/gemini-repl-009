@@ -114,11 +114,11 @@ async fn main() -> Result<()> {
     
     // Test cases that should trigger read_file for Makefile
     let test_prompts = vec![
-        "What are the target dependencies of Makefile?",
-        "Show me the targets in the Makefile",
-        "What does the Makefile contain?",
-        "List all make targets",
-        "What can I build with make?",
+        "Use the read_file tool to read Makefile and tell me what targets are defined",
+        "What are the target dependencies of Makefile? Use read_file to check",
+        "Show me the targets in the Makefile by reading it with read_file",
+        "Read the Makefile file and tell me what it contains",
+        "Use read_file with file_path='Makefile' to see what I can build",
     ];
     
     let tools = create_file_tools();
@@ -127,10 +127,24 @@ async fn main() -> Result<()> {
         info!("\n--- Testing prompt: \"{}\" ---", prompt);
         
         let request = GenerateRequest {
-            contents: vec![Content {
-                role: "user".to_string(),
-                parts: vec![Part::Text { text: prompt.to_string() }],
-            }],
+            contents: vec![
+                Content {
+                    role: "user".to_string(),
+                    parts: vec![Part::Text { 
+                        text: "You have access to file system tools including read_file. Use read_file immediately when asked about file contents. You must use the tools provided rather than claiming you cannot access files.".to_string() 
+                    }],
+                },
+                Content {
+                    role: "model".to_string(),
+                    parts: vec![Part::Text { 
+                        text: "I understand. I will use the read_file tool when asked about file contents.".to_string() 
+                    }],
+                },
+                Content {
+                    role: "user".to_string(),
+                    parts: vec![Part::Text { text: prompt.to_string() }],
+                }
+            ],
             tools: Some(tools.clone()),
         };
         
@@ -224,7 +238,7 @@ async fn main() -> Result<()> {
 
 async fn make_api_call(request: &GenerateRequest, api_key: &str) -> Result<String> {
     let client = Client::new();
-    let model = env::var("GEMINI_MODEL").unwrap_or_else(|_| "gemini-1.5-flash".to_string());
+    let model = env::var("GEMINI_MODEL").unwrap_or_else(|_| "gemini-2.0-flash-lite".to_string());
     
     let url = format!(
         "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",

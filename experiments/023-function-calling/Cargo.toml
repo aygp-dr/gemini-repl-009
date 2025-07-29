@@ -15,6 +15,14 @@ path = "src/test_runner_main.rs"
 name = "makefile-test"
 path = "src/makefile_test.rs"
 
+[[bin]]
+name = "focused-test"
+path = "src/focused_test.rs"
+
+[[bin]]
+name = "harder-test"
+path = "src/harder_test.rs"
+
 [lib]
 name = "function_calling"
 path = "src/lib.rs"
