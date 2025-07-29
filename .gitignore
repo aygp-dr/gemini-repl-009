@@ -5,6 +5,8 @@
 # Cargo lock file (include for applications, exclude for libraries)
 # Since this is an application, we keep Cargo.lock in version control
 # Cargo.lock
+# But exclude experiment Cargo.lock files
+experiments/*/Cargo.lock
 
 # Backup files
 **/*.rs.bk
@@ -67,6 +69,7 @@ Thumbs.db
 workspace/
 .sessions/
 .gemini_repl/
+.gemini-repl/
 .claude/
 .ai/
 

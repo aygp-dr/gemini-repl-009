@@ -1,0 +1,310 @@
+#+TITLE: Phase 1-2 Detailed Implementation Plan
+#+AUTHOR: AYGP-DR
+#+DATE: 2025-07-27
+
+* Phase 1: Foundation (Week 1-2)
+
+** 1.1 Project Setup [BLOCKING ALL]
+*** Agent: Infrastructure Agent
+*** Dependencies: None (start here)
+*** Tasks:
+- [ ] Initialize Cargo workspace
+- [ ] Setup src/ directory structure
+- [ ] Configure Cargo.toml with dependencies
+- [ ] Setup CI/CD with GitHub Actions
+- [ ] Create .env.example and gitignore
+- [ ] Setup tracing/logging infrastructure
+
+*** Deliverables:
+- Project compiles with =cargo build=
+- CI passes on main branch
+- Basic logging outputs to stderr
+
+*** Parallel Work: All other 1.x tasks can start once this completes
+
+** 1.2 Core REPL Loop [PARALLEL AFTER 1.1]
+*** Agent: REPL Agent
+*** Dependencies: 1.1 (project setup)
+*** Tasks:
+- [ ] Implement readline with rustyline
+- [ ] Add signal handlers (SIGINT, SIGTERM)
+- [ ] Create input parsing loop
+- [ ] Handle multi-line input detection
+- [ ] Add graceful shutdown
+- [ ] Persist readline history
+
+*** Key Files:
+- =src/repl/mod.rs= - Main REPL loop
+- =src/repl/input.rs= - Input handling
+- =src/repl/signals.rs= - Signal management
+
+*** Test Requirements:
+- Signal handling under all conditions
+- History persistence across restarts
+- Graceful handling of EOF
+
+** 1.3 Command System [PARALLEL AFTER 1.1]
+*** Agent: Command Agent  
+*** Dependencies: 1.1 (project setup)
+*** Tasks:
+- [ ] Design Command trait
+- [ ] Implement command registry
+- [ ] Create base commands (/help, /exit, /clear, /version)
+- [ ] Add command argument parsing
+- [ ] Implement command error handling
+
+*** Key Files:
+- =src/commands/mod.rs= - Command system
+- =src/commands/registry.rs= - Command registration
+- =src/commands/builtin.rs= - Built-in commands
+
+*** Interface:
+#+BEGIN_SRC rust
+#[async_trait]
+pub trait Command: Send + Sync {
+    fn name(&self) -> &str;
+    fn description(&self) -> &str;
+    fn usage(&self) -> &str;
+    async fn execute(&self, args: &[&str]) -> Result<String>;
+}
+#+END_SRC
+
+** 1.4 API Client [PARALLEL AFTER 1.1]
+*** Agent: API Agent
+*** Dependencies: 1.1 (project setup)
+*** Tasks:
+- [ ] Create HTTP client with reqwest
+- [ ] Implement Gemini API authentication
+- [ ] Add retry logic with exponential backoff
+- [ ] Create request/response types
+- [ ] Add timeout and rate limiting
+- [ ] Implement streaming response handling
+
+*** Key Files:
+- =src/api/mod.rs= - API client interface
+- =src/api/client.rs= - HTTP client implementation
+- =src/api/types.rs= - Request/response types
+- =src/api/auth.rs= - Authentication handling
+
+*** Security Requirements:
+- API key never logged or exposed
+- Secure memory handling
+- Masked in all error messages
+
+** Integration Point: Phase 1 Complete
+*** Dependencies: 1.2 + 1.3 + 1.4 complete
+*** Deliverable: Basic REPL that can:
+- Accept input and respond with "echo"
+- Execute built-in commands
+- Handle signals gracefully
+- Connect to Gemini API (basic ping)
+
+* Phase 2: Context Management (Week 3-4)
+
+** 2.1 Message Types & Conversation [BLOCKING PHASE 2]
+*** Agent: Context Agent
+*** Dependencies: Phase 1 complete
+*** Tasks:
+- [ ] Design Message and Conversation types
+- [ ] Implement conversation state management
+- [ ] Add role management (user/assistant/system)
+- [ ] Create message validation
+- [ ] Implement conversation history
+
+*** Key Files:
+- =src/context/mod.rs= - Context management
+- =src/context/message.rs= - Message types
+- =src/context/conversation.rs= - Conversation state
+
+*** Data Structures:
+#+BEGIN_SRC rust
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Message {
+    pub role: Role,
+    pub content: String,
+    pub timestamp: DateTime<Utc>,
+    pub tokens: Option<TokenCount>,
+    pub metadata: HashMap<String, Value>,
+}
+
+#[derive(Debug)]
+pub struct Conversation {
+    pub id: Uuid,
+    pub messages: Vec<Message>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub metadata: ConversationMetadata,
+}
+#+END_SRC
+
+** 2.2 Session Persistence [PARALLEL AFTER 2.1]
+*** Agent: Persistence Agent
+*** Dependencies: 2.1 (message types)
+*** Tasks:
+- [ ] Design session file format (JSON)
+- [ ] Implement save/load functionality
+- [ ] Add auto-save mechanism
+- [ ] Create session metadata tracking
+- [ ] Implement named sessions
+- [ ] Add session resume capability
+
+*** Key Files:
+- =src/persistence/mod.rs= - Persistence interface
+- =src/persistence/file.rs= - File-based storage
+- =src/persistence/session.rs= - Session management
+
+*** File Structure:
+#+BEGIN_SRC
+~/.gemini_repl/
+├── sessions/
+│   ├── default.json
+│   ├── {session-name}.json
+│   └── metadata.json
+├── config.toml
+└── logs/
+    └── gemini-repl.log
+#+END_SRC
+
+** 2.3 Token Management [PARALLEL AFTER 2.1]
+*** Agent: Token Agent
+*** Dependencies: 2.1 (message types)
+*** Tasks:
+- [ ] Implement token counting for messages
+- [ ] Add cost estimation calculations
+- [ ] Create token window management
+- [ ] Add context pruning warnings
+- [ ] Implement usage statistics tracking
+- [ ] Create /stats and /context commands
+
+*** Key Files:
+- =src/tokens/mod.rs= - Token management
+- =src/tokens/counter.rs= - Token counting logic
+- =src/tokens/pricing.rs= - Cost calculations
+
+** 2.4 Context Commands [DEPENDS ON ALL 2.x]
+*** Agent: Command Agent (extension)
+*** Dependencies: 2.1 + 2.2 + 2.3
+*** Tasks:
+- [ ] Implement /context command
+- [ ] Add /save and /load commands
+- [ ] Create /stats command
+- [ ] Add /clear-context command
+- [ ] Implement /export command
+
+** Integration Point: Phase 2 Complete
+*** Dependencies: All 2.x tasks complete
+*** Deliverable: REPL with full conversation management:
+- Multi-turn conversations work
+- Sessions save/load correctly
+- Token counting accurate
+- Context commands functional
+
+* Dependency Graph
+
+#+BEGIN_SRC
+Phase 1 Dependencies:
+1.1 (Setup) → [1.2, 1.3, 1.4] → Integration
+
+Phase 2 Dependencies:
+Phase 1 → 2.1 (Messages) → [2.2, 2.3] → 2.4 → Integration
+
+Critical Path:
+1.1 → 1.2 → Phase 1 Integration → 2.1 → 2.4 → Phase 2 Integration
+#+END_SRC
+
+* Parallel Work Opportunities
+
+** Phase 1 Parallelization:
+- After 1.1 completes: 1.2, 1.3, 1.4 can work simultaneously
+- Different agents can own different components
+- Integration testing starts when any 2 components ready
+
+** Phase 2 Parallelization:
+- After 2.1 completes: 2.2 and 2.3 can work simultaneously
+- 2.4 requires both 2.2 and 2.3 complete
+- Persistence and token management are independent
+
+* Agent Allocation Strategy
+
+** Infrastructure Agent:
+- Owns: 1.1 (Setup), CI/CD, build system
+- Duration: 2-3 days
+- Next: Can assist with integration testing
+
+** REPL Agent:
+- Owns: 1.2 (REPL Loop), signal handling
+- Duration: 3-4 days  
+- Next: Can work on UI enhancements
+
+** Command Agent:
+- Owns: 1.3 (Command System), 2.4 (Context Commands)
+- Duration: 2-3 days Phase 1, 2-3 days Phase 2
+- Next: Tool system commands
+
+** API Agent:
+- Owns: 1.4 (API Client), streaming responses
+- Duration: 4-5 days
+- Next: Function calling integration
+
+** Context Agent:
+- Owns: 2.1 (Message Types), conversation logic
+- Duration: 3-4 days
+- Next: Advanced context features
+
+** Persistence Agent:
+- Owns: 2.2 (Session Persistence), file handling
+- Duration: 3-4 days
+- Next: Advanced session features
+
+** Token Agent:
+- Owns: 2.3 (Token Management), cost tracking
+- Duration: 2-3 days
+- Next: Advanced analytics
+
+* Testing Strategy
+
+** Unit Tests (Per Agent):
+- Each agent writes tests for their components
+- Mock dependencies for isolated testing
+- 80%+ coverage required
+
+** Integration Tests (Cross-Agent):
+- REPL + Command integration
+- API + Context integration  
+- Persistence + Session integration
+- Full end-to-end workflow
+
+** Handoff Criteria:
+- All unit tests pass
+- Component builds successfully
+- Basic integration test passes
+- Documentation updated
+
+* Risk Mitigation
+
+** High-Risk Dependencies:
+1. 1.1 (Setup) blocks everything - highest priority
+2. 2.1 (Messages) blocks Phase 2 - second priority
+3. Signal handling - historically problematic
+
+** Mitigation Strategies:
+- Daily integration builds
+- Feature flags for incomplete components
+- Rollback procedures documented
+- Cross-agent code reviews
+
+* Success Metrics
+
+** Phase 1 Success:
+- [ ] REPL starts and accepts input
+- [ ] Commands execute without panic
+- [ ] API connection established
+- [ ] No memory leaks in 1-hour session
+- [ ] Graceful shutdown on all signals
+
+** Phase 2 Success:
+- [ ] Multi-turn conversations maintained
+- [ ] Sessions persist across restarts
+- [ ] Token counts within 5% accuracy
+- [ ] Context commands work correctly
+- [ ] No data corruption scenarios

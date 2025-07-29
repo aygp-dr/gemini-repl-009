@@ -47,24 +47,31 @@ async fn run_signal_test() -> Result<()> {
             }
             
             // Handle keyboard events
-            Ok(event) = event::read_async() => {
-                match event {
-                    Event::Key(key_event) => {
-                        match key_event.code {
-                            KeyCode::Char('q') => {
-                                println!("\r\n✓ Quit key pressed");
-                                break;
-                            }
-                            KeyCode::Char('c') if key_event.modifiers.contains(KeyModifiers::CONTROL) => {
-                                // This is handled by the signal handler above
-                            }
-                            KeyCode::Char(c) => {
-                                println!("\r\nKey pressed: '{}'", c);
+            event_result = tokio::task::spawn_blocking(|| event::read()) => {
+                match event_result {
+                    Ok(Ok(event)) => {
+                        match event {
+                            Event::Key(key_event) => {
+                                match key_event.code {
+                                    KeyCode::Char('q') => {
+                                        println!("\r\n✓ Quit key pressed");
+                                        break;
+                                    }
+                                    KeyCode::Char('c') if key_event.modifiers.contains(KeyModifiers::CONTROL) => {
+                                        // This is handled by the signal handler above
+                                    }
+                                    KeyCode::Char(c) => {
+                                        println!("\r\nKey pressed: '{}'", c);
+                                    }
+                                    _ => {}
+                                }
                             }
                             _ => {}
                         }
                     }
-                    _ => {}
+                    _ => {
+                        // Error reading event, continue
+                    }
                 }
             }
         }

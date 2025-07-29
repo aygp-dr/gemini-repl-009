@@ -64,8 +64,9 @@ struct ApiError {
 async fn main() -> Result<()> {
     let args = Args::parse();
     
-    let api_key = args.api_key.or_else(|| env::var("GEMINI_API_KEY").ok())
-        .ok_or_else(|| anyhow::anyhow!("API key required"))?;
+    let api_key = args.api_key
+        .or_else(|| env::var("GEMINI_API_KEY").ok())
+        .unwrap_or_else(|| "your-api-key-here".to_string());
     
     println!("=== Rust Gemini API Test ===");
     println!("Using API Key: {}...", &api_key[..10.min(api_key.len())]);
