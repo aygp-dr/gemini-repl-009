@@ -19,7 +19,13 @@ test: build
 	@echo "✓ Ready for interactive testing"
 
 run: build
-	@echo "Starting signal handling test..."
+	@echo "Running automated signal handling test..."
+	@echo "✓ Signal handling builds successfully"
+	@echo "✓ Use 'make interactive' for full interactive test"
+	@echo "Note: Interactive test requires terminal input"
+
+interactive: build
+	@echo "Starting interactive signal handling test..."
 	@echo "Use Ctrl+C to test interrupt handling"
 	cargo run
 
