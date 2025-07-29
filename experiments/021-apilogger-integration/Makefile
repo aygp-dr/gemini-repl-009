@@ -2,7 +2,9 @@
 
 run:
 	@echo "Testing ApiLogger integration..."
-	cargo run --bin apilogger-test
+	@echo "⚠️  Experiment 021 not yet implemented"
+	@echo "📋 Need to integrate logging::ApiLogger into GeminiClient"
+	@echo "Status: Placeholder for Phase 1 completion"
 
 test:
 	@echo "Running ApiLogger integration tests..."

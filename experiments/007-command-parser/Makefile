@@ -13,12 +13,16 @@ build:
 	@echo "Building command parser experiment..."
 	cargo build
 
-test: build
-	@echo "Running parser tests..."
-	@echo "/exit" | cargo run | head -30
-
 run: build
-	@echo "Starting command parser test..."
+	@echo "Running parser tests..."
+	@echo -e "/help\n/exit" | timeout 10 cargo run
+
+test: build
+	@echo "Running automated parser tests..."
+	@echo -e "/help\n/version\n/exit" | timeout 5 cargo run | head -20
+
+interactive: build
+	@echo "Starting interactive command parser test..."
 	cargo run
 
 clean:

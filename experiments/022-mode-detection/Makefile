@@ -2,7 +2,9 @@
 
 run:
 	@echo "Testing mode detection (noop/mock/production)..."
-	cargo run --bin mode-test
+	@echo "⚠️  Experiment 022 not yet implemented"
+	@echo "📋 Need to implement RFC-001-CLI-FLAGS.md mode detection"
+	@echo "Status: Placeholder for Phase 1 completion"
 
 test:
 	@echo "Running mode detection tests..."

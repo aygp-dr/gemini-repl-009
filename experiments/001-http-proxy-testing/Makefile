@@ -1,13 +1,22 @@
 # Makefile for HTTP Proxy Testing Experiment
 
-.PHONY: test clean results
+.PHONY: run test clean results help
+
+help:
+	@echo "HTTP Proxy Testing Experiment:"
+	@echo "  make run     - Run proxy connectivity tests"
+	@echo "  make test    - Same as run"
+	@echo "  make results - Document test results"
+	@echo "  make clean   - Clean artifacts"
 
 # Run all proxy tests
-test:
+run:
 	@echo "Running proxy connectivity tests..."
 	@bash test_proxy.sh
 	@echo ""
 	@echo "To test in Rust, add proxy_config.rs to your project"
+
+test: run
 
 # Document results
 results:

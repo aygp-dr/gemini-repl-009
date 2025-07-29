@@ -2,7 +2,9 @@
 
 run:
 	@echo "Testing streaming response integration..."
-	cargo run --bin streaming-test
+	@echo "⚠️  Experiment 020 not yet implemented"
+	@echo "📋 See README.md for implementation plan"
+	@echo "Status: Placeholder for Phase 1 completion"
 
 test:
 	@echo "Running streaming integration tests..."
