@@ -3,12 +3,15 @@
 use anyhow::{Result, anyhow};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::env;
 use crate::logging::ApiLogger;
 
 #[derive(Serialize)]
 pub struct GenerateRequest {
     pub contents: Vec<Content>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tools: Option<Vec<Tool>>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -49,12 +52,36 @@ pub struct ApiError {
     pub message: String,
 }
 
+// Tool definitions for function calling
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Tool {
+    #[serde(rename = "functionDeclarations")]
+    pub function_declarations: Vec<FunctionDeclaration>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct FunctionParameters {
+    #[serde(rename = "type")]
+    pub param_type: String,
+    pub properties: HashMap<String, ParameterProperty>,
+    pub required: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ParameterProperty {
+    #[serde(rename = "type")]
+    pub prop_type: String,
+    pub description: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub items: Option<Box<ParameterProperty>>,
+}
+
 // Function calling support
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct FunctionDeclaration {
     pub name: String,
     pub description: String,
-    pub parameters: Option<serde_json::Value>,
+    pub parameters: FunctionParameters,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -105,8 +132,13 @@ impl GeminiClient {
     }
     
     pub async fn send_message(&self, messages: &[Content]) -> Result<String> {
+        self.send_message_with_tools(messages, None).await
+    }
+    
+    pub async fn send_message_with_tools(&self, messages: &[Content], tools: Option<Vec<Tool>>) -> Result<String> {
         let request = GenerateRequest {
             contents: messages.to_vec(),
+            tools,
         };
         
         let url = format!(

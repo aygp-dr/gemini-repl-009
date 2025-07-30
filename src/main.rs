@@ -21,7 +21,7 @@ struct Args {
     api_key: Option<String>,
     
     /// Model to use
-    #[arg(short, long, default_value = "gemini-1.5-flash")]
+    #[arg(short, long, default_value = "gemini-2.0-flash-lite")]
     model: String,
     
     /// Enable debug logging
