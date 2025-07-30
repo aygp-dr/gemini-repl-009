@@ -8,20 +8,22 @@ use std::env;
 
 mod api;
 mod logging;
+mod functions;
 
 use api::{GeminiClient, Content, Part};
 use logging::{init_logging, is_debug_mode};
+use functions::get_available_tools;
 
 #[derive(Parser, Debug)]
 #[command(name = "gemini-repl")]
 #[command(version, about = "A secure, performant REPL for AI conversations", long_about = None)]
 struct Args {
-    /// API key for Gemini (can also use GEMINI_API_KEY env var)
+    /// API key for Gemini (can also use `GEMINI_API_KEY` env var)
     #[arg(short, long, env = "GEMINI_API_KEY", hide_env_values = true)]
     api_key: Option<String>,
     
     /// Model to use
-    #[arg(short, long, default_value = "gemini-2.0-flash-lite")]
+    #[arg(short, long, default_value = "gemini-2.0-flash-exp")]
     model: String,
     
     /// Enable debug logging
@@ -105,12 +107,14 @@ async fn main() -> Result<()> {
                             println!("Conversation history ({} messages):", conversation.len());
                             for (i, content) in conversation.iter().enumerate() {
                                 let role = if i % 2 == 0 { "User" } else { "Assistant" };
-                                println!("{}: {}", role, content.parts[0].text);
+                                if let Some(text) = &content.parts[0].text {
+                                    println!("{role}: {text}");
+                                }
                             }
                         }
                     }
                     input if input.starts_with('/') => {
-                        println!("Unknown command: {}. Type /help for available commands.", input);
+                        println!("Unknown command: {input}. Type /help for available commands.");
                     }
                     input => {
                         // Handle user input
@@ -118,27 +122,28 @@ async fn main() -> Result<()> {
                             // Add user message to conversation
                             conversation.push(Content {
                                 role: "user".to_string(),
-                                parts: vec![Part { text: input.to_string() }],
+                                parts: vec![Part { text: Some(input.to_string()), function_call: None, function_response: None }],
                             });
                             
-                            // Make API call
-                            match client.send_message(&conversation).await {
+                            // Make API call with tools
+                            let tools = get_available_tools();
+                            match client.send_message_with_tools(&conversation, Some(tools)).await {
                                 Ok(response) => {
-                                    println!("{}", response);
+                                    println!("{response}");
                                     
                                     // Add assistant response to conversation
                                     conversation.push(Content {
                                         role: "model".to_string(),
-                                        parts: vec![Part { text: response }],
+                                        parts: vec![Part { text: Some(response), function_call: None, function_response: None }],
                                     });
                                 }
                                 Err(e) => {
-                                    eprintln!("Error: {}", e);
+                                    eprintln!("Error: {e}");
                                 }
                             }
                         } else {
                             // Noop mode - echo input back
-                            println!("You said: {}", input);
+                            println!("You said: {input}");
                             println!("(Running in noop mode - no API calls made)");
                         }
                     }
@@ -146,14 +151,13 @@ async fn main() -> Result<()> {
             }
             Err(ReadlineError::Interrupted) => {
                 println!("^C");
-                continue;
             }
             Err(ReadlineError::Eof) => {
                 println!("^D");
                 break;
             }
             Err(err) => {
-                println!("Error: {:?}", err);
+                println!("Error: {err:?}");
                 break;
             }
         }

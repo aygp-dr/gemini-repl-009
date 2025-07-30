@@ -104,6 +104,9 @@ rls*.log
 /docs/_build/
 /site/
 
+# Generated documentation
+README.md
+
 # Node (if you add any JS tooling)
 node_modules/
 

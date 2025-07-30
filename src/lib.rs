@@ -2,6 +2,7 @@
 
 pub mod api;
 pub mod logging;
+pub mod functions;
 
 // Re-export public API
 pub use api::{GeminiClient, Content, Part};
