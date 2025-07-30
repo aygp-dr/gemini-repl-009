@@ -1,0 +1,11 @@
+=== INTEGRATION TEST REPORT ===
+Generated: Wed Jul 30 01:17:24 EDT 2025
+Total Tests: 49
+Successful: 14
+Success Rate: 28.57%
+
+By Function Type:
+- read_file: 14/20 (70.00%)
+- list_files: 0/12 (0%)
+- search_code: 0/15 (0%)
+- write_file: 0/2 (0%)
