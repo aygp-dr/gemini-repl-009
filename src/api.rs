@@ -1,11 +1,11 @@
 //! Gemini API client module
 
-use anyhow::{Result, anyhow};
+use crate::logging::ApiLogger;
+use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::env;
-use crate::logging::ApiLogger;
 
 #[derive(Serialize)]
 pub struct GenerateRequest {
@@ -115,21 +115,21 @@ pub struct GeminiClient {
 
 impl GeminiClient {
     /// Creates a new Gemini client.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// Returns an error if the HTTP client cannot be created.
     pub fn new(api_key: String, model: String) -> Result<Self> {
         let mut client_builder = Client::builder();
-        
+
         // Add proxy support if configured
         if let Ok(proxy_url) = env::var("HTTPS_PROXY") {
             tracing::info!("Using proxy: {}", proxy_url);
             client_builder = client_builder.proxy(reqwest::Proxy::https(&proxy_url)?);
         }
-        
+
         let client = client_builder.build()?;
-        
+
         // Create logger if logging is enabled
         let logger = if env::var("GEMINI_API_LOGGING").unwrap_or_default() == "true" {
             let log_dir = env::var("GEMINI_LOG_DIR").unwrap_or_else(|_| "logs".to_string());
@@ -137,7 +137,7 @@ impl GeminiClient {
         } else {
             None
         };
-        
+
         Ok(Self {
             client,
             api_key,
@@ -145,22 +145,27 @@ impl GeminiClient {
             logger,
         })
     }
-    
+
     /// Sends a message to the Gemini API.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// Returns an error if the API request fails or returns an error response.
+    #[allow(dead_code)] // Kept for API completeness and future use
     pub async fn send_message(&self, messages: &[Content]) -> Result<String> {
         self.send_message_with_tools(messages, None).await
     }
-    
+
     /// Sends a message to the Gemini API with optional function calling tools.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// Returns an error if the API request fails or returns an error response.
-    pub async fn send_message_with_tools(&self, messages: &[Content], tools: Option<Vec<Tool>>) -> Result<String> {
+    pub async fn send_message_with_tools(
+        &self,
+        messages: &[Content],
+        tools: Option<Vec<Tool>>,
+    ) -> Result<String> {
         // Add system instruction if tools are provided
         let system_instruction = if tools.is_some() {
             Some(Content {
@@ -174,18 +179,18 @@ impl GeminiClient {
         } else {
             None
         };
-        
+
         let request = GenerateRequest {
             contents: messages.to_vec(),
             tools,
             system_instruction,
         };
-        
+
         let url = format!(
             "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
             self.model, self.api_key
         );
-        
+
         // Log request if logger is enabled
         if let Some(ref logger) = self.logger {
             let host = "generativelanguage.googleapis.com";
@@ -198,16 +203,12 @@ impl GeminiClient {
                 &serde_json::to_value(&request).unwrap_or_default(),
             )?;
         }
-        
-        let response = self.client
-            .post(&url)
-            .json(&request)
-            .send()
-            .await?;
-        
+
+        let response = self.client.post(&url).json(&request).send().await?;
+
         let status = response.status();
         let response_text = response.text().await?;
-        
+
         // Log response if logger is enabled
         if let Some(ref logger) = self.logger {
             let host = "generativelanguage.googleapis.com";
@@ -220,25 +221,28 @@ impl GeminiClient {
                 100, // TODO: track actual duration
             )?;
         }
-        
+
         let parsed: GenerateResponse = serde_json::from_str(&response_text)?;
-        
+
         if let Some(error) = parsed.error {
             return Err(anyhow!("API Error ({}): {}", error.code, error.message));
         }
-        
+
         if let Some(candidates) = parsed.candidates {
             if let Some(candidate) = candidates.first() {
                 if let Some(part) = candidate.content.parts.first() {
                     // Check for function call
                     if let Some(function_call) = &part.function_call {
-                        return Ok(format!("FUNCTION_CALL: {} with args: {}", 
-                            function_call.name, 
-                            function_call.args.as_ref()
+                        return Ok(format!(
+                            "FUNCTION_CALL: {} with args: {}",
+                            function_call.name,
+                            function_call
+                                .args
+                                .as_ref()
                                 .map_or_else(|| "{}".to_string(), std::string::ToString::to_string)
                         ));
                     }
-                    
+
                     // Otherwise return text
                     if let Some(text) = &part.text {
                         return Ok(text.trim().to_string());
@@ -246,7 +250,7 @@ impl GeminiClient {
                 }
             }
         }
-        
+
         Err(anyhow!("Empty response from API"))
     }
 }

@@ -4,6 +4,7 @@ use crate::api::{FunctionDeclaration, FunctionParameters, ParameterProperty, Too
 use std::collections::HashMap;
 
 /// Get all available tools for function calling
+#[must_use]
 pub fn get_available_tools() -> Vec<Tool> {
     vec![
         Tool {

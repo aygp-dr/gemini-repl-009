@@ -1,22 +1,23 @@
 //! Unit tests for function calling functionality
 
-use gemini_repl::api::{Content, Part, FunctionCall, FunctionResponse};
+use gemini_repl::api::{Content, FunctionCall, FunctionResponse, Part};
 use gemini_repl::functions::get_available_tools;
 
 #[test]
 fn test_get_available_tools() {
     let tools = get_available_tools();
     assert_eq!(tools.len(), 1);
-    
+
     let tool = &tools[0];
     assert_eq!(tool.function_declarations.len(), 4);
-    
+
     // Check function names
-    let names: Vec<&str> = tool.function_declarations
+    let names: Vec<&str> = tool
+        .function_declarations
         .iter()
         .map(|f| f.name.as_str())
         .collect();
-    
+
     assert!(names.contains(&"read_file"));
     assert!(names.contains(&"list_files"));
     assert!(names.contains(&"write_file"));
@@ -30,7 +31,7 @@ fn test_part_serialization_with_text() {
         function_call: None,
         function_response: None,
     };
-    
+
     let json = serde_json::to_string(&part).unwrap();
     assert!(json.contains("\"text\":\"Hello, world!\""));
     assert!(!json.contains("functionCall"));
@@ -49,7 +50,7 @@ fn test_part_serialization_with_function_call() {
         }),
         function_response: None,
     };
-    
+
     let json = serde_json::to_string(&part).unwrap();
     assert!(json.contains("\"functionCall\""));
     assert!(json.contains("\"name\":\"read_file\""));
@@ -72,7 +73,7 @@ fn test_content_with_function_call() {
             function_response: None,
         }],
     };
-    
+
     let json = serde_json::to_string(&content).unwrap();
     assert!(json.contains("\"role\":\"user\""));
     assert!(json.contains("\"functionCall\""));
@@ -87,7 +88,7 @@ fn test_function_response_serialization() {
             "content": "# Makefile content here"
         }),
     };
-    
+
     let json = serde_json::to_string(&response).unwrap();
     assert!(json.contains("\"name\":\"read_file\""));
     assert!(json.contains("\"content\":\"# Makefile content here\""));
