@@ -1,0 +1,154 @@
+{
+  "batch_id": "019",
+  "questions_range": "451-475",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["multi-file operations", "cross-project searches", "integration testing"],
+  "questions": [
+    {
+      "id": 451,
+      "type": "non-tool",
+      "question": "What are the key principles of microservices architecture and how do they differ from monolithic applications?"
+    },
+    {
+      "id": 452,
+      "type": "tool-calling",
+      "question": "Find all TypeScript files in the project that import React hooks and list their file paths",
+      "expected_tools": ["list_files", "search_code"]
+    },
+    {
+      "id": 453,
+      "type": "tool-calling",
+      "question": "Create a comprehensive integration test suite for the authentication module that covers login, logout, and token refresh scenarios",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 454,
+      "type": "tool-calling",
+      "question": "Search for all database migration files and generate a summary of schema changes over time",
+      "expected_tools": ["list_files", "read_file", "search_code"]
+    },
+    {
+      "id": 455,
+      "type": "tool-calling",
+      "question": "Refactor all hardcoded API endpoints in the frontend to use a centralized configuration file",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 456,
+      "type": "non-tool",
+      "question": "Explain the difference between OAuth 2.0 authorization code flow and client credentials flow, including when to use each"
+    },
+    {
+      "id": 457,
+      "type": "tool-calling",
+      "question": "Find all React components that use useState or useEffect hooks and analyze their complexity",
+      "expected_tools": ["search_code", "read_file", "list_files"]
+    },
+    {
+      "id": 458,
+      "type": "tool-calling",
+      "question": "Create a Docker Compose configuration for local development that includes the main application, database, and Redis cache",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 459,
+      "type": "tool-calling",
+      "question": "Search for all TODO and FIXME comments across the codebase and categorize them by priority and module",
+      "expected_tools": ["search_code", "list_files"]
+    },
+    {
+      "id": 460,
+      "type": "tool-calling",
+      "question": "Generate TypeScript interfaces for all API response objects found in the backend controllers",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 461,
+      "type": "tool-calling",
+      "question": "Find all files that contain environment variable references and create a comprehensive .env.example file",
+      "expected_tools": ["search_code", "list_files", "write_file"]
+    },
+    {
+      "id": 462,
+      "type": "non-tool",
+      "question": "What are the benefits and drawbacks of using GraphQL versus REST APIs for a mobile application backend?"
+    },
+    {
+      "id": 463,
+      "type": "tool-calling",
+      "question": "Analyze all test files to identify missing test coverage for critical business logic functions",
+      "expected_tools": ["list_files", "read_file", "search_code"]
+    },
+    {
+      "id": 464,
+      "type": "tool-calling",
+      "question": "Create a comprehensive error handling middleware that logs errors and returns standardized error responses",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 465,
+      "type": "tool-calling",
+      "question": "Search for all SQL queries in the codebase and identify potential security vulnerabilities like SQL injection",
+      "expected_tools": ["search_code", "read_file", "list_files"]
+    },
+    {
+      "id": 466,
+      "type": "tool-calling",
+      "question": "Generate API documentation in OpenAPI 3.0 format based on the existing route definitions and controller methods",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 467,
+      "type": "tool-calling",
+      "question": "Find all React components that directly manipulate the DOM and refactor them to use refs properly",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 468,
+      "type": "non-tool",
+      "question": "Describe the CAP theorem and its implications for distributed database design"
+    },
+    {
+      "id": 469,
+      "type": "tool-calling",
+      "question": "Create a performance monitoring dashboard configuration that tracks key metrics across all microservices",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 470,
+      "type": "tool-calling",
+      "question": "Search for all async/await usage in the codebase and identify potential race conditions or unhandled promises",
+      "expected_tools": ["search_code", "read_file", "list_files"]
+    },
+    {
+      "id": 471,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive database seeding script that creates realistic test data for all entities",
+      "expected_tools": ["read_file", "search_code", "write_file"]
+    },
+    {
+      "id": 472,
+      "type": "tool-calling",
+      "question": "Find all configuration files across different environments and standardize their structure and naming conventions",
+      "expected_tools": ["list_files", "read_file", "write_file"]
+    },
+    {
+      "id": 473,
+      "type": "non-tool",
+      "question": "What are the key considerations when implementing caching strategies in a high-traffic web application?"
+    },
+    {
+      "id": 474,
+      "type": "tool-calling",
+      "question": "Create a CI/CD pipeline configuration that runs tests, builds Docker images, and deploys to staging automatically",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 475,
+      "type": "tool-calling",
+      "question": "Search for all imported dependencies across package.json files and identify outdated or unused packages",
+      "expected_tools": ["list_files", "read_file", "search_code"]
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "batch_id": "020",
+  "questions_range": "476-500",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["documentation generation", "refactoring", "migration scenarios"],
+  "questions": [
+    {
+      "id": 476,
+      "type": "tool-calling",
+      "question": "Generate comprehensive JSDoc comments for all exported functions in the utility modules",
+      "expected_tools": ["list_files", "read_file", "write_file"]
+    },
+    {
+      "id": 477,
+      "type": "tool-calling",
+      "question": "Find all class-based React components and convert them to functional components with hooks",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 478,
+      "type": "non-tool",
+      "question": "Explain the principles of Domain-Driven Design and how they apply to microservices architecture"
+    },
+    {
+      "id": 479,
+      "type": "tool-calling",
+      "question": "Create a migration script to upgrade all database schemas from version 1.0 to 2.0 with proper rollback support",
+      "expected_tools": ["read_file", "search_code", "write_file"]
+    },
+    {
+      "id": 480,
+      "type": "tool-calling",
+      "question": "Search for all deprecated API usage and create a comprehensive upgrade guide with code examples",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 481,
+      "type": "tool-calling",
+      "question": "Generate unit tests for all repository pattern implementations found in the data access layer",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 482,
+      "type": "tool-calling",
+      "question": "Find all hardcoded strings that should be internationalized and extract them to localization files",
+      "expected_tools": ["search_code", "list_files", "write_file"]
+    },
+    {
+      "id": 483,
+      "type": "non-tool",
+      "question": "What are the security implications of using JWT tokens for authentication, and what are the best practices?"
+    },
+    {
+      "id": 484,
+      "type": "tool-calling",
+      "question": "Create a comprehensive logging strategy that includes structured logging, correlation IDs, and proper log levels",
+      "expected_tools": ["read_file", "search_code", "write_file"]
+    },
+    {
+      "id": 485,
+      "type": "tool-calling",
+      "question": "Search for all React prop-types usage and migrate to TypeScript interfaces with proper type definitions",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 486,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive README file that includes setup instructions, API documentation, and contribution guidelines",
+      "expected_tools": ["list_files", "read_file", "write_file"]
+    },
+    {
+      "id": 487,
+      "type": "tool-calling",
+      "question": "Find all magic numbers and string literals in the codebase and refactor them into named constants",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 488,
+      "type": "tool-calling",
+      "question": "Create a performance testing suite that benchmarks critical API endpoints under various load conditions",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 489,
+      "type": "non-tool",
+      "question": "Describe the differences between horizontal and vertical scaling, including their trade-offs and use cases"
+    },
+    {
+      "id": 490,
+      "type": "tool-calling",
+      "question": "Search for all database connection usage and implement proper connection pooling and retry logic",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 491,
+      "type": "tool-calling",
+      "question": "Generate TypeScript declaration files for all JavaScript modules to improve type safety",
+      "expected_tools": ["list_files", "read_file", "write_file"]
+    },
+    {
+      "id": 492,
+      "type": "tool-calling",
+      "question": "Find all inline styles in React components and migrate them to CSS modules or styled-components",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 493,
+      "type": "tool-calling",
+      "question": "Create a comprehensive health check system that monitors database connectivity, external APIs, and system resources",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 494,
+      "type": "tool-calling",
+      "question": "Search for all try-catch blocks and ensure they have proper error handling and logging mechanisms",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 495,
+      "type": "non-tool",
+      "question": "What are the key principles of reactive programming and how do they apply to modern web applications?"
+    },
+    {
+      "id": 496,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive security audit report that identifies potential vulnerabilities across all modules",
+      "expected_tools": ["search_code", "read_file", "list_files"]
+    },
+    {
+      "id": 497,
+      "type": "tool-calling",
+      "question": "Find all API rate limiting implementations and standardize them across all endpoints",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 498,
+      "type": "tool-calling",
+      "question": "Create a data backup and recovery strategy with automated scheduling and validation scripts",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 499,
+      "type": "tool-calling",
+      "question": "Search for all third-party service integrations and implement proper circuit breaker patterns",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 500,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive deployment guide that covers different environments and rollback procedures",
+      "expected_tools": ["read_file", "list_files", "write_file"]
+    }
+  ]
+}
