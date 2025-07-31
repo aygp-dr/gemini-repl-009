@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_001",
+  "created_at": "2025-07-31T03:18:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q001",
+      "question": "What is the primary purpose of a REPL?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "General programming knowledge question"
+    },
+    {
+      "id": "q002",
+      "question": "List all Python files in the experiments/023-function-calling directory",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Directory exploration in gemini-repl-009 project"
+    },
+    {
+      "id": "q003",
+      "question": "Show me the contents of the Makefile in experiments/025-function-calling-proof",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Reading project configuration files"
+    },
+    {
+      "id": "q004",
+      "question": "Explain the concept of idempotency in distributed systems",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Theoretical computer science question"
+    },
+    {
+      "id": "q005",
+      "question": "Find all files containing 'gemini-2.0-flash-lite' in the experiments directory",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Searching for model references in code"
+    },
+    {
+      "id": "q006",
+      "question": "Create a new test file test_model_switching.py in experiments/027-gemini-flash-lite-deep-eval/src with a basic pytest structure",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Creating test infrastructure"
+    },
+    {
+      "id": "q007",
+      "question": "What files are in the claude-monitor project root?",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring claude-monitor repository structure"
+    },
+    {
+      "id": "q008",
+      "question": "Show the implementation of the main function in experiments/023-function-calling/src/main.rs",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Reading Rust implementation code"
+    },
+    {
+      "id": "q009",
+      "question": "What is a monad and why is it useful?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Functional programming concept"
+    },
+    {
+      "id": "q010",
+      "question": "Search for all occurrences of 'TodoWrite' in the gemini-repl-009 codebase",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding tool usage patterns"
+    },
+    {
+      "id": "q011",
+      "question": "Read the README.org file in the mccarthy-lisp-explorer project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding project documentation"
+    },
+    {
+      "id": "q012",
+      "question": "List all Cargo.toml files in the experiments directory",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Finding Rust project configurations"
+    },
+    {
+      "id": "q013",
+      "question": "How does garbage collection work in modern programming languages?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming language internals"
+    },
+    {
+      "id": "q014",
+      "question": "Create a simple Python script data_analyzer.py in experiments/027-gemini-flash-lite-deep-eval/src that loads JSON results",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building analysis tools"
+    },
+    {
+      "id": "q015",
+      "question": "Find all shell scripts in the freebsd-sysmap project",
+      "expected_tool_calls": ["list_files", "search_code"],
+      "category": "file-search",
+      "context": "Locating system administration scripts"
+    },
+    {
+      "id": "q016",
+      "question": "Show me the pyproject.toml from the claude-code-metrics-lab project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Examining Python project configuration"
+    },
+    {
+      "id": "q017",
+      "question": "What is the CAP theorem?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Distributed systems theory"
+    },
+    {
+      "id": "q018",
+      "question": "Search for test files in the mal-ruby-minimal project",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "test-discovery",
+      "context": "Finding test infrastructure in Lisp implementation"
+    },
+    {
+      "id": "q019",
+      "question": "Read the CLAUDE.md file from the balanced-ternary project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding project-specific Claude instructions"
+    },
+    {
+      "id": "q020",
+      "question": "List all markdown files in the llm-context-pruning-experiments directory",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Finding documentation in ML project"
+    },
+    {
+      "id": "q021",
+      "question": "Create a README.md file for experiments/027-gemini-flash-lite-deep-eval explaining the evaluation methodology",
+      "expected_tool_calls": ["write_file"],
+      "category": "documentation",
+      "context": "Documenting the evaluation experiment"
+    },
+    {
+      "id": "q022",
+      "question": "What is the difference between concurrency and parallelism?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Computer science fundamentals"
+    },
+    {
+      "id": "q023",
+      "question": "Find all Python files that import 'asyncio' in the persistent-tree-server project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Analyzing async patterns in Python"
+    },
+    {
+      "id": "q024",
+      "question": "Show the Dockerfile from the armv8-neon-explorer project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Examining container configuration"
+    },
+    {
+      "id": "q025",
+      "question": "List all subdirectories in the experiments folder",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding experiment organization"
+    }
+  ]
+}
