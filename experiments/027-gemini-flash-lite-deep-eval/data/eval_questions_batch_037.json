@@ -1,0 +1,155 @@
+{
+  "batch_id": "037",
+  "questions_range": "901-925",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["data engineering", "big data", "streaming analytics"],
+  "questions": [
+    {
+      "id": 901,
+      "type": "tool-calling",
+      "question": "Create a comprehensive data lake architecture with Apache Spark for large-scale data processing and analytics",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 902,
+      "type": "tool-calling",
+      "question": "Find all ETL pipeline implementations and optimize for real-time streaming with Apache Kafka and Flink",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 903,
+      "type": "non-tool",
+      "question": "Explain the differences between batch processing and stream processing architectures for big data analytics"
+    },
+    {
+      "id": 904,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive data quality framework with automated validation, profiling, and anomaly detection",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 905,
+      "type": "tool-calling",
+      "question": "Search for all data warehouse implementations and migrate to modern cloud-native architectures",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 906,
+      "type": "tool-calling",
+      "question": "Create a comprehensive data catalog system with metadata management and lineage tracking",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 907,
+      "type": "tool-calling",
+      "question": "Find all real-time analytics implementations and add complex event processing with pattern detection",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 908,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive data governance platform with privacy controls and access management",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 909,
+      "type": "non-tool",
+      "question": "What are the key considerations for implementing GDPR right-to-be-forgotten in distributed data systems?"
+    },
+    {
+      "id": 910,
+      "type": "tool-calling",
+      "question": "Search for all data pipeline orchestration and implement workflow management with Apache Airflow",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 911,
+      "type": "tool-calling",
+      "question": "Create a comprehensive change data capture (CDC) system for real-time database synchronization",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 912,
+      "type": "tool-calling",
+      "question": "Find all data compression implementations and optimize storage with advanced columnar formats like Parquet",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 913,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive data versioning system with schema evolution and backward compatibility",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 914,
+      "type": "tool-calling",
+      "question": "Search for all distributed computing implementations and optimize for fault tolerance with checkpointing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 915,
+      "type": "tool-calling",
+      "question": "Create a comprehensive data masking and anonymization system for privacy-preserving analytics",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 916,
+      "type": "non-tool",
+      "question": "Describe the challenges of implementing consistent data formats across heterogeneous data sources"
+    },
+    {
+      "id": 917,
+      "type": "tool-calling",
+      "question": "Find all time-series data processing and implement efficient storage with compression and aggregation",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 918,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive data federation system with virtual data integration and query optimization",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 919,
+      "type": "tool-calling",
+      "question": "Search for all graph database implementations and add distributed graph processing with Neo4j",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 920,
+      "type": "tool-calling",
+      "question": "Create a comprehensive data archival system with intelligent tiering and lifecycle management",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 921,
+      "type": "tool-calling",
+      "question": "Find all data synchronization implementations and add conflict resolution with vector clocks",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 922,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive data marketplace platform with API monetization and usage analytics",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 923,
+      "type": "non-tool",
+      "question": "What are the performance optimization strategies for distributed query processing in big data systems?"
+    },
+    {
+      "id": 924,
+      "type": "tool-calling",
+      "question": "Search for all data security implementations and add field-level encryption with key rotation",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 925,
+      "type": "tool-calling",
+      "question": "Create a comprehensive data observability platform with lineage tracking and impact analysis",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}
