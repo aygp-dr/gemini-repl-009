@@ -1,0 +1,1 @@
+Implementation complete: All systems now consistently use gemini-2.0-flash-exp. Rate limiting configured for 10 req/min quota. This represents a fundamental shift from speed to reliability based on empirical function calling performance data.
