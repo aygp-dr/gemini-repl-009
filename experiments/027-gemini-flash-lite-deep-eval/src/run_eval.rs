@@ -7,6 +7,9 @@ use std::path::Path;
 use std::time::Duration;
 use tokio::time::sleep;
 
+mod api_client;
+use api_client::{GeminiClient, GenerateRequest, Content, Part, create_evaluation_tools};
+
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
@@ -72,36 +75,87 @@ struct BatchResult {
     completed_at: String,
 }
 
-async fn evaluate_question(question: &Question, _model: &str) -> EvalResult {
+async fn evaluate_question(question: &Question, model: &str, client: &GeminiClient) -> EvalResult {
     let start = std::time::Instant::now();
     
-    // TODO: Implement actual API call to Gemini
-    // For now, simulate with mock response
-    let mock_success = question.id.ends_with('1') || question.id.ends_with('5');
-    let actual_tools = if mock_success {
-        question.expected_tool_calls.clone()
+    // Create request with function calling tools if this question expects tool calls
+    let tools = if !question.expected_tool_calls.is_empty() {
+        Some(create_evaluation_tools())
     } else {
-        vec![]
+        None
     };
 
-    EvalResult {
-        question_id: question.id.clone(),
-        question: question.question.clone(),
-        expected_tools: question.expected_tool_calls.clone(),
-        actual_tools,
-        success: mock_success,
-        response_time_ms: start.elapsed().as_millis() as u64,
-        error: if !mock_success {
-            Some("Mock failure".to_string())
-        } else {
-            None
-        },
+    let request = GenerateRequest {
+        contents: vec![Content {
+            role: "user".to_string(),
+            parts: vec![Part {
+                text: Some(question.question.clone()),
+                function_call: None,
+            }],
+        }],
+        tools,
+    };
+
+    match client.generate(request).await {
+        Ok(response) => {
+            let mut actual_tools = Vec::new();
+            
+            // Extract function calls from response
+            if let Some(candidates) = response.candidates {
+                for candidate in candidates {
+                    for part in candidate.content.parts {
+                        if let Some(function_call) = part.function_call {
+                            actual_tools.push(function_call.name);
+                        }
+                    }
+                }
+            }
+
+            // Check if actual tools match expected tools
+            let success = if question.expected_tool_calls.is_empty() {
+                // Non-tool question - success if no function calls
+                actual_tools.is_empty()
+            } else {
+                // Tool question - check if all expected tools were called
+                question.expected_tool_calls.iter().all(|expected| {
+                    actual_tools.contains(expected)
+                })
+            };
+
+            EvalResult {
+                question_id: question.id.clone(),
+                question: question.question.clone(),
+                expected_tools: question.expected_tool_calls.clone(),
+                actual_tools,
+                success,
+                response_time_ms: start.elapsed().as_millis() as u64,
+                error: None,
+            }
+        }
+        Err(e) => {
+            EvalResult {
+                question_id: question.id.clone(),
+                question: question.question.clone(),
+                expected_tools: question.expected_tool_calls.clone(),
+                actual_tools: vec![],
+                success: false,
+                response_time_ms: start.elapsed().as_millis() as u64,
+                error: Some(e.to_string()),
+            }
+        }
     }
 }
 
 async fn process_batch(batch_path: &Path, model: &str, delay_secs: u64) -> Result<BatchResult> {
     let content = fs::read_to_string(batch_path)?;
     let batch: Batch = serde_json::from_str(&content)?;
+    
+    // Get API key from environment
+    let api_key = std::env::var("GEMINI_API_KEY")
+        .map_err(|_| anyhow::anyhow!("GEMINI_API_KEY not set"))?;
+    
+    // Create client
+    let client = GeminiClient::new(api_key, model.to_string())?;
     
     let started_at = Utc::now().to_rfc3339();
     let mut results = Vec::new();
@@ -114,12 +168,15 @@ async fn process_batch(batch_path: &Path, model: &str, delay_secs: u64) -> Resul
         }
         
         print!("  Question {}/{}: ", i + 1, batch.questions.len());
-        let result = evaluate_question(question, model).await;
+        let result = evaluate_question(question, model, &client).await;
         
         if result.success {
             println!("✓");
         } else {
             println!("✗");
+            if let Some(err) = &result.error {
+                println!("    Error: {}", err);
+            }
         }
         
         results.push(result);

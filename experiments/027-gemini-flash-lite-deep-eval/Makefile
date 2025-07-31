@@ -22,6 +22,10 @@ test-full:
 	@echo "Running full evaluation with rate limiting..."
 	cargo run --bin run-eval -- --full --delay $(RATE_LIMIT_DELAY) --model $(MODEL)
 
+test-chunked:
+	@echo "Running evaluation in chunks to avoid rate limiting..."
+	./run_chunked_eval.sh
+
 analyze:
 	@echo "Analyzing results..."
 	python3 src/analyze_results.py
