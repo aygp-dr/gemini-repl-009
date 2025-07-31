@@ -10,9 +10,9 @@ if [ -f "$PROJECT_ROOT/.env" ]; then
 fi
 
 MODEL="${MODEL:-gemini-2.0-flash-lite}"
-DELAY="${DELAY:-3}"  # 3 seconds between requests
-CHUNK_SIZE="${CHUNK_SIZE:-5}"  # Process 5 batches at a time
-CHUNK_DELAY="${CHUNK_DELAY:-60}"  # 60 seconds between chunks
+DELAY="${DELAY:-5}"  # 5 seconds between requests (more conservative)
+CHUNK_SIZE="${CHUNK_SIZE:-3}"  # Process 3 batches at a time (75 questions)
+CHUNK_DELAY="${CHUNK_DELAY:-120}"  # 2 minutes between chunks
 
 echo "Running chunked evaluation"
 echo "Model: $MODEL"
