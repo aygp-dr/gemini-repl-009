@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_015",
+  "created_at": "2025-07-31T11:00:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q351",
+      "question": "What is the difference between cohesion and coupling in software design?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software engineering principles and module design"
+    },
+    {
+      "id": "q352",
+      "question": "List all Rust files in the book-mill project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring book processing and text analysis tools"
+    },
+    {
+      "id": "q353",
+      "question": "Read the requirements.txt from book-mill",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding book processing pipeline dependencies"
+    },
+    {
+      "id": "q354",
+      "question": "Search for 'processing' patterns in book-mill",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding text and document processing algorithms"
+    },
+    {
+      "id": "q355",
+      "question": "Create a document processor docs.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building document processing utilities for evaluation"
+    },
+    {
+      "id": "q356",
+      "question": "What is the difference between fail-fast and fail-safe design principles?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "System reliability and error handling strategies"
+    },
+    {
+      "id": "q357",
+      "question": "List all documentation files in the bu-pmip-2025 conference project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring academic conference preparation materials"
+    },
+    {
+      "id": "q358",
+      "question": "Read the conference_info.org from bu-pmip-2025",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding academic conference information"
+    },
+    {
+      "id": "q359",
+      "question": "Find all references to 'conference' preparation in bu-pmip-2025",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating conference presentation and preparation code"
+    },
+    {
+      "id": "q360",
+      "question": "Show the project structure of the claude-code-version-audit",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding code versioning and audit tools"
+    },
+    {
+      "id": "q361",
+      "question": "Read the npm-package-audit.sh from claude-code-version-audit",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding NPM package auditing automation"
+    },
+    {
+      "id": "q362",
+      "question": "What is the difference between optimistic and pessimistic locking?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Database and concurrency control mechanisms"
+    },
+    {
+      "id": "q363",
+      "question": "Search for 'audit' patterns in claude-code-version-audit",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding code auditing and version control analysis"
+    },
+    {
+      "id": "q364",
+      "question": "Create a version tracker version.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building version tracking for evaluation components"
+    },
+    {
+      "id": "q365",
+      "question": "List all Python files in the Claude-Code-Usage-Monitor project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Claude AI usage monitoring and analytics"
+    },
+    {
+      "id": "q366",
+      "question": "Read the claude_monitor.py from Claude-Code-Usage-Monitor",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding AI usage monitoring implementation"
+    },
+    {
+      "id": "q367",
+      "question": "What is the difference between horizontal and vertical partitioning?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Database scaling and partitioning strategies"
+    },
+    {
+      "id": "q368",
+      "question": "Find all monitoring patterns in Claude-Code-Usage-Monitor",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating usage monitoring and telemetry collection"
+    },
+    {
+      "id": "q369",
+      "question": "Show the pyproject.toml from Claude-Code-Usage-Monitor",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding monitoring tool project configuration"
+    },
+    {
+      "id": "q370",
+      "question": "Search for 'usage' analytics in Claude-Code-Usage-Monitor",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding usage analytics and reporting implementation"
+    },
+    {
+      "id": "q371",
+      "question": "Create a usage tracker usage.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building usage tracking for evaluation system"
+    },
+    {
+      "id": "q372",
+      "question": "What are the main principles of reactive programming?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming paradigms and reactive systems"
+    },
+    {
+      "id": "q373",
+      "question": "List all documentation files in the dotclaude configuration project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Claude AI configuration management"
+    },
+    {
+      "id": "q374",
+      "question": "Read the GLOSSARY.md from dotclaude",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Claude AI configuration terminology"
+    },
+    {
+      "id": "q375",
+      "question": "Find all references to 'configuration' management in dotclaude",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating Claude AI configuration and setup patterns"
+    }
+  ]
+}

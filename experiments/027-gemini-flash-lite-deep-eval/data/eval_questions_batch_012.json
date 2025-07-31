@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_012",
+  "created_at": "2025-07-31T10:45:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q276",
+      "question": "What is the difference between static and dynamic linking?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Systems programming and binary linking"
+    },
+    {
+      "id": "q277",
+      "question": "List all Emacs configuration files in the fixed-point-explorer project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring mathematical fixed point computation"
+    },
+    {
+      "id": "q278",
+      "question": "Read the init.el configuration from fixed-point-explorer",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Emacs setup for mathematical computation"
+    },
+    {
+      "id": "q279",
+      "question": "Search for 'fixed-point' algorithms in fixed-point-explorer",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding fixed point computation implementations"
+    },
+    {
+      "id": "q280",
+      "question": "Create a math utilities module math_utils.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building mathematical computation utilities"
+    },
+    {
+      "id": "q281",
+      "question": "What is the difference between imperative and functional programming paradigms?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming paradigms comparison"
+    },
+    {
+      "id": "q282",
+      "question": "List all Python files in the functional-data-structures project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring functional programming data structures"
+    },
+    {
+      "id": "q283",
+      "question": "Read the pyproject.toml from functional-data-structures",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding functional programming project setup"
+    },
+    {
+      "id": "q284",
+      "question": "Find all immutable data structure implementations in functional-data-structures",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating persistent and immutable data structures"
+    },
+    {
+      "id": "q285",
+      "question": "Show the project structure of the genealogical-inference-engine",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding genealogy and family tree analysis"
+    },
+    {
+      "id": "q286",
+      "question": "Read the README.org from genealogical-inference-engine",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding genealogical inference algorithms"
+    },
+    {
+      "id": "q287",
+      "question": "What is the difference between breadth-first and depth-first traversal?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Graph and tree algorithms"
+    },
+    {
+      "id": "q288",
+      "question": "Search for 'inference' algorithms in genealogical-inference-engine",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding genealogical reasoning and inference code"
+    },
+    {
+      "id": "q289",
+      "question": "Create a graph algorithms module graph.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building graph processing utilities for evaluation"
+    },
+    {
+      "id": "q290",
+      "question": "List all Markdown files in the heavybool-cat-explorer category theory project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring category theory and mathematical abstractions"
+    },
+    {
+      "id": "q291",
+      "question": "Read the category-theory.org from heavybool-cat-explorer",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding category theory documentation"
+    },
+    {
+      "id": "q292",
+      "question": "What is the difference between abstraction and encapsulation?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Object-oriented programming principles"
+    },
+    {
+      "id": "q293",
+      "question": "Find all references to 'category' theory concepts in heavybool-cat-explorer",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating category theory implementation patterns"
+    },
+    {
+      "id": "q294",
+      "question": "Show the Makefile from heavybool-cat-explorer",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding build process for mathematical software"
+    },
+    {
+      "id": "q295",
+      "question": "Search for 'functor' patterns in heavybool-cat-explorer",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding functor and morphism implementations"
+    },
+    {
+      "id": "q296",
+      "question": "Create a category theory module category.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building category theory abstractions for evaluation"
+    },
+    {
+      "id": "q297",
+      "question": "What are the main differences between procedural and object-oriented programming?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming paradigms evolution"
+    },
+    {
+      "id": "q298",
+      "question": "List all Python files in the hy-ipython-repl-fix project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Hy Lisp Python integration fixes"
+    },
+    {
+      "id": "q299",
+      "question": "Read the requirements.txt from hy-ipython-repl-fix",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Hy Lisp integration dependencies"
+    },
+    {
+      "id": "q300",
+      "question": "Find all references to 'REPL' integration in hy-ipython-repl-fix",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating interactive Python/Hy integration code"
+    }
+  ]
+}
