@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_010",
+  "created_at": "2025-07-31T10:35:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q226",
+      "question": "What is the difference between big-O, big-Theta, and big-Omega notation?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Algorithm analysis and complexity theory"
+    },
+    {
+      "id": "q227",
+      "question": "List all Python files in the files-to-markdown converter",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring code documentation generation tools"
+    },
+    {
+      "id": "q228",
+      "question": "Read the codebase_to_gfm.py from files-to-markdown",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding GitHub Flavored Markdown generation"
+    },
+    {
+      "id": "q229",
+      "question": "Search for 'markdown' generation patterns in files-to-markdown",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding markdown formatting and generation logic"
+    },
+    {
+      "id": "q230",
+      "question": "Create a format converter convert.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building result format conversion utilities"
+    },
+    {
+      "id": "q231",
+      "question": "What is the difference between forward and backward compatibility?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software versioning and compatibility"
+    },
+    {
+      "id": "q232",
+      "question": "List configuration files in the prompt-toolkit-examples project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring terminal UI framework examples"
+    },
+    {
+      "id": "q233",
+      "question": "Read the PROMPT_TOOLKIT_GUIDE.md from prompt-toolkit-examples",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding terminal UI development guide"
+    },
+    {
+      "id": "q234",
+      "question": "Find all references to 'key' bindings in prompt-toolkit-examples",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating keyboard input handling patterns"
+    },
+    {
+      "id": "q235",
+      "question": "Show the project structure of the lists-and-lists project",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding list processing and analysis tools"
+    },
+    {
+      "id": "q236",
+      "question": "Read the lists-and-lists-rfc.md specification",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding list data structure specification"
+    },
+    {
+      "id": "q237",
+      "question": "What is the difference between dynamic and static allocation?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Memory management concepts"
+    },
+    {
+      "id": "q238",
+      "question": "Search for 'analysis' patterns in the lists-and-lists project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding list analysis and processing algorithms"
+    },
+    {
+      "id": "q239",
+      "question": "Create a data structure tester ds_test.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building data structure performance testing"
+    },
+    {
+      "id": "q240",
+      "question": "List all shell scripts in the exp-singlefile-cleanup-script project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring file cleanup and organization automation"
+    },
+    {
+      "id": "q241",
+      "question": "Read the mk_test_files.py from exp-singlefile-cleanup-script",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding test file generation for cleanup testing"
+    },
+    {
+      "id": "q242",
+      "question": "What is the difference between monolithic and microservice architectures?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software architecture patterns"
+    },
+    {
+      "id": "q243",
+      "question": "Find all Python cleanup scripts in exp-singlefile-cleanup-script",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "cleanup-scripts",
+      "context": "Locating file organization and cleanup automation"
+    },
+    {
+      "id": "q244",
+      "question": "Show the 10_flat_script.py implementation",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding file flattening and organization logic"
+    },
+    {
+      "id": "q245",
+      "question": "Search for 'cleanup' operations in exp-singlefile-cleanup-script",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding file cleanup and organization patterns"
+    },
+    {
+      "id": "q246",
+      "question": "Create a file organizer organizer.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building file organization utilities for evaluation"
+    },
+    {
+      "id": "q247",
+      "question": "What are the principles of defensive programming?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software engineering practices"
+    },
+    {
+      "id": "q248",
+      "question": "List all Python files in the edgetpu-ml machine learning project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Edge TPU machine learning implementation"
+    },
+    {
+      "id": "q249",
+      "question": "Read the pyproject.toml from edgetpu-ml",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Edge TPU ML project dependencies"
+    },
+    {
+      "id": "q250",
+      "question": "Find all references to 'TPU' optimization in edgetpu-ml",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating tensor processing unit optimization code"
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_009",
+  "created_at": "2025-07-31T10:30:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q201",
+      "question": "What is the difference between a binary tree and a binary search tree?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Tree data structures and algorithms"
+    },
+    {
+      "id": "q202",
+      "question": "List all Shell scripts in the dotfiles project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring system configuration management"
+    },
+    {
+      "id": "q203",
+      "question": "Read the install.sh script from dotfiles",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding dotfiles installation automation"
+    },
+    {
+      "id": "q204",
+      "question": "Search for 'symlink' operations in the dotfiles project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding symbolic link management patterns"
+    },
+    {
+      "id": "q205",
+      "question": "Create a file watcher monitor.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building file system monitoring for evaluation"
+    },
+    {
+      "id": "q206",
+      "question": "What is the difference between TCP and UDP protocols?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Network protocols and communication"
+    },
+    {
+      "id": "q207",
+      "question": "List security-related files in the dotanthropic project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring cryptographic configuration management"
+    },
+    {
+      "id": "q208",
+      "question": "Read the encryption_guide.org from dotanthropic",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding encryption setup documentation"
+    },
+    {
+      "id": "q209",
+      "question": "Find all references to 'GPG' in the dotanthropic project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating GNU Privacy Guard configuration"
+    },
+    {
+      "id": "q210",
+      "question": "Show the directory structure of the isolated-pymcp project",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding Python MCP server isolation architecture"
+    },
+    {
+      "id": "q211",
+      "question": "Read the SECURITY.md from isolated-pymcp",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding security considerations for MCP isolation"
+    },
+    {
+      "id": "q212",
+      "question": "What is the difference between processes and threads?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Operating systems and concurrency"
+    },
+    {
+      "id": "q213",
+      "question": "Search for 'docker' containerization in isolated-pymcp",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding container isolation implementation"
+    },
+    {
+      "id": "q214",
+      "question": "Create a network client client.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building network communication for distributed evaluation"
+    },
+    {
+      "id": "q215",
+      "question": "List all Rust files in the makeshift build system project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring build system implementation"
+    },
+    {
+      "id": "q216",
+      "question": "Read the WORKFLOWS.md from makeshift",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding build workflow documentation"
+    },
+    {
+      "id": "q217",
+      "question": "What is the difference between compilation and linking?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software build processes"
+    },
+    {
+      "id": "q218",
+      "question": "Find all Makefile patterns in the makeshift project",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "build-system",
+      "context": "Locating build automation configurations"
+    },
+    {
+      "id": "q219",
+      "question": "Show the main Makefile from makeshift",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding build system Makefile structure"
+    },
+    {
+      "id": "q220",
+      "question": "Search for 'build' target definitions in makeshift Makefiles",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding build target implementations"
+    },
+    {
+      "id": "q221",
+      "question": "Create a signal handler signals.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building signal handling for evaluation process management"
+    },
+    {
+      "id": "q222",
+      "question": "What are the main principles of clean code?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software engineering best practices"
+    },
+    {
+      "id": "q223",
+      "question": "List all Python files in the firefox-dom-poster project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring browser automation and DOM manipulation"
+    },
+    {
+      "id": "q224",
+      "question": "Read the pyproject.toml from firefox-dom-poster",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Python browser automation project configuration"
+    },
+    {
+      "id": "q225",
+      "question": "Find all references to 'DOM' manipulation in firefox-dom-poster",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating DOM interaction and manipulation code"
+    }
+  ]
+}
