@@ -1,0 +1,295 @@
+{
+  "batch_id": "batch_002",
+  "model": "gemini-2.0-flash-lite",
+  "total_questions": 25,
+  "successful": 11,
+  "failed": 14,
+  "success_rate": 0.44,
+  "results": [
+    {
+      "question_id": "q026",
+      "question": "Find all Gemfile files across the aygp-dr repositories",
+      "expected_tools": [
+        "search_code",
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 542,
+      "error": null
+    },
+    {
+      "question_id": "q027",
+      "question": "Read the contents of the test_server.py file in persistent-tree-server",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 434,
+      "error": null
+    },
+    {
+      "question_id": "q028",
+      "question": "What is the purpose of a Bloom filter?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 5240,
+      "error": null
+    },
+    {
+      "question_id": "q029",
+      "question": "List all .org files in the jwt-paradigms project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 559,
+      "error": null
+    },
+    {
+      "question_id": "q030",
+      "question": "Search for 'function_call' usage in the gemini-repl-009 src directory",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 491,
+      "error": null
+    },
+    {
+      "question_id": "q031",
+      "question": "Create a test configuration file test_config.toml in experiments/027-gemini-flash-lite-deep-eval",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [
+        "write_file"
+      ],
+      "success": true,
+      "response_time_ms": 509,
+      "error": null
+    },
+    {
+      "question_id": "q032",
+      "question": "Show the contents of setup.sh in the mbta-pi-console project",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 377,
+      "error": null
+    },
+    {
+      "question_id": "q033",
+      "question": "What are the SOLID principles in software design?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 9392,
+      "error": null
+    },
+    {
+      "question_id": "q034",
+      "question": "Find all TypeScript files in the mcp-server-qrcode project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": false,
+      "response_time_ms": 1106,
+      "error": null
+    },
+    {
+      "question_id": "q035",
+      "question": "Read the deps.edn file from the liquid-neural-networks project",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 429,
+      "error": null
+    },
+    {
+      "question_id": "q036",
+      "question": "Search for Docker compose files in all projects",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code",
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 497,
+      "error": null
+    },
+    {
+      "question_id": "q037",
+      "question": "List the contents of the src directory in enhanced-trie",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 477,
+      "error": null
+    },
+    {
+      "question_id": "q038",
+      "question": "What is tail call optimization and why is it important?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 7700,
+      "error": null
+    },
+    {
+      "question_id": "q039",
+      "question": "Create a simple benchmark script benchmark.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [
+        "write_file"
+      ],
+      "success": true,
+      "response_time_ms": 847,
+      "error": null
+    },
+    {
+      "question_id": "q040",
+      "question": "Read the SECURITY.md file from the gemini-repl-009 root",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 385,
+      "error": null
+    },
+    {
+      "question_id": "q041",
+      "question": "Find all Makefile targets in the photographic-archaeology project",
+      "expected_tools": [
+        "read_file",
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 493,
+      "error": null
+    },
+    {
+      "question_id": "q042",
+      "question": "List Python files in the multipart-push project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 514,
+      "error": null
+    },
+    {
+      "question_id": "q043",
+      "question": "Explain the actor model in concurrent programming",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 6742,
+      "error": null
+    },
+    {
+      "question_id": "q044",
+      "question": "Search for 'telemetry' references in the claude-code-metrics-lab",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 504,
+      "error": null
+    },
+    {
+      "question_id": "q045",
+      "question": "Read the project.clj from the gemini-repl-002 directory",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 464,
+      "error": null
+    },
+    {
+      "question_id": "q046",
+      "question": "Create a rate limiter module rate_limiter.rs in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [
+        "write_file"
+      ],
+      "success": true,
+      "response_time_ms": 519,
+      "error": null
+    },
+    {
+      "question_id": "q047",
+      "question": "Find all shell scripts in the nexushive-setup project",
+      "expected_tools": [
+        "list_files",
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 527,
+      "error": null
+    },
+    {
+      "question_id": "q048",
+      "question": "What is the difference between BFS and DFS algorithms?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 6682,
+      "error": null
+    },
+    {
+      "question_id": "q049",
+      "question": "Show the requirements.txt from the hathitrust-book-downloader",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 582,
+      "error": null
+    },
+    {
+      "question_id": "q050",
+      "question": "List all JSON files in experiments/023-function-calling/tests",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 735,
+      "error": null
+    }
+  ],
+  "started_at": "2025-07-31T04:37:53.238998490+00:00",
+  "completed_at": "2025-07-31T04:40:40.047868413+00:00"
+}

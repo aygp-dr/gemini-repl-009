@@ -1,0 +1,292 @@
+{
+  "batch_id": "batch_003",
+  "model": "gemini-2.0-flash-lite",
+  "total_questions": 25,
+  "successful": 12,
+  "failed": 13,
+  "success_rate": 0.48,
+  "results": [
+    {
+      "question_id": "q051",
+      "question": "What is the difference between static and dynamic typing?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 882,
+      "error": null
+    },
+    {
+      "question_id": "q052",
+      "question": "List all Go files in the 2048-heuristics project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 803,
+      "error": null
+    },
+    {
+      "question_id": "q053",
+      "question": "Read the main implementation file 2048-heuristics.go",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 501,
+      "error": null
+    },
+    {
+      "question_id": "q054",
+      "question": "Search for 'strategy' patterns in the 2048-heuristics codebase",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 460,
+      "error": null
+    },
+    {
+      "question_id": "q055",
+      "question": "Create a performance comparison script perf_compare.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [
+        "write_file"
+      ],
+      "success": true,
+      "response_time_ms": 1184,
+      "error": null
+    },
+    {
+      "question_id": "q056",
+      "question": "What is memoization and when should it be used?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 1054,
+      "error": null
+    },
+    {
+      "question_id": "q057",
+      "question": "List all Scheme files in the enhanced-trie directory",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 581,
+      "error": null
+    },
+    {
+      "question_id": "q058",
+      "question": "Read the trie.scm implementation file",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 652,
+      "error": null
+    },
+    {
+      "question_id": "q059",
+      "question": "Find all references to 'neural' in the liquid-neural-networks project",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 466,
+      "error": null
+    },
+    {
+      "question_id": "q060",
+      "question": "Show the project structure of the armv8-neon-explorer directory",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 635,
+      "error": null
+    },
+    {
+      "question_id": "q061",
+      "question": "Read the Makefile.platforms from armv8-neon-explorer",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 713,
+      "error": null
+    },
+    {
+      "question_id": "q062",
+      "question": "What are design patterns and why are they useful?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 646,
+      "error": null
+    },
+    {
+      "question_id": "q063",
+      "question": "Search for 'docker' references in the gemini-fullstack-langgraph-quickstart",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 1119,
+      "error": null
+    },
+    {
+      "question_id": "q064",
+      "question": "Create a test runner script test_runner.sh in experiments/027-gemini-flash-lite-deep-eval",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1568,
+      "error": null
+    },
+    {
+      "question_id": "q065",
+      "question": "List all Ruby files in the mal-ruby-minimal project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 732,
+      "error": null
+    },
+    {
+      "question_id": "q066",
+      "question": "Read the step0_repl.rb file from mal-ruby-minimal",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 508,
+      "error": null
+    },
+    {
+      "question_id": "q067",
+      "question": "What is the publish-subscribe pattern?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 866,
+      "error": null
+    },
+    {
+      "question_id": "q068",
+      "question": "Find all Python test files in the persistent-tree-server project",
+      "expected_tools": [
+        "list_files",
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 881,
+      "error": null
+    },
+    {
+      "question_id": "q069",
+      "question": "Show the docker-compose.yml from the go-agentic-workshop",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 756,
+      "error": null
+    },
+    {
+      "question_id": "q070",
+      "question": "Search for 'agent' patterns in the multi-framework-agent-lab",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 585,
+      "error": null
+    },
+    {
+      "question_id": "q071",
+      "question": "Create a logging utility logger.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 763,
+      "error": null
+    },
+    {
+      "question_id": "q072",
+      "question": "What is the difference between synchronous and asynchronous programming?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 494,
+      "error": null
+    },
+    {
+      "question_id": "q073",
+      "question": "List all configuration files in the nexushive-setup project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1038,
+      "error": null
+    },
+    {
+      "question_id": "q074",
+      "question": "Read the pyproject.toml from the claude-code-metrics-lab",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 591,
+      "error": null
+    },
+    {
+      "question_id": "q075",
+      "question": "Find all references to 'metrics' in the claude-code-metrics-lab codebase",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 795,
+      "error": null
+    }
+  ],
+  "started_at": "2025-07-31T13:05:25.170542565+00:00",
+  "completed_at": "2025-07-31T13:07:44.511585344+00:00"
+}

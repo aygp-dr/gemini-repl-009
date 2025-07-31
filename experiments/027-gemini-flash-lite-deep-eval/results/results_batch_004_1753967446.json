@@ -1,0 +1,300 @@
+{
+  "batch_id": "batch_004",
+  "model": "gemini-2.0-flash-lite",
+  "total_questions": 25,
+  "successful": 16,
+  "failed": 9,
+  "success_rate": 0.64,
+  "results": [
+    {
+      "question_id": "q076",
+      "question": "What is the difference between composition and inheritance?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 674,
+      "error": null
+    },
+    {
+      "question_id": "q077",
+      "question": "List all JavaScript files in the mcp-server-qrcode project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1205,
+      "error": null
+    },
+    {
+      "question_id": "q078",
+      "question": "Read the package.json from mcp-server-qrcode",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1277,
+      "error": null
+    },
+    {
+      "question_id": "q079",
+      "question": "Search for 'qrcode' generation functions in mcp-server-qrcode",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 598,
+      "error": null
+    },
+    {
+      "question_id": "q080",
+      "question": "Create a result aggregator module results.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [
+        "write_file"
+      ],
+      "success": true,
+      "response_time_ms": 622,
+      "error": null
+    },
+    {
+      "question_id": "q081",
+      "question": "What is database normalization and why is it important?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 801,
+      "error": null
+    },
+    {
+      "question_id": "q082",
+      "question": "List all Clojure files in the core-async-flow-workshop",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 902,
+      "error": null
+    },
+    {
+      "question_id": "q083",
+      "question": "Read the deps.edn configuration from core-async-flow-workshop",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 1079,
+      "error": null
+    },
+    {
+      "question_id": "q084",
+      "question": "Find all references to 'async' in the core-async-flow-workshop",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 833,
+      "error": null
+    },
+    {
+      "question_id": "q085",
+      "question": "Show the directory structure of the claude-log-stream project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 814,
+      "error": null
+    },
+    {
+      "question_id": "q086",
+      "question": "Read the detailed_session_analysis.clj from claude-log-stream",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 457,
+      "error": null
+    },
+    {
+      "question_id": "q087",
+      "question": "What are microservices and what are their advantages and disadvantages?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 730,
+      "error": null
+    },
+    {
+      "question_id": "q088",
+      "question": "Search for 'telemetry' usage in the claude-code-metrics-lab tests",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 843,
+      "error": null
+    },
+    {
+      "question_id": "q089",
+      "question": "Create a metrics collector script metrics.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [
+        "write_file"
+      ],
+      "success": true,
+      "response_time_ms": 1615,
+      "error": null
+    },
+    {
+      "question_id": "q090",
+      "question": "List all Python files in the dtmfmarker project",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1146,
+      "error": null
+    },
+    {
+      "question_id": "q091",
+      "question": "Read the dtmfmarker.py main implementation file",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 1384,
+      "error": null
+    },
+    {
+      "question_id": "q092",
+      "question": "What is eventual consistency in distributed systems?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 494,
+      "error": null
+    },
+    {
+      "question_id": "q093",
+      "question": "Find all shell script files in the freebsd-sysmap project",
+      "expected_tools": [
+        "list_files",
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 680,
+      "error": null
+    },
+    {
+      "question_id": "q094",
+      "question": "Show the SECURITY.org file from freebsd-sysmap",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1404,
+      "error": null
+    },
+    {
+      "question_id": "q095",
+      "question": "Search for 'service' management patterns in freebsd-sysmap",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 764,
+      "error": null
+    },
+    {
+      "question_id": "q096",
+      "question": "Create a report generator report.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1022,
+      "error": null
+    },
+    {
+      "question_id": "q097",
+      "question": "What is the difference between REST and GraphQL APIs?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 470,
+      "error": null
+    },
+    {
+      "question_id": "q098",
+      "question": "List all Rust files in the gemini-repl-009 experiments directory",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 1434,
+      "error": null
+    },
+    {
+      "question_id": "q099",
+      "question": "Read the Cargo.toml from experiments/027-gemini-flash-lite-deep-eval",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 955,
+      "error": null
+    },
+    {
+      "question_id": "q100",
+      "question": "Find all function call related code in the gemini-repl-009 source",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 809,
+      "error": null
+    }
+  ],
+  "started_at": "2025-07-31T13:08:23.885637802+00:00",
+  "completed_at": "2025-07-31T13:10:46.973428646+00:00"
+}

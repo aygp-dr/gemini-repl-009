@@ -1,0 +1,73 @@
+[package]
+name = "gemini-repl"
+version = "0.9.0"
+edition = "2021"
+authors = ["AYGP-DR"]
+description = "A secure, performant REPL for AI conversations with self-modification capabilities"
+license = "MIT"
+repository = "https://github.com/aygp-dr/gemini-repl-009"
+keywords = ["gemini", "repl", "ai", "cli", "self-modifying"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+# Core dependencies
+anyhow = "1.0"
+tokio = { version = "1.40", features = ["full"] }
+async-trait = "0.1"
+futures = "0.3"
+
+# CLI and REPL
+clap = { version = "4.5", features = ["derive", "env"] }
+rustyline = "14.0"
+
+# HTTP and API
+reqwest = { version = "0.12", features = ["json", "stream"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Logging and debugging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+env_logger = "0.11"
+log = "0.4"
+
+# Utilities
+uuid = { version = "1.10", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1.11"
+dirs = "5.0"
+base64 = "0.22"
+
+# Code analysis and manipulation
+syn = { version = "2.0", features = ["full", "visit", "parsing"] }
+quote = "1.0"
+proc-macro2 = "1.0"
+
+# Security and sandboxing
+tempfile = "3.13"
+which = "6.0"
+
+# File operations
+walkdir = "2.5"
+glob = "0.3"
+toml = "0.8"
+
+[dev-dependencies]
+tempdir = "0.3"
+mockito = "1.5"
+proptest = "1.5"
+criterion = "0.5"
+
+[[bench]]
+name = "api_performance"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true
