@@ -12,7 +12,11 @@ generate-evals:
 
 test-small:
 	@echo "Running small baseline test (first batch, 25 questions)..."
-	cargo run --bin run-eval -- --start-batch 1 --model $(MODEL)
+	cargo run --bin run-eval -- --start-batch 1 --model $(MODEL) --delay $(RATE_LIMIT_DELAY)
+
+test-batch-n:
+	@echo "Running batch $(BATCH_NUM)..."
+	cargo run --bin run-eval -- --start-batch $(BATCH_NUM) --model $(MODEL) --delay $(RATE_LIMIT_DELAY)
 
 test-batch:
 	@echo "Running batch test with $(BATCH_SIZE) questions..."
