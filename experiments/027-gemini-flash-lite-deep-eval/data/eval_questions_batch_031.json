@@ -1,0 +1,155 @@
+{
+  "batch_id": "031",
+  "questions_range": "751-775",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["fintech", "trading systems", "risk management"],
+  "questions": [
+    {
+      "id": 751,
+      "type": "tool-calling",
+      "question": "Create a comprehensive high-frequency trading system with microsecond latency optimization and market data processing",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 752,
+      "type": "tool-calling",
+      "question": "Find all payment processing implementations and add multi-currency support with real-time exchange rates",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 753,
+      "type": "non-tool",
+      "question": "Explain the challenges of implementing real-time risk management in algorithmic trading systems"
+    },
+    {
+      "id": 754,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive portfolio optimization system with mean-variance analysis and Black-Litterman model",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 755,
+      "type": "tool-calling",
+      "question": "Search for all fraud detection algorithms and implement advanced pattern recognition with neural networks",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 756,
+      "type": "tool-calling",
+      "question": "Create a comprehensive derivatives pricing system with Monte Carlo simulation and Greeks calculation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 757,
+      "type": "tool-calling",
+      "question": "Find all regulatory compliance implementations and add automated reporting for financial regulations",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 758,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive credit scoring system with machine learning and alternative data sources",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 759,
+      "type": "non-tool",
+      "question": "What are the regulatory requirements for implementing open banking APIs and PSD2 compliance?"
+    },
+    {
+      "id": 760,
+      "type": "tool-calling",
+      "question": "Search for all market microstructure analysis and implement order book reconstruction with level-2 data",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 761,
+      "type": "tool-calling",
+      "question": "Create a comprehensive robo-advisor system with goal-based investing and automatic rebalancing",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 762,
+      "type": "tool-calling",
+      "question": "Find all alternative data processing and implement sentiment analysis from social media and news",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 763,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive liquidity management system with cash flow forecasting and optimization",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 764,
+      "type": "tool-calling",
+      "question": "Search for all backtesting frameworks and implement walk-forward analysis with performance attribution",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 765,
+      "type": "tool-calling",
+      "question": "Create a comprehensive central bank digital currency (CBDC) implementation with privacy features",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 766,
+      "type": "non-tool",
+      "question": "Describe the impact of quantum computing on current cryptographic methods used in financial systems"
+    },
+    {
+      "id": 767,
+      "type": "tool-calling",
+      "question": "Find all stress testing implementations and add scenario analysis with economic factor modeling",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 768,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive trade settlement system with DVP (Delivery versus Payment) and netting",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 769,
+      "type": "tool-calling",
+      "question": "Search for all ESG (Environmental, Social, Governance) scoring and implement sustainable investing metrics",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 770,
+      "type": "tool-calling",
+      "question": "Create a comprehensive wealth management platform with tax optimization and estate planning tools",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 771,
+      "type": "tool-calling",
+      "question": "Find all cryptocurrency trading implementations and add DeFi protocol integration with yield farming",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 772,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive insurance claims processing system with automated underwriting and fraud detection",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 773,
+      "type": "non-tool",
+      "question": "What are the challenges and opportunities of implementing AI in financial advisory services?"
+    },
+    {
+      "id": 774,
+      "type": "tool-calling",
+      "question": "Search for all real-time market data feeds and implement low-latency processing with FPGA acceleration",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 775,
+      "type": "tool-calling",
+      "question": "Create a comprehensive regulatory reporting system with XBRL and automated data validation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

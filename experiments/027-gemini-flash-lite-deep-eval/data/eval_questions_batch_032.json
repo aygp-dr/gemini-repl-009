@@ -1,0 +1,155 @@
+{
+  "batch_id": "032",
+  "questions_range": "776-800",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["e-commerce", "digital marketing", "customer analytics"],
+  "questions": [
+    {
+      "id": 776,
+      "type": "tool-calling",
+      "question": "Create a comprehensive recommendation engine for e-commerce with collaborative filtering and deep learning",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 777,
+      "type": "tool-calling",
+      "question": "Find all shopping cart implementations and add abandoned cart recovery with personalized email campaigns",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 778,
+      "type": "non-tool",
+      "question": "Explain the challenges of implementing omnichannel customer experience across multiple touchpoints"
+    },
+    {
+      "id": 779,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive inventory management system with demand forecasting and automatic reordering",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 780,
+      "type": "tool-calling",
+      "question": "Search for all pricing optimization algorithms and implement dynamic pricing with competitor analysis",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 781,
+      "type": "tool-calling",
+      "question": "Create a comprehensive customer segmentation system with RFM analysis and behavioral clustering",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 782,
+      "type": "tool-calling",
+      "question": "Find all search functionality and implement advanced search with natural language processing and faceted filtering",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 783,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive customer lifetime value prediction system with survival analysis",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 784,
+      "type": "non-tool",
+      "question": "What are the privacy considerations and GDPR compliance requirements for customer data analytics?"
+    },
+    {
+      "id": 785,
+      "type": "tool-calling",
+      "question": "Search for all marketing automation workflows and implement multi-channel campaign optimization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 786,
+      "type": "tool-calling",
+      "question": "Create a comprehensive loyalty program system with gamification and personalized rewards",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 787,
+      "type": "tool-calling",
+      "question": "Find all review and rating systems and implement sentiment analysis with fake review detection",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 788,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive supply chain optimization system with vendor management and logistics",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 789,
+      "type": "tool-calling",
+      "question": "Search for all customer service implementations and add AI-powered chatbots with escalation rules",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 790,
+      "type": "tool-calling",
+      "question": "Create a comprehensive conversion rate optimization system with A/B testing and funnel analysis",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 791,
+      "type": "non-tool",
+      "question": "Describe the impact of voice commerce and smart speakers on e-commerce user experience design"
+    },
+    {
+      "id": 792,
+      "type": "tool-calling",
+      "question": "Find all social commerce integrations and implement shoppable posts with influencer tracking",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 793,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive marketplace platform with multi-vendor support and commission management",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 794,
+      "type": "tool-calling",
+      "question": "Search for all mobile commerce implementations and optimize for progressive web app performance",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 795,
+      "type": "tool-calling",
+      "question": "Create a comprehensive subscription commerce system with billing automation and churn prediction",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 796,
+      "type": "tool-calling",
+      "question": "Find all personalization engines and implement real-time content optimization with machine learning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 797,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive return and refund management system with automated processing workflows",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 798,
+      "type": "non-tool",
+      "question": "What are the key performance metrics and KPIs for measuring e-commerce success across different channels?"
+    },
+    {
+      "id": 799,
+      "type": "tool-calling",
+      "question": "Search for all headless commerce implementations and integrate with modern JAMstack architectures",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 800,
+      "type": "tool-calling",
+      "question": "Create a comprehensive dropshipping automation system with supplier integration and order fulfillment",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}
