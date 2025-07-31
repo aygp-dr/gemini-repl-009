@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_018",
+  "created_at": "2025-07-31T11:15:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q426",
+      "question": "What is the difference between imperative and declarative SQL?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Database query languages and approaches"
+    },
+    {
+      "id": "q427",
+      "question": "List all documentation files in the nexusmind-setup project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring mind mapping and cognitive setup tools"
+    },
+    {
+      "id": "q428",
+      "question": "Read the README.md from nexusmind-setup",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding cognitive setup and configuration"
+    },
+    {
+      "id": "q429",
+      "question": "Search for 'setup' automation in nexusmind-setup",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding cognitive environment setup implementation"
+    },
+    {
+      "id": "q430",
+      "question": "Create a setup automation setup.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building automated setup for evaluation environment"
+    },
+    {
+      "id": "q431",
+      "question": "What is the difference between normalization and denormalization?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Database design optimization strategies"
+    },
+    {
+      "id": "q432",
+      "question": "List all Python files in the ollama-topic-forge project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring local LLM topic generation and management"
+    },
+    {
+      "id": "q433",
+      "question": "Read the RELEASE-NOTES-v0.5.0.md from ollama-topic-forge",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding LLM topic generation release features"
+    },
+    {
+      "id": "q434",
+      "question": "Find all references to 'ollama' integration in ollama-topic-forge",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating local LLM integration implementation"
+    },
+    {
+      "id": "q435",
+      "question": "Show the project structure of the para-spacy-lisp",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding parallel SpaCy NLP processing in Lisp"
+    },
+    {
+      "id": "q436",
+      "question": "Read the mcp-server.py from para-spacy-lisp",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding SpaCy MCP server implementation"
+    },
+    {
+      "id": "q437",
+      "question": "What is the difference between consistency and availability in CAP theorem?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Distributed systems trade-offs and theory"
+    },
+    {
+      "id": "q438",
+      "question": "Search for 'SpaCy' NLP patterns in para-spacy-lisp",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding natural language processing implementation"
+    },
+    {
+      "id": "q439",
+      "question": "Create an NLP processor nlp.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building natural language processing for evaluation"
+    },
+    {
+      "id": "q440",
+      "question": "List all Python files in the pbetj project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring project-based evaluation and testing framework"
+    },
+    {
+      "id": "q441",
+      "question": "Read the README.org from pbetj",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding project evaluation methodology"
+    },
+    {
+      "id": "q442",
+      "question": "What is the difference between latency and throughput?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "System performance metrics and optimization"
+    },
+    {
+      "id": "q443",
+      "question": "Find all references to 'evaluation' in pbetj",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating project evaluation and testing patterns"
+    },
+    {
+      "id": "q444",
+      "question": "Show the Makefile from pbetj",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding project build and evaluation process"
+    },
+    {
+      "id": "q445",
+      "question": "Search for 'testing' frameworks in pbetj",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding testing and evaluation framework implementation"
+    },
+    {
+      "id": "q446",
+      "question": "Create a testing framework test_framework.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building comprehensive testing framework for evaluation"
+    },
+    {
+      "id": "q447",
+      "question": "What are the main principles of continuous deployment?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software deployment and DevOps practices"
+    },
+    {
+      "id": "q448",
+      "question": "List all Python files in the petstore-workshop project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring API development workshop materials"
+    },
+    {
+      "id": "q449",
+      "question": "Read the uv.lock from petstore-workshop",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Python dependency locking with uv"
+    },
+    {
+      "id": "q450",
+      "question": "Find all references to 'API' patterns in petstore-workshop",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating REST API implementation and workshop code"
+    }
+  ]
+}

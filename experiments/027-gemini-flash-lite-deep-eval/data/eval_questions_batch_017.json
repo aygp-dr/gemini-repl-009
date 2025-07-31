@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_017",
+  "created_at": "2025-07-31T11:10:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q401",
+      "question": "What is the difference between public, private, and protected access modifiers?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Object-oriented programming access control"
+    },
+    {
+      "id": "q402",
+      "question": "List all Python files in the lazy-weekends project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring leisure programming and automation tools"
+    },
+    {
+      "id": "q403",
+      "question": "Read the package.json from lazy-weekends",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Node.js leisure automation dependencies"
+    },
+    {
+      "id": "q404",
+      "question": "Search for 'automation' patterns in lazy-weekends",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding leisure activity automation implementation"
+    },
+    {
+      "id": "q405",
+      "question": "Create an automation scheduler auto.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building automated scheduling for evaluation tasks"
+    },
+    {
+      "id": "q406",
+      "question": "What is the difference between shallow and deep copying?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Memory management and object copying"
+    },
+    {
+      "id": "q407",
+      "question": "List all Python files in the mcp-server-webdav project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring WebDAV server MCP implementation"
+    },
+    {
+      "id": "q408",
+      "question": "Read the pyproject.toml from mcp-server-webdav",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding WebDAV MCP server configuration"
+    },
+    {
+      "id": "q409",
+      "question": "Find all references to 'WebDAV' protocol in mcp-server-webdav",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating WebDAV protocol implementation code"
+    },
+    {
+      "id": "q410",
+      "question": "Show the project structure of the mindflow-shell",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding cognitive shell interface design"
+    },
+    {
+      "id": "q411",
+      "question": "Read the README.org from mindflow-shell",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding cognitive shell architecture"
+    },
+    {
+      "id": "q412",
+      "question": "What is the difference between threading and multiprocessing?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Concurrency and parallel processing approaches"
+    },
+    {
+      "id": "q413",
+      "question": "Search for 'shell' interface patterns in mindflow-shell",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding shell interface and command processing"
+    },
+    {
+      "id": "q414",
+      "question": "Create a shell interface shell.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building interactive shell for evaluation control"
+    },
+    {
+      "id": "q415",
+      "question": "List all Python files in the nexushive-agent-insights project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring agent insights and analytics platform"
+    },
+    {
+      "id": "q416",
+      "question": "Read the pyproject.toml from nexushive-agent-insights",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding agent insights project configuration"
+    },
+    {
+      "id": "q417",
+      "question": "What is the difference between composition and aggregation?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Object-oriented design relationships"
+    },
+    {
+      "id": "q418",
+      "question": "Find all references to 'insights' in nexushive-agent-insights",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating agent analytics and insights generation"
+    },
+    {
+      "id": "q419",
+      "question": "Show the setup.py from nexushive-agent-insights",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding agent insights project setup"
+    },
+    {
+      "id": "q420",
+      "question": "Search for 'agent' analytics patterns in nexushive-agent-insights",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding agent behavior analysis implementation"
+    },
+    {
+      "id": "q421",
+      "question": "Create an insights generator insights.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building evaluation insights and analytics"
+    },
+    {
+      "id": "q422",
+      "question": "What are the main principles of database ACID properties?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Database transaction management"
+    },
+    {
+      "id": "q423",
+      "question": "List all documentation files in the nexushive project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring NexusHive platform documentation"
+    },
+    {
+      "id": "q424",
+      "question": "Read the README.md from nexushive",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding NexusHive platform architecture"
+    },
+    {
+      "id": "q425",
+      "question": "Find all references to 'platform' architecture in nexushive",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating platform architecture implementation"
+    }
+  ]
+}
