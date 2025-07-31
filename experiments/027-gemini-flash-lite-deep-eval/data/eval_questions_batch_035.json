@@ -1,0 +1,155 @@
+{
+  "batch_id": "035",
+  "questions_range": "851-875",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["smart cities", "urban planning", "transportation systems"],
+  "questions": [
+    {
+      "id": 851,
+      "type": "tool-calling",
+      "question": "Create a comprehensive smart traffic management system with real-time optimization and congestion prediction",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 852,
+      "type": "tool-calling",
+      "question": "Find all IoT sensor implementations and create a unified urban sensor network with environmental monitoring",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 853,
+      "type": "non-tool",
+      "question": "Explain the challenges of implementing smart city initiatives while ensuring citizen privacy and data protection"
+    },
+    {
+      "id": 854,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive waste management optimization system with route planning and recycling analytics",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 855,
+      "type": "tool-calling",
+      "question": "Search for all parking management systems and implement dynamic pricing with occupancy prediction",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 856,
+      "type": "tool-calling",
+      "question": "Create a comprehensive public transportation system with real-time tracking and multimodal journey planning",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 857,
+      "type": "tool-calling",
+      "question": "Find all energy management implementations and add smart grid integration with renewable energy optimization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 858,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive citizen engagement platform with digital services and participatory governance",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 859,
+      "type": "non-tool",
+      "question": "What are the key performance indicators and metrics for measuring smart city success and livability?"
+    },
+    {
+      "id": 860,
+      "type": "tool-calling",
+      "question": "Search for all emergency response systems and implement intelligent dispatch with resource allocation",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 861,
+      "type": "tool-calling",
+      "question": "Create a comprehensive water management system with leak detection and quality monitoring",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 862,
+      "type": "tool-calling",
+      "question": "Find all urban planning tools and implement 3D city modeling with zoning analysis and visualization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 863,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive air quality monitoring system with pollution prediction and health alerts",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 864,
+      "type": "tool-calling",
+      "question": "Search for all street lighting implementations and add adaptive lighting with motion sensors and energy savings",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 865,
+      "type": "tool-calling",
+      "question": "Create a comprehensive noise pollution monitoring system with source identification and mitigation strategies",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 866,
+      "type": "non-tool",
+      "question": "Describe the role of 5G networks in enabling smart city applications and edge computing scenarios"
+    },
+    {
+      "id": 867,
+      "type": "tool-calling",
+      "question": "Find all bicycle sharing systems and implement demand prediction with optimal bike redistribution",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 868,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive building automation system with energy efficiency and predictive maintenance",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 869,
+      "type": "tool-calling",
+      "question": "Search for all public safety implementations and add predictive policing with crime hotspot analysis",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 870,
+      "type": "tool-calling",
+      "question": "Create a comprehensive urban agriculture system with vertical farming monitoring and crop optimization",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 871,
+      "type": "tool-calling",
+      "question": "Find all digital signage implementations and create dynamic content management with contextual messaging",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 872,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive crowd management system with density monitoring and flow optimization",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 873,
+      "type": "non-tool",
+      "question": "What are the sustainability considerations and circular economy principles in smart city development?"
+    },
+    {
+      "id": 874,
+      "type": "tool-calling",
+      "question": "Search for all disaster preparedness systems and implement early warning with evacuation planning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 875,
+      "type": "tool-calling",
+      "question": "Create a comprehensive urban heat island mitigation system with temperature monitoring and green space optimization",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "batch_id": "039",
+  "questions_range": "951-975",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["enterprise software", "ERP systems", "business intelligence"],
+  "questions": [
+    {
+      "id": 951,
+      "type": "tool-calling",
+      "question": "Create a comprehensive enterprise resource planning (ERP) system with integrated modules for finance, HR, and operations",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 952,
+      "type": "tool-calling",
+      "question": "Find all workflow automation implementations and add business process management with BPMN modeling",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 953,
+      "type": "non-tool",
+      "question": "Explain the challenges of digital transformation in large enterprises and legacy system modernization"
+    },
+    {
+      "id": 954,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive customer relationship management (CRM) system with sales pipeline and analytics",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 955,
+      "type": "tool-calling",
+      "question": "Search for all document management systems and implement enterprise content management with version control",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 956,
+      "type": "tool-calling",
+      "question": "Create a comprehensive business intelligence platform with OLAP cubes and self-service analytics",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 957,
+      "type": "tool-calling",
+      "question": "Find all human resources management implementations and add talent acquisition with AI-powered screening",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 958,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive supply chain management system with demand planning and procurement automation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 959,
+      "type": "non-tool",
+      "question": "What are the key considerations for implementing enterprise-wide single sign-on (SSO) and identity management?"
+    },
+    {
+      "id": 960,
+      "type": "tool-calling",
+      "question": "Search for all project management implementations and add resource allocation with capacity planning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 961,
+      "type": "tool-calling",
+      "question": "Create a comprehensive enterprise service bus (ESB) with message routing and service orchestration",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 962,
+      "type": "tool-calling",
+      "question": "Find all financial reporting implementations and add regulatory compliance with automated audit trails",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 963,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive knowledge management system with collaborative editing and expert networks",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 964,
+      "type": "tool-calling",
+      "question": "Search for all asset management implementations and add IoT-enabled tracking with predictive maintenance",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 965,
+      "type": "tool-calling",
+      "question": "Create a comprehensive master data management system with data quality and governance controls",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 966,
+      "type": "non-tool",
+      "question": "Describe the benefits and challenges of implementing microservices architecture in enterprise environments"
+    },
+    {
+      "id": 967,
+      "type": "tool-calling",
+      "question": "Find all enterprise search implementations and add intelligent content discovery with semantic search",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 968,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive business continuity system with disaster recovery and backup automation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 969,
+      "type": "tool-calling",
+      "question": "Search for all compliance management implementations and add risk assessment with automated monitoring",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 970,
+      "type": "tool-calling",
+      "question": "Create a comprehensive vendor management system with contract lifecycle and performance tracking",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 971,
+      "type": "tool-calling",
+      "question": "Find all enterprise mobility implementations and add mobile device management with security policies",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 972,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive performance management system with KPI dashboards and balanced scorecards",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 973,
+      "type": "non-tool",
+      "question": "What are the data privacy and security considerations for enterprise cloud migration strategies?"
+    },
+    {
+      "id": 974,
+      "type": "tool-calling",
+      "question": "Search for all enterprise integration implementations and add API management with rate limiting",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 975,
+      "type": "tool-calling",
+      "question": "Create a comprehensive enterprise data warehouse with dimensional modeling and ETL orchestration",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_013",
+  "created_at": "2025-07-31T10:50:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q301",
+      "question": "What is the difference between synchronous and asynchronous I/O?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Systems programming and I/O models"
+    },
+    {
+      "id": "q302",
+      "question": "List all shell scripts in the asciinema-opus-recplay project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring terminal recording and playback automation"
+    },
+    {
+      "id": "q303",
+      "question": "Read the record.sh script from asciinema-opus-recplay",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding terminal session recording automation"
+    },
+    {
+      "id": "q304",
+      "question": "Search for 'asciinema' recording patterns in asciinema-opus-recplay",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding terminal recording and playback implementation"
+    },
+    {
+      "id": "q305",
+      "question": "Create a terminal recorder recorder.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building terminal session recording for evaluation"
+    },
+    {
+      "id": "q306",
+      "question": "What is the difference between a compiler and an interpreter?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming language implementation approaches"
+    },
+    {
+      "id": "q307",
+      "question": "List all documentation files in the athenaeum knowledge base",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring knowledge management and documentation system"
+    },
+    {
+      "id": "q308",
+      "question": "Read the README.md from athenaeum",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding knowledge base architecture"
+    },
+    {
+      "id": "q309",
+      "question": "Find all references to 'knowledge' management in athenaeum",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating knowledge organization and retrieval code"
+    },
+    {
+      "id": "q310",
+      "question": "Show the project structure of the attribution-graphs-explorer",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding attribution and provenance graph analysis"
+    },
+    {
+      "id": "q311",
+      "question": "Read the configure script from attribution-graphs-explorer",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding build configuration for graph analysis"
+    },
+    {
+      "id": "q312",
+      "question": "What is the difference between pass-by-value and pass-by-reference?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming language parameter passing mechanisms"
+    },
+    {
+      "id": "q313",
+      "question": "Search for 'attribution' graph algorithms in attribution-graphs-explorer",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding provenance and attribution tracking implementation"
+    },
+    {
+      "id": "q314",
+      "question": "Create a provenance tracker provenance.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building evaluation result provenance tracking"
+    },
+    {
+      "id": "q315",
+      "question": "List all Python files in the atscale-ai-data-2025 project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring AI/ML data processing and analysis"
+    },
+    {
+      "id": "q316",
+      "question": "Read the main.py from atscale-ai-data-2025",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding AI data pipeline implementation"
+    },
+    {
+      "id": "q317",
+      "question": "What is the difference between supervised and unsupervised learning?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Machine learning paradigms"
+    },
+    {
+      "id": "q318",
+      "question": "Find all references to 'AI' processing in atscale-ai-data-2025",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating artificial intelligence processing patterns"
+    },
+    {
+      "id": "q319",
+      "question": "Show the pyproject.toml from atscale-ai-data-2025",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding AI project dependencies and configuration"
+    },
+    {
+      "id": "q320",
+      "question": "Search for 'data' processing pipelines in atscale-ai-data-2025",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding data processing and transformation code"
+    },
+    {
+      "id": "q321",
+      "question": "Create a data pipeline module pipeline.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building data processing pipeline for evaluation"
+    },
+    {
+      "id": "q322",
+      "question": "What are the main principles of domain-driven design?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software architecture and design patterns"
+    },
+    {
+      "id": "q323",
+      "question": "List all Python files in the aidan-evolution project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring evolutionary algorithms and AI development"
+    },
+    {
+      "id": "q324",
+      "question": "Read the README.md from aidan-evolution",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding evolutionary AI architecture"
+    },
+    {
+      "id": "q325",
+      "question": "Find all references to 'evolution' algorithms in aidan-evolution",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating evolutionary computation implementation"
+    }
+  ]
+}

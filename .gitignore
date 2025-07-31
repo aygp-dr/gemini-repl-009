@@ -1,70 +1,125 @@
-# Environment
-.env
-.env.local
-.env.*.local
+# Rust build artifacts
+/target
+***/target
 
-# Rust
-/target/
+# Cargo lock file (include for applications, exclude for libraries)
+# Since this is an application, we keep Cargo.lock in version control
+# Cargo.lock
+# But exclude experiment Cargo.lock files
+experiments/*/Cargo.lock
+
+# Backup files
 **/*.rs.bk
-Cargo.lock
+*.pdb
 
-# IDE
-.idea/
-*.swp
-*.swo
-*~
-.vscode/
-*.iml
+# MSVC Windows builds
+*.pdb
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-logs/
-*.log
-
-# Sessions and history
-.sessions/
-.gemini_history
-workspace/
-
-# Build artifacts
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+*.egg-info/
 dist/
 build/
 
-# Testing
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Temporary files
+.tmp/
+tmp/
+*.tmp
+*.temp
+*.log
+logs/
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.directory
+
+# Project specific
+workspace/
+.sessions/
+.gemini_repl/
+.gemini-repl/
+.claude/
+.ai/
+
+# Test artifacts
+test-results/
+*.orig
+
+# Backup files
+*.bak
+*.backup
+
+# Coverage reports
 tarpaulin-report.html
 cobertura.xml
 coverage/
 
-# Profiling
-perf.data
-perf.data.old
+# Flamegraph
 flamegraph.svg
+perf.data*
 
-# Documentation
-/target/doc/
+# RLS
+rls*.log
 
-# Temporary files
-*.tmp
-*.temp
-.cache/
+# Rustfmt
+**/*.rs.fmt
 
-# Python (for scripts)
-__pycache__/
-*.py[cod]
-*$py.class
-.pytest_cache/
-.mypy_cache/
+# Cargo configuration
+.cargo/config.toml
+!.cargo/config.toml.example
 
-# Node (for potential web interface)
+# Documentation builds
+/docs/_build/
+/site/
+
+# Generated documentation
+README.md
+
+# Node (if you add any JS tooling)
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Project-specific
-/experiments/*/output/
-/change-requests/*/build/
-/.ai/cache/
+# direnv
+.envrc
+.direnv/
+
+# Local notes
+*.local
+notes.txt
+TODO.txt
+
+# Formal methods tools (large JAR files)
+tools/formal-methods/
+tools/*.jar
+*.jar

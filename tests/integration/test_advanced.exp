@@ -1,0 +1,35 @@
+#!/usr/bin/expect -f
+# Advanced test for Gemini REPL - math and code generation
+
+set timeout 5
+
+# Start the REPL
+spawn ../../target/debug/gemini-repl
+
+# Wait for initial prompt
+expect "gemini>" 
+
+# Test 1: Basic math question
+send "what is 2 + 2\r"
+expect "You said: what is 2 + 2"
+expect "(Running in noop mode - no API calls made)"
+expect "gemini>"
+
+# Test 2: bc command example
+send "show how to do that using bc\r"
+expect "You said: show how to do that using bc"
+expect "(Running in noop mode - no API calls made)"
+expect "gemini>"
+
+# Test 3: Elisp example
+send "show that in elisp\r"
+expect "You said: show that in elisp"
+expect "(Running in noop mode - no API calls made)"
+expect "gemini>"
+
+# Exit
+send "/exit\r"
+expect "Goodbye!"
+
+expect eof
+puts "\n✅ Advanced tests passed!"

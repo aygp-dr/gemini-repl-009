@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_014",
+  "created_at": "2025-07-31T10:55:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q326",
+      "question": "What is the difference between race conditions and deadlocks?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Concurrent programming and synchronization issues"
+    },
+    {
+      "id": "q327",
+      "question": "List all Python files in the aibrainrot-zeddev project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring AI content analysis and synthesis"
+    },
+    {
+      "id": "q328",
+      "question": "Read the extract_article.py from aibrainrot-zeddev",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding content extraction and analysis"
+    },
+    {
+      "id": "q329",
+      "question": "Search for 'analysis' patterns in aibrainrot-zeddev",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding content analysis and processing algorithms"
+    },
+    {
+      "id": "q330",
+      "question": "Create a content analyzer analyzer.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building content analysis utilities for evaluation"
+    },
+    {
+      "id": "q331",
+      "question": "What is the difference between clustering and classification algorithms?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Machine learning algorithm categories"
+    },
+    {
+      "id": "q332",
+      "question": "List all Python files in the aif-c01 multi-language project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring polyglot AI development framework"
+    },
+    {
+      "id": "q333",
+      "question": "Read the pyproject.toml from aif-c01",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding multi-language AI project configuration"
+    },
+    {
+      "id": "q334",
+      "question": "Find all Clojure project configurations in aif-c01",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "clojure-config",
+      "context": "Locating Clojure build and dependency configurations"
+    },
+    {
+      "id": "q335",
+      "question": "Show the project.clj from aif-c01",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Leiningen configuration for AI project"
+    },
+    {
+      "id": "q336",
+      "question": "Search for 'AI' framework patterns in aif-c01",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding artificial intelligence framework implementation"
+    },
+    {
+      "id": "q337",
+      "question": "What is the difference between batch and stream processing?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Data processing paradigms"
+    },
+    {
+      "id": "q338",
+      "question": "Create a stream processor stream.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building streaming data processing for evaluation"
+    },
+    {
+      "id": "q339",
+      "question": "List all shell scripts in the aiml-worklog-rust-wasm-go project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring multi-language AI/ML development workflows"
+    },
+    {
+      "id": "q340",
+      "question": "Read the DEVELOPMENT_PROCESS.md from aiml-worklog-rust-wasm-go",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding multi-language development methodology"
+    },
+    {
+      "id": "q341",
+      "question": "Find all references to 'Rust' development in aiml-worklog-rust-wasm-go",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating Rust systems programming patterns"
+    },
+    {
+      "id": "q342",
+      "question": "What is the difference between interpreted and compiled languages?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming language implementation strategies"
+    },
+    {
+      "id": "q343",
+      "question": "Show the RUST-VALIDATION-TECHNIQUES.md from aiml-worklog-rust-wasm-go",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Rust validation and testing approaches"
+    },
+    {
+      "id": "q344",
+      "question": "Search for 'WASM' patterns in aiml-worklog-rust-wasm-go",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding WebAssembly integration and compilation"
+    },
+    {
+      "id": "q345",
+      "question": "Create a WebAssembly interface wasm.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building WebAssembly evaluation interface"
+    },
+    {
+      "id": "q346",
+      "question": "List all Python files in the aici-demo project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring AI constraint and inference demonstration"
+    },
+    {
+      "id": "q347",
+      "question": "Read the setup.py from aici-demo",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding AI constraint system setup"
+    },
+    {
+      "id": "q348",
+      "question": "What are the main principles of event sourcing?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Data persistence and system architecture patterns"
+    },
+    {
+      "id": "q349",
+      "question": "Find all references to 'AI' constraints in aici-demo",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating artificial intelligence constraint implementation"
+    },
+    {
+      "id": "q350",
+      "question": "Create a constraint solver solver.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building constraint satisfaction for evaluation optimization"
+    }
+  ]
+}

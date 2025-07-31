@@ -1,0 +1,38 @@
+[package]
+name = "function-calling"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "function-calling"
+path = "src/main.rs"
+
+[[bin]]
+name = "test-runner"
+path = "src/test_runner_main.rs"
+
+[[bin]]
+name = "makefile-test"
+path = "src/makefile_test.rs"
+
+[[bin]]
+name = "focused-test"
+path = "src/focused_test.rs"
+
+[[bin]]
+name = "harder-test"
+path = "src/harder_test.rs"
+
+[lib]
+name = "function_calling"
+path = "src/lib.rs"
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+chrono = { version = "0.4", features = ["serde"] }

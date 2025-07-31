@@ -1,0 +1,289 @@
+#+TITLE: Gemini REPL 009 Implementation Plan
+#+AUTHOR: AYGP-DR
+#+DATE: 2025-07-27
+
+* Overview
+
+Deep implementation plan for Rust-based Gemini REPL, organized by phase with specific tasks, dependencies, and deliverables.
+
+* Phase 1: Foundation (Week 1-2)
+
+** 1.1 Project Setup
+*** Tasks
+- [ ] Initialize Cargo project structure
+- [ ] Setup workspace with multiple crates
+- [ ] Configure rustfmt and clippy
+- [ ] Setup GitHub Actions CI/CD
+- [ ] Create .env.example
+- [ ] Setup logging infrastructure
+
+*** Dependencies
+- tokio = "1.39"
+- rustyline = "14.0"
+- tracing = "0.1"
+- anyhow = "1.0"
+- clap = "4.5"
+
+*** Deliverables
+- Basic project compiles and runs
+- CI/CD pipeline active
+- Logging outputs to file and stderr
+
+** 1.2 Core REPL Loop
+*** Tasks
+- [ ] Implement readline with history
+- [ ] Add signal handlers (Ctrl+C, Ctrl+D)
+- [ ] Create input parser
+- [ ] Handle multi-line input
+- [ ] Add command prefix detection (/)
+- [ ] Implement clean shutdown
+
+*** Critical Requirements
+- Must handle signals without panic
+- History persists between sessions
+- Graceful handling of terminal resize
+
+*** Test Cases
+- Signal handling under all conditions
+- History persistence across restarts
+- Edge cases (empty input, very long lines)
+
+** 1.3 Command System
+*** Tasks
+- [ ] Design command trait/interface
+- [ ] Implement command registry
+- [ ] Create base commands (/help, /exit, /clear, /version)
+- [ ] Add command parsing with arguments
+- [ ] Implement error handling for commands
+
+*** Architecture
+#+BEGIN_SRC rust
+trait Command {
+    fn name(&self) -> &str;
+    fn description(&self) -> &str;
+    fn execute(&self, args: &[&str]) -> Result<()>;
+}
+#+END_SRC
+
+** 1.4 API Client Foundation
+*** Tasks
+- [ ] Create HTTP client wrapper
+- [ ] Implement authentication
+- [ ] Add retry logic with exponential backoff
+- [ ] Create request/response types
+- [ ] Add timeout handling
+- [ ] Implement rate limiting
+
+*** Security Requirements
+- API key never logged
+- Secure storage in memory
+- Masked in error messages
+
+* Phase 2: Context Management (Week 3-4)
+
+** 2.1 Conversation History
+*** Tasks
+- [ ] Design message types (user/assistant/system)
+- [ ] Implement conversation state
+- [ ] Add role management
+- [ ] Create context validation
+- [ ] Implement history trimming
+- [ ] Add conversation export
+
+*** Data Structure
+#+BEGIN_SRC rust
+struct Message {
+    role: Role,
+    content: String,
+    timestamp: DateTime<Utc>,
+    tokens: Option<TokenCount>,
+}
+#+END_SRC
+
+** 2.2 Session Persistence
+*** Tasks
+- [ ] Design session file format (JSON)
+- [ ] Implement save/load commands
+- [ ] Add auto-save functionality
+- [ ] Create session metadata
+- [ ] Add session naming
+- [ ] Implement session resume
+
+*** File Structure
+#+BEGIN_SRC
+~/.gemini_repl/
+├── sessions/
+│   ├── default.json
+│   ├── project-x.json
+│   └── archived/
+├── config.toml
+└── gemini.log
+#+END_SRC
+
+** 2.3 Token Management
+*** Tasks
+- [ ] Implement token counting
+- [ ] Add cost estimation
+- [ ] Create token window management
+- [ ] Add pruning warnings
+- [ ] Implement usage statistics
+- [ ] Create /stats command
+
+*** Metrics to Track
+- Tokens per message
+- Total session tokens
+- Estimated cost
+- Token velocity
+
+* Phase 3: Tool System (Week 5-6)
+
+** 3.1 Security Sandbox
+*** Tasks
+- [ ] Implement path validation
+- [ ] Create workspace boundaries
+- [ ] Add symlink protection
+- [ ] Implement size limits
+- [ ] Create audit logging
+- [ ] Add permission system
+
+*** Security Tests Required
+- Path traversal attempts
+- Symlink escape attempts
+- Size limit enforcement
+- Permission violations
+
+** 3.2 Core Tools Implementation
+*** Tasks
+- [ ] read_file - with size limits
+- [ ] write_file - with workspace validation
+- [ ] list_files - with filtering
+- [ ] search_files - with regex support
+- [ ] Create tool trait/interface
+- [ ] Add tool registry
+
+*** Tool Interface
+#+BEGIN_SRC rust
+#[async_trait]
+trait Tool {
+    fn schema(&self) -> ToolSchema;
+    async fn execute(&self, args: Value) -> Result<Value>;
+}
+#+END_SRC
+
+** 3.3 Function Calling Integration
+*** Tasks
+- [ ] Parse Gemini function schemas
+- [ ] Implement tool dispatcher
+- [ ] Add validation layer
+- [ ] Create error handling
+- [ ] Add usage logging
+- [ ] Implement tool help system
+
+* Phase 4: Production Features (Week 7-8)
+
+** 4.1 Performance Optimization
+*** Tasks
+- [ ] Implement response streaming
+- [ ] Add async operations
+- [ ] Create caching layer
+- [ ] Optimize startup time
+- [ ] Add lazy loading
+- [ ] Profile and benchmark
+
+*** Performance Targets
+- <50ms startup
+- <500ms first response
+- <10MB base memory
+- Streaming feels instant
+
+** 4.2 Error Handling & Recovery
+*** Tasks
+- [ ] Implement graceful degradation
+- [ ] Add automatic recovery
+- [ ] Create timeout handling
+- [ ] Add circuit breakers
+- [ ] Implement rollback for tools
+- [ ] Add error reporting
+
+** 4.3 UI Enhancements
+*** Tasks
+- [ ] Add progress indicators
+- [ ] Create status line
+- [ ] Implement color themes
+- [ ] Add markdown rendering
+- [ ] Create spinner for API calls
+- [ ] Add completion hints
+
+* Testing Strategy
+
+** Unit Tests (Per Component)
+- REPL loop states
+- Command parsing
+- API client retries
+- Tool sandboxing
+- Token counting
+
+** Integration Tests
+- Full conversation flow
+- Session save/load cycle
+- Tool execution chain
+- Error recovery scenarios
+
+** Security Tests
+- Fuzzing inputs
+- Path traversal attempts
+- API key exposure checks
+- Resource exhaustion
+
+** Performance Tests
+- Startup benchmarks
+- Response time measurement
+- Memory profiling
+- Concurrent operations
+
+* Risk Mitigation
+
+** High Risk Areas
+1. Signal handling - Test exhaustively
+2. Security sandbox - External audit
+3. API changes - Version detection
+
+** Mitigation Strategies
+- Feature flags for experimental code
+- Comprehensive test coverage (>80%)
+- Staged rollout with beta testing
+- Rollback procedures documented
+
+* Success Criteria
+
+** Phase 1
+- [ ] REPL responds to input
+- [ ] Commands execute properly
+- [ ] API connection established
+- [ ] No crashes in 1hr session
+
+** Phase 2
+- [ ] Multi-turn conversations work
+- [ ] Sessions persist correctly
+- [ ] Token counts accurate ±5%
+- [ ] No data loss scenarios
+
+** Phase 3
+- [ ] Security audit passes
+- [ ] All tools functional
+- [ ] Self-hosting capable
+- [ ] Tool errors handled gracefully
+
+** Phase 4
+- [ ] Performance targets met
+- [ ] 99% uptime in testing
+- [ ] UI responsive and pleasant
+- [ ] Production-ready logging
+
+* Next Steps
+
+1. Convert this plan to GitHub issues
+2. Tag issues with milestones
+3. Create project board
+4. Begin Phase 1 implementation
+5. Weekly progress reviews

@@ -1,0 +1,29 @@
+#!/usr/bin/expect -f
+# Basic test for Gemini REPL
+
+set timeout 5
+
+# Start the REPL
+spawn ../../target/debug/gemini-repl
+
+# Wait for initial prompt
+expect "gemini>" 
+
+# Send a chat message
+send "Calculate 2 + 40\r"
+expect "You said: Calculate 2 + 40"
+expect "(Running in noop mode - no API calls made)"
+expect "gemini>"
+
+# Send another message
+send "Hello, Gemini!\r"
+expect "You said: Hello, Gemini!"
+expect "(Running in noop mode - no API calls made)"
+expect "gemini>"
+
+# Test exit
+send "/exit\r"
+expect "Goodbye!"
+
+expect eof
+puts "\n✅ Basic tests passed!"

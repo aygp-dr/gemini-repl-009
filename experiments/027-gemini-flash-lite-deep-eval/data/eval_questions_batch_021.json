@@ -1,0 +1,155 @@
+{
+  "batch_id": "021",
+  "questions_range": "501-525",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["advanced debugging", "code quality", "architectural patterns"],
+  "questions": [
+    {
+      "id": 501,
+      "type": "tool-calling",
+      "question": "Find all memory leaks in React components by analyzing useEffect cleanup functions and event listeners",
+      "expected_tools": ["search_code", "read_file", "list_files"]
+    },
+    {
+      "id": 502,
+      "type": "non-tool",
+      "question": "Explain the SOLID principles and provide examples of how they improve code maintainability"
+    },
+    {
+      "id": 503,
+      "type": "tool-calling",
+      "question": "Create a code quality analysis tool that measures cyclomatic complexity, code duplication, and test coverage",
+      "expected_tools": ["read_file", "search_code", "write_file"]
+    },
+    {
+      "id": 504,
+      "type": "tool-calling",
+      "question": "Search for all singleton pattern implementations and evaluate whether they should be replaced with dependency injection",
+      "expected_tools": ["search_code", "read_file", "list_files"]
+    },
+    {
+      "id": 505,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive style guide enforcement configuration for ESLint, Prettier, and TypeScript",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 506,
+      "type": "tool-calling",
+      "question": "Find all race conditions in concurrent code and implement proper synchronization mechanisms",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 507,
+      "type": "tool-calling",
+      "question": "Create a comprehensive monitoring system that tracks application performance metrics and business KPIs",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 508,
+      "type": "non-tool",
+      "question": "What are the trade-offs between event-driven architecture and request-response patterns in distributed systems?"
+    },
+    {
+      "id": 509,
+      "type": "tool-calling",
+      "question": "Search for all callback hell patterns and refactor them to use async/await or Promise chains",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 510,
+      "type": "tool-calling",
+      "question": "Generate integration tests that verify end-to-end workflows across multiple microservices",
+      "expected_tools": ["read_file", "search_code", "write_file"]
+    },
+    {
+      "id": 511,
+      "type": "tool-calling",
+      "question": "Find all N+1 query problems in ORM usage and implement proper eager loading or query optimization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 512,
+      "type": "tool-calling",
+      "question": "Create a comprehensive API versioning strategy with backward compatibility and deprecation paths",
+      "expected_tools": ["read_file", "search_code", "write_file"]
+    },
+    {
+      "id": 513,
+      "type": "tool-calling",
+      "question": "Search for all hardcoded timeout values and configuration settings and externalize them",
+      "expected_tools": ["search_code", "list_files", "write_file"]
+    },
+    {
+      "id": 514,
+      "type": "non-tool",
+      "question": "Describe the benefits and challenges of implementing Command Query Responsibility Segregation (CQRS)"
+    },
+    {
+      "id": 515,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive disaster recovery plan with automated failover and data replication strategies",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 516,
+      "type": "tool-calling",
+      "question": "Find all potential XSS vulnerabilities in user input handling and implement proper sanitization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 517,
+      "type": "tool-calling",
+      "question": "Create a comprehensive caching layer with Redis that includes cache invalidation and warming strategies",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 518,
+      "type": "tool-calling",
+      "question": "Search for all string concatenation in loops and optimize them for better performance",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 519,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive API rate limiting system with different tiers and usage analytics",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 520,
+      "type": "non-tool",
+      "question": "What are the key considerations when designing a multi-tenant SaaS application architecture?"
+    },
+    {
+      "id": 521,
+      "type": "tool-calling",
+      "question": "Find all inefficient database queries and implement proper indexing and query optimization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 522,
+      "type": "tool-calling",
+      "question": "Create a comprehensive feature flag system that supports A/B testing and gradual rollouts",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 523,
+      "type": "tool-calling",
+      "question": "Search for all blocking I/O operations and implement proper asynchronous handling",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 524,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive observability stack with distributed tracing, metrics, and log aggregation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 525,
+      "type": "tool-calling",
+      "question": "Find all potential deadlock scenarios in concurrent code and implement proper locking strategies",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    }
+  ]
+}

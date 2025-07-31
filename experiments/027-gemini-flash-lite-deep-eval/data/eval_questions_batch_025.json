@@ -1,0 +1,155 @@
+{
+  "batch_id": "025",
+  "questions_range": "601-625",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["cloud architecture", "serverless computing", "container orchestration"],
+  "questions": [
+    {
+      "id": 601,
+      "type": "tool-calling",
+      "question": "Create a comprehensive serverless architecture using AWS Lambda with proper cold start optimization",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 602,
+      "type": "tool-calling",
+      "question": "Find all container configurations and implement proper multi-stage Docker builds with security scanning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 603,
+      "type": "non-tool",
+      "question": "Explain the differences between Infrastructure as Code tools like Terraform, CloudFormation, and Pulumi"
+    },
+    {
+      "id": 604,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive Kubernetes operator for managing custom resources with reconciliation loops",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 605,
+      "type": "tool-calling",
+      "question": "Search for all cloud storage usage and implement proper data lifecycle management with archiving",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 606,
+      "type": "tool-calling",
+      "question": "Create a comprehensive service mesh configuration with Istio for microservices communication",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 607,
+      "type": "tool-calling",
+      "question": "Find all event-driven architecture patterns and implement serverless event processing pipelines",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 608,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive auto-scaling system for containers based on custom metrics and business logic",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 609,
+      "type": "non-tool",
+      "question": "What are the security considerations when implementing a zero-trust network architecture in the cloud?"
+    },
+    {
+      "id": 610,
+      "type": "tool-calling",
+      "question": "Search for all API Gateway configurations and implement proper request routing with rate limiting",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 611,
+      "type": "tool-calling",
+      "question": "Create a comprehensive disaster recovery system with cross-region replication and automated failover",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 612,
+      "type": "tool-calling",
+      "question": "Find all cloud function implementations and optimize them for memory usage and execution time",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 613,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive infrastructure monitoring system with custom CloudWatch metrics and alarms",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 614,
+      "type": "tool-calling",
+      "question": "Search for all database clustering configurations and implement proper sharding with load balancing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 615,
+      "type": "tool-calling",
+      "question": "Create a comprehensive CI/CD pipeline for containerized applications with security scanning and deployment strategies",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 616,
+      "type": "non-tool",
+      "question": "Describe the trade-offs between serverless and containerized architectures for different application types"
+    },
+    {
+      "id": 617,
+      "type": "tool-calling",
+      "question": "Find all content delivery network configurations and implement global content distribution with edge caching",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 618,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive secrets management system with automatic rotation and access controls",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 619,
+      "type": "tool-calling",
+      "question": "Search for all load balancer configurations and implement intelligent traffic routing with health checks",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 620,
+      "type": "tool-calling",
+      "question": "Create a comprehensive cost optimization system for cloud resources with automated rightsizing",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 621,
+      "type": "tool-calling",
+      "question": "Find all message queue implementations and optimize them for high-throughput event processing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 622,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive network security system with WAF rules and DDoS protection",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 623,
+      "type": "non-tool",
+      "question": "What are the key considerations for implementing GDPR compliance in a cloud-native application?"
+    },
+    {
+      "id": 624,
+      "type": "tool-calling",
+      "question": "Search for all data encryption implementations and ensure proper key management and rotation",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 625,
+      "type": "tool-calling",
+      "question": "Create a comprehensive observability platform with distributed tracing, metrics, and log correlation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "batch_id": "034",
+  "questions_range": "826-850",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["education technology", "learning management", "adaptive learning"],
+  "questions": [
+    {
+      "id": 826,
+      "type": "tool-calling",
+      "question": "Create a comprehensive learning management system (LMS) with adaptive learning paths and competency mapping",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 827,
+      "type": "tool-calling",
+      "question": "Find all student assessment implementations and add automated grading with natural language processing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 828,
+      "type": "non-tool",
+      "question": "Explain the pedagogical principles behind personalized learning and how technology can support different learning styles"
+    },
+    {
+      "id": 829,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive virtual classroom system with interactive whiteboards and breakout rooms",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 830,
+      "type": "tool-calling",
+      "question": "Search for all plagiarism detection systems and implement advanced text similarity analysis with machine learning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 831,
+      "type": "tool-calling",
+      "question": "Create a comprehensive student information system with enrollment management and transcript generation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 832,
+      "type": "tool-calling",
+      "question": "Find all content authoring tools and implement interactive multimedia lesson creation with SCORM compliance",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 833,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive gamification system for education with achievement badges and leaderboards",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 834,
+      "type": "non-tool",
+      "question": "What are the accessibility requirements and inclusive design principles for educational technology platforms?"
+    },
+    {
+      "id": 835,
+      "type": "tool-calling",
+      "question": "Search for all learning analytics implementations and add predictive modeling for student success",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 836,
+      "type": "tool-calling",
+      "question": "Create a comprehensive skill assessment platform with competency-based evaluation and certification",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 837,
+      "type": "tool-calling",
+      "question": "Find all collaborative learning tools and implement peer review systems with social learning features",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 838,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive mobile learning platform with offline content synchronization",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 839,
+      "type": "tool-calling",
+      "question": "Search for all virtual reality implementations and create immersive educational experiences with spatial learning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 840,
+      "type": "tool-calling",
+      "question": "Create a comprehensive parent-teacher communication system with progress tracking and meeting scheduling",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 841,
+      "type": "non-tool",
+      "question": "Describe the challenges of implementing AI tutoring systems and ensuring educational effectiveness"
+    },
+    {
+      "id": 842,
+      "type": "tool-calling",
+      "question": "Find all language learning implementations and add speech recognition with pronunciation feedback",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 843,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive library management system with digital resources and recommendation engines",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 844,
+      "type": "tool-calling",
+      "question": "Search for all proctoring systems and implement AI-powered exam monitoring with integrity verification",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 845,
+      "type": "tool-calling",
+      "question": "Create a comprehensive career guidance system with skill gap analysis and job market alignment",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 846,
+      "type": "tool-calling",
+      "question": "Find all special education support tools and implement assistive technology with personalized accommodations",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 847,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive research collaboration platform for academic institutions with publication management",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 848,
+      "type": "non-tool",
+      "question": "What are the privacy and ethical considerations when collecting and analyzing student data in educational technology?"
+    },
+    {
+      "id": 849,
+      "type": "tool-calling",
+      "question": "Search for all microlearning implementations and create bite-sized content delivery with spaced repetition",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 850,
+      "type": "tool-calling",
+      "question": "Create a comprehensive alumni network system with mentorship matching and career development tracking",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

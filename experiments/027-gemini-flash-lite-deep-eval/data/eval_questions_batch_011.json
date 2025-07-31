@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_011",
+  "created_at": "2025-07-31T10:40:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q251",
+      "question": "What is the difference between virtualization and containerization?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Infrastructure and deployment technologies"
+    },
+    {
+      "id": "q252",
+      "question": "List all configuration files in the mbtaterm transit visualization project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring public transit data visualization"
+    },
+    {
+      "id": "q253",
+      "question": "Read the mbta_test.py from mbtaterm",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding transit data processing tests"
+    },
+    {
+      "id": "q254",
+      "question": "Search for 'visualization' patterns in mbtaterm",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding data visualization implementation"
+    },
+    {
+      "id": "q255",
+      "question": "Create a visualization helper viz.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building visualization utilities for evaluation results"
+    },
+    {
+      "id": "q256",
+      "question": "What is the difference between horizontal and vertical scaling?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "System scalability and architecture"
+    },
+    {
+      "id": "q257",
+      "question": "List all Python files in the mindflow cognitive architecture project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring cognitive architecture implementation"
+    },
+    {
+      "id": "q258",
+      "question": "Read the README.org from mindflow",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding cognitive flow architecture documentation"
+    },
+    {
+      "id": "q259",
+      "question": "Find all references to 'cognitive' patterns in mindflow",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating cognitive architecture implementation patterns"
+    },
+    {
+      "id": "q260",
+      "question": "Show the directory structure of the lisp-dialect-showcase",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding Lisp language comparison project"
+    },
+    {
+      "id": "q261",
+      "question": "Read the showcase-clojure.org from lisp-dialect-showcase",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Clojure language showcase documentation"
+    },
+    {
+      "id": "q262",
+      "question": "What is the difference between strong and weak typing?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Type system design in programming languages"
+    },
+    {
+      "id": "q263",
+      "question": "Search for 'macro' systems across lisp-dialect-showcase",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding macro system implementations across Lisp dialects"
+    },
+    {
+      "id": "q264",
+      "question": "Create a language comparison tool compare.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building programming language feature comparison"
+    },
+    {
+      "id": "q265",
+      "question": "List all Emacs Lisp files in the llm-function-actors project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring LLM function calling within Emacs"
+    },
+    {
+      "id": "q266",
+      "question": "Read the llm-function-actors.el implementation",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Emacs Lisp LLM integration"
+    },
+    {
+      "id": "q267",
+      "question": "What is the difference between eager and lazy evaluation?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming language evaluation strategies"
+    },
+    {
+      "id": "q268",
+      "question": "Find all function calling patterns in llm-function-actors",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating LLM function calling implementations"
+    },
+    {
+      "id": "q269",
+      "question": "Show the test-makefile.mk from llm-function-actors",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding testing automation for LLM functions"
+    },
+    {
+      "id": "q270",
+      "question": "Search for 'actor' model patterns in llm-function-actors",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding actor-based concurrency implementations"
+    },
+    {
+      "id": "q271",
+      "question": "Create an actor system actors.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building actor-based concurrent evaluation system"
+    },
+    {
+      "id": "q272",
+      "question": "What are the principles of service-oriented architecture?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Enterprise architecture patterns"
+    },
+    {
+      "id": "q273",
+      "question": "List all tools in the llm-tool-collection project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring LLM tooling and utilities collection"
+    },
+    {
+      "id": "q274",
+      "question": "Read the llm-tool-collection.el from the tools project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding LLM tool collection implementation"
+    },
+    {
+      "id": "q275",
+      "question": "Find all references to 'tool' definitions in llm-tool-collection",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating LLM tool definition and registration patterns"
+    }
+  ]
+}

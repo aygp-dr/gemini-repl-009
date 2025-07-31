@@ -264,16 +264,16 @@ Performance and polish features should come after stability:
 * Risk Mitigation
 
 ** High-Risk Areas
-1. **Signal Handling**: Multiple versions failed here
-2. **Tool Security**: Critical vulnerability if done wrong
-3. **Context Management**: Easy to lose user data
-4. **API Changes**: Google APIs evolve rapidly
+1. /Signal Handling/: Multiple versions failed here
+2. /Tool Security/: Critical vulnerability if done wrong
+3. /Context Management/: Easy to lose user data
+4. /API Changes/: Google APIs evolve rapidly
 
 ** Mitigation Strategies
-1. **Comprehensive Testing**: Unit + Integration + TTY tests
-2. **Security-First Design**: Sandbox from day one
-3. **Data Persistence**: Auto-save and backup
-4. **API Abstraction**: Clean separation layers
+1. /Comprehensive Testing/: Unit + Integration + TTY tests
+2. /Security-First Design/: Sandbox from day one
+3. /Data Persistence/: Auto-save and backup
+4. /API Abstraction/: Clean separation layers
 
 * Success Metrics
 
@@ -313,51 +313,51 @@ Performance and polish features should come after stability:
 | 4 | 2 weeks | 4 feature sets | Medium |
 | 5 | Open-ended | Extensions | Low |
 
-Total MVP: **8 weeks** for production-ready system
+Total MVP: *8 weeks* for production-ready system
 
 * Architecture Decisions
 
 ** Core Principles
-1. **Security by Design**: Sandbox everything from start
-2. **Async by Default**: Use Tokio throughout
-3. **Error Transparency**: Clear error messages and recovery
-4. **Test-Driven**: Write tests before features
-5. **Configuration-Driven**: Minimize hard-coded behavior
+1. /Security by Design/: Sandbox everything from start
+2. /Async by Default/: Use Tokio throughout
+3. /Error Transparency/: Clear error messages and recovery
+4. /Test-Driven/: Write tests before features
+5. /Configuration-Driven/: Minimize hard-coded behavior
 
 ** Technology Choices
-- **REPL**: =rustyline= for readline functionality
-- **HTTP**: =reqwest= with async support
-- **Serialization**: =serde= + =serde_json=
-- **CLI**: =clap= with derive macros
-- **Logging**: =log= + =env_logger=
-- **Testing**: Built-in test framework + property tests
+- /REPL/: =rustyline= for readline functionality
+- /HTTP/: =reqwest= with async support
+- /Serialization/: =serde= + =serde_json=
+- /CLI/: =clap= with derive macros
+- /Logging/: =log= + =env_logger=
+- /Testing/: Built-in test framework + property tests
 
 ** Design Patterns
-- **Command Pattern**: For extensible command system
-- **Strategy Pattern**: For multiple tool implementations
-- **Observer Pattern**: For logging and monitoring
-- **Builder Pattern**: For configuration management
+- /Command Pattern/: For extensible command system
+- /Strategy Pattern/: For multiple tool implementations
+- /Observer Pattern/: For logging and monitoring
+- /Builder Pattern/: For configuration management
 
 * Lessons from Previous Versions
 
 ** What Worked Well
-1. **Incremental Development**: Each version built on previous learnings
-2. **Language-Specific Strengths**: Leveraging unique language features
-3. **Educational Focus**: Clear documentation and examples
-4. **Security Consciousness**: Later versions prioritized security
+1. /Incremental Development/: Each version built on previous learnings
+2. /Language-Specific Strengths/: Leveraging unique language features
+3. /Educational Focus/: Clear documentation and examples
+4. /Security Consciousness/: Later versions prioritized security
 
 ** What Didn't Work
-1. **Over-Engineering**: Complex build systems hindered progress
-2. **Incomplete Error Handling**: Led to poor user experience
-3. **Security Afterthoughts**: Vulnerabilities in deployed systems
-4. **Missing Tests**: Same bugs appeared across versions
+1. /Over-Engineering/: Complex build systems hindered progress
+2. /Incomplete Error Handling/: Led to poor user experience
+3. /Security Afterthoughts/: Vulnerabilities in deployed systems
+4. /Missing Tests/: Same bugs appeared across versions
 
 ** Key Insights
-1. **Start Simple**: MVP first, then evolve
-2. **Security First**: Design boundaries early
-3. **Test Everything**: Especially edge cases and security
-4. **User Experience Matters**: Performance and reliability are features
-5. **Documentation Enables**: Good docs accelerate development
+1. /Start Simple/: MVP first, then evolve
+2. /Security First/: Design boundaries early
+3. /Test Everything/: Especially edge cases and security
+4. /User Experience Matters/: Performance and reliability are features
+5. /Documentation Enables/: Good docs accelerate development
 
 ---
 

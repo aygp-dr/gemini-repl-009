@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_005",
+  "created_at": "2025-07-31T10:10:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q101",
+      "question": "What is the observer pattern and when should it be used?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Behavioral design patterns"
+    },
+    {
+      "id": "q102",
+      "question": "List all documentation files in the cookbook project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring documentation structure"
+    },
+    {
+      "id": "q103",
+      "question": "Read the README.md from the cookbook project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding project purpose and setup"
+    },
+    {
+      "id": "q104",
+      "question": "Search for 'neural' implementations in the liquid-neural-networks project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding neural network algorithm implementations"
+    },
+    {
+      "id": "q105",
+      "question": "Create a data validator module validator.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building input validation for evaluation pipeline"
+    },
+    {
+      "id": "q106",
+      "question": "What is the difference between Docker and virtual machines?",
+      "expected_tool_calls": [],
+      "category": "non-tool", 
+      "context": "Containerization technology"
+    },
+    {
+      "id": "q107",
+      "question": "List all Emacs Lisp files in the mccarthy-lisp-explorer",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Emacs integration for Lisp education"
+    },
+    {
+      "id": "q108",
+      "question": "Read the mccarthy-lisp-explorer.el file",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Emacs Lisp integration code"
+    },
+    {
+      "id": "q109",
+      "question": "Find all references to 'lambda' in the mccarthy-lisp-explorer",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Understanding lambda calculus implementations"
+    },
+    {
+      "id": "q110",
+      "question": "Show the file structure of the frames-explorer project",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding frame-based knowledge representation"
+    },
+    {
+      "id": "q111",
+      "question": "Read the frame_system.py implementation from frames-explorer",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding knowledge representation framework"
+    },
+    {
+      "id": "q112",
+      "question": "What is load balancing and what are common strategies?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Distributed systems architecture"
+    },
+    {
+      "id": "q113",
+      "question": "Search for 'test' files in the pyte-game-tests project",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "test-discovery",
+      "context": "Finding game testing infrastructure"
+    },
+    {
+      "id": "q114",
+      "question": "Create a statistics module stats.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building statistical analysis for evaluation results"
+    },
+    {
+      "id": "q115",
+      "question": "List all Python files in the project-keyword-spotter",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring voice recognition ML project"
+    },
+    {
+      "id": "q116",
+      "question": "Read the audio_recorder.py from project-keyword-spotter",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding audio capture implementation"
+    },
+    {
+      "id": "q117",
+      "question": "What is the difference between machine learning and deep learning?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "AI and ML concepts"
+    },
+    {
+      "id": "q118",
+      "question": "Find all Docker configuration files in the armv8-neon-explorer",
+      "expected_tool_calls": ["list_files", "search_code"],
+      "category": "docker-config",
+      "context": "Understanding multi-architecture container setup"
+    },
+    {
+      "id": "q119",
+      "question": "Show the docker-compose.yml from armv8-neon-explorer",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding containerized ARM development environment"
+    },
+    {
+      "id": "q120",
+      "question": "Search for 'NEON' optimization patterns in armv8-neon-explorer",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding ARM NEON SIMD implementations"
+    },
+    {
+      "id": "q121",
+      "question": "Create a visualization module charts.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building evaluation result visualization"
+    },
+    {
+      "id": "q122",
+      "question": "What are the principles of functional programming?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming paradigms"
+    },
+    {
+      "id": "q123",
+      "question": "List all configuration files in the github-manager project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring GitHub automation tools"
+    },
+    {
+      "id": "q124",
+      "question": "Read the forge-setup.sh from github-manager",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Git forge integration setup"
+    },
+    {
+      "id": "q125",
+      "question": "Find all references to 'issue' management in github-manager",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Understanding GitHub issue automation patterns"
+    }
+  ]
+}

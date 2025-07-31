@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_016",
+  "created_at": "2025-07-31T11:05:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q376",
+      "question": "What is the difference between linear and binary search algorithms?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Search algorithms and time complexity analysis"
+    },
+    {
+      "id": "q377",
+      "question": "List all Python files in the dotjs-2025 conference project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring JavaScript conference presentation materials"
+    },
+    {
+      "id": "q378",
+      "question": "Read the pyproject.toml from dotjs-2025",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding conference project Python dependencies"
+    },
+    {
+      "id": "q379",
+      "question": "Search for 'presentation' patterns in dotjs-2025",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding presentation generation and management code"
+    },
+    {
+      "id": "q380",
+      "question": "Create a presentation builder present.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building presentation generation for evaluation results"
+    },
+    {
+      "id": "q381",
+      "question": "What is the difference between polymorphism and inheritance?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Object-oriented programming concepts"
+    },
+    {
+      "id": "q382",
+      "question": "List all Python files in the els2026-lightning-talks project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Emacs Lisp conference presentation tools"
+    },
+    {
+      "id": "q383",
+      "question": "Read the talks_setup.sh from els2026-lightning-talks",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding conference talk setup automation"
+    },
+    {
+      "id": "q384",
+      "question": "Find all references to 'lightning' talk patterns in els2026-lightning-talks",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating rapid presentation format implementations"
+    },
+    {
+      "id": "q385",
+      "question": "Show the project structure of the functional-tui-exploration",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding functional terminal UI development"
+    },
+    {
+      "id": "q386",
+      "question": "Read the gren_tui_learnings.md from functional-tui-exploration",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding functional TUI development insights"
+    },
+    {
+      "id": "q387",
+      "question": "What is the difference between stack and heap memory allocation?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Memory management and systems programming"
+    },
+    {
+      "id": "q388",
+      "question": "Search for 'functional' programming patterns in functional-tui-exploration",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding functional programming TUI implementations"
+    },
+    {
+      "id": "q389",
+      "question": "Create a TUI framework tui.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building terminal UI for evaluation monitoring"
+    },
+    {
+      "id": "q390",
+      "question": "List all Python files in the gdg-cloud-boston-agents-2025 project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring cloud AI agents conference materials"
+    },
+    {
+      "id": "q391",
+      "question": "Read the self-study-plan.org from gdg-cloud-boston-agents-2025",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding cloud AI learning methodology"
+    },
+    {
+      "id": "q392",
+      "question": "What is the difference between stateful and stateless services?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Distributed systems and service design"
+    },
+    {
+      "id": "q393",
+      "question": "Find all references to 'agents' in gdg-cloud-boston-agents-2025",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating AI agent implementation and discussion"
+    },
+    {
+      "id": "q394",
+      "question": "Show the gcloud-reference.org from gdg-cloud-boston-agents-2025",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Google Cloud reference documentation"
+    },
+    {
+      "id": "q395",
+      "question": "Search for 'cloud' platform patterns in gdg-cloud-boston-agents-2025",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding cloud platform integration code"
+    },
+    {
+      "id": "q396",
+      "question": "Create a cloud interface cloud.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building cloud platform integration for evaluation"
+    },
+    {
+      "id": "q397",
+      "question": "What are the main principles of continuous integration?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software development and deployment practices"
+    },
+    {
+      "id": "q398",
+      "question": "List all Python files in the grafanacon-2025 project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring monitoring and observability conference materials"
+    },
+    {
+      "id": "q399",
+      "question": "Read the pyproject.toml from grafanacon-2025",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding monitoring tools project configuration"
+    },
+    {
+      "id": "q400",
+      "question": "Find all references to 'monitoring' in grafanacon-2025",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating monitoring and observability implementation"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "timestamp": "20250729_184112",
+  "model": "gemini-1.5-flash",
+  "total_runs": 20,
+  "results": {
+    "success": 0,
+    "wrong_function": 0,
+    "no_function": 14,
+    "failed": 6
+  },
+  "success_rate": 0,
+  "function_call_rate": 0
+}

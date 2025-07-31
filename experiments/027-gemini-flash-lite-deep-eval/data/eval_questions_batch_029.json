@@ -1,0 +1,155 @@
+{
+  "batch_id": "029",
+  "questions_range": "701-725",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["bioinformatics", "scientific computing", "data visualization"],
+  "questions": [
+    {
+      "id": 701,
+      "type": "tool-calling",
+      "question": "Create a comprehensive DNA sequence analysis pipeline with BLAST integration and phylogenetic tree construction",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 702,
+      "type": "tool-calling",
+      "question": "Find all numerical simulation code and implement high-performance computing with parallel processing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 703,
+      "type": "non-tool",
+      "question": "Explain the computational challenges in protein folding prediction and current approaches like AlphaFold"
+    },
+    {
+      "id": 704,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive mass spectrometry data analysis system with peak detection and compound identification",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 705,
+      "type": "tool-calling",
+      "question": "Search for all statistical analysis implementations and add Bayesian inference with MCMC sampling",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 706,
+      "type": "tool-calling",
+      "question": "Create a comprehensive molecular dynamics simulation system with force field calculations",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 707,
+      "type": "tool-calling",
+      "question": "Find all genomic variant calling implementations and optimize for whole genome sequencing analysis",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 708,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive interactive data visualization system with D3.js and WebGL for large datasets",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 709,
+      "type": "non-tool",
+      "question": "What are the ethical considerations in genomic data analysis and personalized medicine applications?"
+    },
+    {
+      "id": 710,
+      "type": "tool-calling",
+      "question": "Search for all climate modeling code and implement atmospheric simulation with weather prediction",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 711,
+      "type": "tool-calling",
+      "question": "Create a comprehensive drug discovery pipeline with molecular docking and ADMET prediction",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 712,
+      "type": "tool-calling",
+      "question": "Find all image processing for microscopy and implement advanced cell segmentation and tracking",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 713,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive epidemiological modeling system with disease spread simulation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 714,
+      "type": "tool-calling",
+      "question": "Search for all protein structure analysis and implement secondary structure prediction algorithms",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 715,
+      "type": "tool-calling",
+      "question": "Create a comprehensive astronomical data processing system with telescope image calibration",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 716,
+      "type": "non-tool",
+      "question": "Describe the computational methods used in computational fluid dynamics and their applications"
+    },
+    {
+      "id": 717,
+      "type": "tool-calling",
+      "question": "Find all gene expression analysis code and implement differential expression with pathway enrichment",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 718,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive chemical reaction simulation system with thermodynamic calculations",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 719,
+      "type": "tool-calling",
+      "question": "Search for all financial modeling implementations and add Monte Carlo risk assessment",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 720,
+      "type": "tool-calling",
+      "question": "Create a comprehensive neuroscience data analysis system with spike train analysis and connectivity mapping",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 721,
+      "type": "tool-calling",
+      "question": "Find all geological survey data processing and implement seismic wave analysis with earthquake prediction",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 722,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive materials science simulation system with crystal structure analysis",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 723,
+      "type": "non-tool",
+      "question": "What are the key challenges in computational biology for understanding complex biological systems?"
+    },
+    {
+      "id": 724,
+      "type": "tool-calling",
+      "question": "Search for all ecological modeling implementations and add biodiversity assessment with conservation planning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 725,
+      "type": "tool-calling",
+      "question": "Create a comprehensive particle physics simulation system with collision detection and decay analysis",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

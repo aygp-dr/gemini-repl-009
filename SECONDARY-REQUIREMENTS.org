@@ -330,13 +330,13 @@ Support migration from other versions:
 
 From analyzing 8 versions and hundreds of issues:
 
-1. **Security First**: Path traversal and API key leaks are critical
-2. **Performance Matters**: Users notice >500ms delays
-3. **Tools Are Tricky**: AI needs clear guidance to use tools
-4. **Context Is King**: Losing context frustrates users
-5. **Errors Happen**: Graceful degradation is essential
-6. **Simple Wins**: 4-6 tools cover most use cases
-7. **Testing Pays**: Many issues could be caught by tests
+1. /Security First/: Path traversal and API key leaks are critical
+2. /Performance Matters/: Users notice >500ms delays
+3. /Tools Are Tricky/: AI needs clear guidance to use tools
+4. /Context Is King/: Losing context frustrates users
+5. /Errors Happen/: Graceful degradation is essential
+6. /Simple Wins/: 4-6 tools cover most use cases
+7. /Testing Pays/: Many issues could be caught by tests
 
 ---
 

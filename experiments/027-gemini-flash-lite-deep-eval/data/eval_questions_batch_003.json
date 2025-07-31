@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_003",
+  "created_at": "2025-07-31T10:00:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q051",
+      "question": "What is the difference between static and dynamic typing?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming language type systems"
+    },
+    {
+      "id": "q052",
+      "question": "List all Go files in the 2048-heuristics project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Go game AI implementation"
+    },
+    {
+      "id": "q053",
+      "question": "Read the main implementation file 2048-heuristics.go",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding game heuristics algorithms"
+    },
+    {
+      "id": "q054",
+      "question": "Search for 'strategy' patterns in the 2048-heuristics codebase",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding AI strategy implementations"
+    },
+    {
+      "id": "q055",
+      "question": "Create a performance comparison script perf_compare.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building evaluation performance tools"
+    },
+    {
+      "id": "q056",
+      "question": "What is memoization and when should it be used?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Optimization techniques"
+    },
+    {
+      "id": "q057",
+      "question": "List all Scheme files in the enhanced-trie directory",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring functional data structure implementation"
+    },
+    {
+      "id": "q058",
+      "question": "Read the trie.scm implementation file",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding trie data structure in Scheme"
+    },
+    {
+      "id": "q059",
+      "question": "Find all references to 'neural' in the liquid-neural-networks project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Exploring neural network implementations"
+    },
+    {
+      "id": "q060",
+      "question": "Show the project structure of the armv8-neon-explorer directory",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding ARM optimization project layout"
+    },
+    {
+      "id": "q061",
+      "question": "Read the Makefile.platforms from armv8-neon-explorer",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding cross-platform build configuration"
+    },
+    {
+      "id": "q062",
+      "question": "What are design patterns and why are they useful?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software engineering principles"
+    },
+    {
+      "id": "q063",
+      "question": "Search for 'docker' references in the gemini-fullstack-langgraph-quickstart",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding containerization setup"
+    },
+    {
+      "id": "q064",
+      "question": "Create a test runner script test_runner.sh in experiments/027-gemini-flash-lite-deep-eval",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Setting up automated test execution"
+    },
+    {
+      "id": "q065",
+      "question": "List all Ruby files in the mal-ruby-minimal project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Lisp interpreter implementation in Ruby"
+    },
+    {
+      "id": "q066",
+      "question": "Read the step0_repl.rb file from mal-ruby-minimal",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding REPL bootstrap implementation"
+    },
+    {
+      "id": "q067",
+      "question": "What is the publish-subscribe pattern?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Messaging and communication patterns"
+    },
+    {
+      "id": "q068",
+      "question": "Find all Python test files in the persistent-tree-server project",
+      "expected_tool_calls": ["list_files", "search_code"],
+      "category": "test-discovery",
+      "context": "Locating test infrastructure for tree data structure"
+    },
+    {
+      "id": "q069",
+      "question": "Show the docker-compose.yml from the go-agentic-workshop",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding containerized Go development setup"
+    },
+    {
+      "id": "q070",
+      "question": "Search for 'agent' patterns in the multi-framework-agent-lab",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding agent implementation patterns"
+    },
+    {
+      "id": "q071",
+      "question": "Create a logging utility logger.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building evaluation infrastructure"
+    },
+    {
+      "id": "q072",
+      "question": "What is the difference between synchronous and asynchronous programming?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming paradigms"
+    },
+    {
+      "id": "q073",
+      "question": "List all configuration files in the nexushive-setup project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring system setup configurations"
+    },
+    {
+      "id": "q074",
+      "question": "Read the pyproject.toml from the claude-code-metrics-lab",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Python project dependencies and tooling"
+    },
+    {
+      "id": "q075",
+      "question": "Find all references to 'metrics' in the claude-code-metrics-lab codebase",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Understanding telemetry and monitoring implementation"
+    }
+  ]
+}

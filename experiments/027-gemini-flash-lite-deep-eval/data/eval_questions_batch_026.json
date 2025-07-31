@@ -1,0 +1,155 @@
+{
+  "batch_id": "026",
+  "questions_range": "626-650",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["progressive web apps", "mobile development", "accessibility"],
+  "questions": [
+    {
+      "id": 626,
+      "type": "tool-calling",
+      "question": "Create a comprehensive Progressive Web App with offline functionality and background sync capabilities",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 627,
+      "type": "tool-calling",
+      "question": "Find all mobile-specific UI components and implement responsive design with touch gesture support",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 628,
+      "type": "non-tool",
+      "question": "Explain the differences between native, hybrid, and web-based mobile app development approaches"
+    },
+    {
+      "id": 629,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive accessibility audit system that checks WCAG 2.1 compliance automatically",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 630,
+      "type": "tool-calling",
+      "question": "Search for all push notification implementations and create a unified notification system with personalization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 631,
+      "type": "tool-calling",
+      "question": "Create a comprehensive service worker system with intelligent caching strategies and update mechanisms",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 632,
+      "type": "tool-calling",
+      "question": "Find all device API usage (camera, GPS, sensors) and implement proper permission handling",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 633,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive screen reader support system with proper ARIA labels and semantic markup",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 634,
+      "type": "non-tool",
+      "question": "What are the key performance optimization strategies for mobile web applications?"
+    },
+    {
+      "id": 635,
+      "type": "tool-calling",
+      "question": "Search for all biometric authentication usage and implement secure fingerprint and face recognition",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 636,
+      "type": "tool-calling",
+      "question": "Create a comprehensive app shell architecture with lazy loading and code splitting",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 637,
+      "type": "tool-calling",
+      "question": "Find all internationalization implementations and add right-to-left language support",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 638,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive offline-first data synchronization system with conflict resolution",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 639,
+      "type": "tool-calling",
+      "question": "Search for all keyboard navigation implementations and ensure full keyboard accessibility",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 640,
+      "type": "tool-calling",
+      "question": "Create a comprehensive mobile app performance monitoring system with crash reporting",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 641,
+      "type": "non-tool",
+      "question": "Describe the challenges and solutions for implementing cross-platform mobile applications"
+    },
+    {
+      "id": 642,
+      "type": "tool-calling",
+      "question": "Find all touch interaction handling and implement advanced gesture recognition with haptic feedback",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 643,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive app installation and update system with differential updates",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 644,
+      "type": "tool-calling",
+      "question": "Search for all voice interface implementations and add voice command recognition and synthesis",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 645,
+      "type": "tool-calling",
+      "question": "Create a comprehensive dark mode system with automatic switching based on device preferences",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 646,
+      "type": "tool-calling",
+      "question": "Find all battery optimization implementations and minimize background processing impact",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 647,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive mobile app security system with certificate pinning and root detection",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 648,
+      "type": "non-tool",
+      "question": "What are the accessibility guidelines for designing mobile applications for users with disabilities?"
+    },
+    {
+      "id": 649,
+      "type": "tool-calling",
+      "question": "Search for all augmented reality implementations and create immersive AR experiences with object tracking",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 650,
+      "type": "tool-calling",
+      "question": "Create a comprehensive mobile app analytics system with user behavior tracking and conversion funnels",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

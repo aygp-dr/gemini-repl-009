@@ -1,0 +1,155 @@
+{
+  "batch_id": "033",
+  "questions_range": "801-825",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["healthcare tech", "telemedicine", "medical devices"],
+  "questions": [
+    {
+      "id": 801,
+      "type": "tool-calling",
+      "question": "Create a comprehensive electronic health record (EHR) system with FHIR compliance and interoperability",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 802,
+      "type": "tool-calling",
+      "question": "Find all medical imaging analysis and implement AI-powered diagnosis with radiological image processing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 803,
+      "type": "non-tool",
+      "question": "Explain the regulatory requirements and FDA approval process for medical device software development"
+    },
+    {
+      "id": 804,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive telemedicine platform with video consultation and remote patient monitoring",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 805,
+      "type": "tool-calling",
+      "question": "Search for all clinical decision support systems and implement evidence-based treatment recommendations",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 806,
+      "type": "tool-calling",
+      "question": "Create a comprehensive patient portal with appointment scheduling and secure messaging",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 807,
+      "type": "tool-calling",
+      "question": "Find all pharmacy management systems and implement e-prescribing with drug interaction checking",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 808,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive hospital information system with bed management and resource allocation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 809,
+      "type": "non-tool",
+      "question": "What are the privacy and security challenges in implementing HIPAA-compliant healthcare applications?"
+    },
+    {
+      "id": 810,
+      "type": "tool-calling",
+      "question": "Search for all wearable device integrations and implement continuous health monitoring with alerts",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 811,
+      "type": "tool-calling",
+      "question": "Create a comprehensive clinical trial management system with patient recruitment and data collection",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 812,
+      "type": "tool-calling",
+      "question": "Find all genomic analysis implementations and add personalized medicine with pharmacogenomics",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 813,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive mental health platform with mood tracking and therapy scheduling",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 814,
+      "type": "tool-calling",
+      "question": "Search for all laboratory information systems and implement automated result reporting with quality control",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 815,
+      "type": "tool-calling",
+      "question": "Create a comprehensive chronic disease management system with care plan automation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 816,
+      "type": "non-tool",
+      "question": "Describe the challenges of implementing AI in medical diagnosis and the need for explainable AI"
+    },
+    {
+      "id": 817,
+      "type": "tool-calling",
+      "question": "Find all medical device connectivity and implement IoT-based patient monitoring with edge computing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 818,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive vaccination tracking system with immunization schedules and reminder notifications",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 819,
+      "type": "tool-calling",
+      "question": "Search for all emergency response systems and implement triage algorithms with severity scoring",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 820,
+      "type": "tool-calling",
+      "question": "Create a comprehensive medical billing system with insurance claim processing and revenue cycle management",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 821,
+      "type": "tool-calling",
+      "question": "Find all population health analytics and implement epidemiological surveillance with disease outbreak detection",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 822,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive rehabilitation therapy system with progress tracking and exercise prescription",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 823,
+      "type": "non-tool",
+      "question": "What are the ethical considerations in healthcare AI, particularly regarding bias and patient consent?"
+    },
+    {
+      "id": 824,
+      "type": "tool-calling",
+      "question": "Search for all medical research data platforms and implement collaborative research with data sharing protocols",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 825,
+      "type": "tool-calling",
+      "question": "Create a comprehensive home healthcare system with caregiver coordination and family communication tools",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

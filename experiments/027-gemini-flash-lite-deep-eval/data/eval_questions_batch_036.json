@@ -1,0 +1,155 @@
+{
+  "batch_id": "036",
+  "questions_range": "876-900",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["cybersecurity", "penetration testing", "threat detection"],
+  "questions": [
+    {
+      "id": 876,
+      "type": "tool-calling",
+      "question": "Create a comprehensive vulnerability scanning system with automated penetration testing and risk assessment",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 877,
+      "type": "tool-calling",
+      "question": "Find all authentication implementations and add multi-factor authentication with biometric verification",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 878,
+      "type": "non-tool",
+      "question": "Explain the OWASP Top 10 security vulnerabilities and mitigation strategies for web applications"
+    },
+    {
+      "id": 879,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive intrusion detection system with behavioral analysis and machine learning",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 880,
+      "type": "tool-calling",
+      "question": "Search for all encryption implementations and upgrade to post-quantum cryptography standards",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 881,
+      "type": "tool-calling",
+      "question": "Create a comprehensive security information and event management (SIEM) system with threat correlation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 882,
+      "type": "tool-calling",
+      "question": "Find all network security implementations and add zero-trust architecture with micro-segmentation",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 883,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive incident response system with automated containment and forensic analysis",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 884,
+      "type": "non-tool",
+      "question": "What are the key considerations for implementing security in a DevSecOps pipeline?"
+    },
+    {
+      "id": 885,
+      "type": "tool-calling",
+      "question": "Search for all access control systems and implement attribute-based access control (ABAC) with dynamic policies",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 886,
+      "type": "tool-calling",
+      "question": "Create a comprehensive malware detection system with sandboxing and behavioral analysis",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 887,
+      "type": "tool-calling",
+      "question": "Find all API security implementations and add OAuth 2.1 with comprehensive rate limiting and monitoring",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 888,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive threat intelligence platform with IOC correlation and attribution analysis",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 889,
+      "type": "tool-calling",
+      "question": "Search for all data loss prevention implementations and add content inspection with machine learning classification",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 890,
+      "type": "tool-calling",
+      "question": "Create a comprehensive security awareness training system with phishing simulation and user behavior analytics",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 891,
+      "type": "non-tool",
+      "question": "Describe the challenges of securing containerized applications and Kubernetes clusters"
+    },
+    {
+      "id": 892,
+      "type": "tool-calling",
+      "question": "Find all endpoint protection implementations and add advanced threat hunting with memory forensics",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 893,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive identity and access management system with privileged access management",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 894,
+      "type": "tool-calling",
+      "question": "Search for all secure coding practices and implement static application security testing (SAST) automation",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 895,
+      "type": "tool-calling",
+      "question": "Create a comprehensive cloud security posture management system with compliance monitoring",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 896,
+      "type": "tool-calling",
+      "question": "Find all backup and recovery implementations and add ransomware protection with immutable backups",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 897,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive red team exercise platform with attack simulation and defense validation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 898,
+      "type": "non-tool",
+      "question": "What are the privacy implications and GDPR compliance requirements for security monitoring systems?"
+    },
+    {
+      "id": 899,
+      "type": "tool-calling",
+      "question": "Search for all certificate management implementations and add automated PKI with certificate lifecycle management",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 900,
+      "type": "tool-calling",
+      "question": "Create a comprehensive security orchestration and automated response (SOAR) platform with playbook execution",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

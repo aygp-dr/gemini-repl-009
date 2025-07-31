@@ -1,0 +1,47 @@
+* Experiment 025: Function Calling Proof
+
+** Overview
+
+This experiment tests the function calling capabilities of the Gemini REPL with `gemini-2.0-flash-exp` model.
+
+** Status: ⚠️ Critical Issues Found
+
+*** Test Results Summary
+
+| Date | Time | Success Rate | read_file | list_files | search_code | write_file |
+|------|------|--------------|-----------|------------|-------------|------------|
+| 2025-07-30 | 01:16 | 28.57% | 70% | 0% | 0% | 0% |
+| 2025-07-30 | 12:56 | 24.48% | 60% | 0% | 0% | 0% |
+
+*** Key Findings
+
+1. **Performance Regression**: Overall success rate dropped from 28.57% to 24.48%
+2. **Single Function Success**: Only `read_file` commands work (60-70% success rate)
+3. **Complete Failures**: All other function types (`list_files`, `search_code`, `write_file`) fail 100% of the time
+4. **Model**: Using `gemini-2.0-flash-exp` as configured in the REPL
+
+*** Test Infrastructure
+
+- `run_integration_test.sh`: Main test runner with 49 test cases
+- `Makefile`: Build targets for running tests and linting
+- Integration results tracked with timestamps
+
+*** Next Steps
+
+1. Debug why non-`read_file` functions are failing
+2. Investigate the function calling format being sent to Gemini
+3. Compare with successful implementation from earlier experiments
+4. Consider model-specific adjustments for `gemini-2.0-flash-exp`
+
+*** Running Tests
+
+#+begin_src bash
+make -C experiments/025-function-calling-proof test-integration
+#+end_src
+
+*** Files
+
+- `run_integration_test.sh` - Main test script
+- `integration_results_*.txt` - Test results with timestamps
+- `analyze_patterns.sh` - Pattern analysis script (not yet committed)
+- `test_simple.sh` - Simple test cases (not yet committed)
