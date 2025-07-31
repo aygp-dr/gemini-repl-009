@@ -1,0 +1,1 @@
+Additional context: Function calling errors appear to be model-specific inconsistencies rather than format issues. Flash-lite fails to call functions even when it should, while flash-exp correctly identifies when to use tools. This suggests fundamental differences in model training or capabilities, not just formatting problems.
