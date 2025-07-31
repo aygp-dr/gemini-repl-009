@@ -13,9 +13,14 @@ We'll proceed cautiously with chunked evaluation.
 - ✅ Batch 001: Completed multiple runs
   - Run 1: flash-lite: 12/25 (48%)
   - Run 2: flash-lite: 10/25 (40%) - encountered MALFORMED_FUNCTION_CALL
+  - Run 3: flash-lite: 12/25 (48%) - Fixed MALFORMED_FUNCTION_CALL with system instruction
   - flash-exp: 19/25 (76%) - hit rate limit after q10
 - ⏳ Batch 002: Partial (timed out after 17 questions with 5s delays)
   - Estimated ~8/17 successful based on output
+
+### Key Learning: System Instruction Fixed Format Issue
+✅ Adding system instruction solved MALFORMED_FUNCTION_CALL errors
+❌ But success rate remains at 48% - model still not calling functions when expected
 
 ### Next Steps
 1. **Small chunks**: Process 5 batches at a time (125 questions)

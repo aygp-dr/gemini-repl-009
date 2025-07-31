@@ -94,6 +94,13 @@ async fn evaluate_question(question: &Question, model: &str, client: &GeminiClie
             }],
         }],
         tools,
+        system_instruction: Some(Content {
+            role: "system".to_string(),
+            parts: vec![Part {
+                text: Some("You are a helpful assistant with access to functions. When a user asks you to perform an action that matches one of your available functions, you should call that function directly. Do not generate code or explain how to use the function - just call it with the appropriate arguments.".to_string()),
+                function_call: None,
+            }],
+        }),
     };
 
     match client.generate(request).await {

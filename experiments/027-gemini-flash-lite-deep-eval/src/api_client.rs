@@ -8,6 +8,8 @@ pub struct GenerateRequest {
     pub contents: Vec<Content>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tools: Option<Vec<Tool>>,
+    #[serde(rename = "systemInstruction", skip_serializing_if = "Option::is_none")]
+    pub system_instruction: Option<Content>,
 }
 
 #[derive(Serialize, Deserialize)]

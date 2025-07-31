@@ -19,6 +19,12 @@ test_request = {
             "text": "Create a file hello.py with the content: print('Hello World')"
         }]
     }],
+    "systemInstruction": {
+        "role": "system",
+        "parts": [{
+            "text": "You are a helpful assistant with access to functions. When a user asks you to perform an action that matches one of your available functions, you should call that function directly. Do not generate code or explain how to use the function - just call it with the appropriate arguments."
+        }]
+    },
     "tools": [{
         "functionDeclarations": [{
             "name": "write_file",
