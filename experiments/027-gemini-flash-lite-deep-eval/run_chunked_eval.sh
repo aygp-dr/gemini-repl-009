@@ -3,6 +3,12 @@
 
 set -e
 
+# Source .env from project root
+PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+if [ -f "$PROJECT_ROOT/.env" ]; then
+    export $(grep -v '^#' "$PROJECT_ROOT/.env" | xargs)
+fi
+
 MODEL="${MODEL:-gemini-2.0-flash-lite}"
 DELAY="${DELAY:-3}"  # 3 seconds between requests
 CHUNK_SIZE="${CHUNK_SIZE:-5}"  # Process 5 batches at a time
