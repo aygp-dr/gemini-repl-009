@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_006",
+  "created_at": "2025-07-31T10:15:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q126",
+      "question": "What is the difference between depth-first and breadth-first search?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Graph algorithms and traversal"
+    },
+    {
+      "id": "q127",
+      "question": "List all Python files in the holey puzzle solver project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring puzzle solving algorithm implementation"
+    },
+    {
+      "id": "q128",
+      "question": "Read the puzzle_solver.py implementation from holey",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding constraint satisfaction problem solving"
+    },
+    {
+      "id": "q129",
+      "question": "Search for 'algorithm' patterns in the gdb-game-ai project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding AI algorithm implementations for game playing"
+    },
+    {
+      "id": "q130",
+      "question": "Create a config parser module config.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building configuration management for evaluation"
+    },
+    {
+      "id": "q131",
+      "question": "What is the MapReduce programming model?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Distributed computing paradigms"
+    },
+    {
+      "id": "q132",
+      "question": "List all C files in the gdb-tutorial project", 
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring systems programming and debugging examples"
+    },
+    {
+      "id": "q133",
+      "question": "Read the fibonacci.c implementation from gdb-tutorial",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding C programming for debugging examples"
+    },
+    {
+      "id": "q134",
+      "question": "Find all GDB script files in the gdb-tutorial project",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "gdb-scripts",
+      "context": "Locating debugging automation scripts"
+    },
+    {
+      "id": "q135",
+      "question": "Show the project structure of the llm-context-pruning-experiments",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding ML research project organization"
+    },
+    {
+      "id": "q136",
+      "question": "Read the main.py from llm-context-pruning-experiments",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding LLM optimization research implementation"
+    },
+    {
+      "id": "q137",
+      "question": "What is the difference between compilation and interpretation?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming language implementation"
+    },
+    {
+      "id": "q138",
+      "question": "Search for 'context' optimization patterns in llm-context-pruning-experiments",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding context window optimization techniques"
+    },
+    {
+      "id": "q139",
+      "question": "Create a thread pool manager threads.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building concurrent evaluation processing"
+    },
+    {
+      "id": "q140",
+      "question": "List all HTML files in the hathitrust-book-downloader project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring web scraping project structure"
+    },
+    {
+      "id": "q141",
+      "question": "Read the create-bookmarklet.html from hathitrust-book-downloader",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding browser automation tools"
+    },
+    {
+      "id": "q142",
+      "question": "What is the difference between authentication and authorization?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Security concepts"
+    },
+    {
+      "id": "q143",
+      "question": "Find all JavaScript files in the hathitrust-book-downloader",
+      "expected_tool_calls": ["list_files", "search_code"],
+      "category": "javascript-files",
+      "context": "Locating browser automation scripts"
+    },
+    {
+      "id": "q144",
+      "question": "Show the simple-console.js implementation",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding browser console interaction code"
+    },
+    {
+      "id": "q145",
+      "question": "Search for 'download' functionality in hathitrust-book-downloader",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding download automation implementation"
+    },
+    {
+      "id": "q146",
+      "question": "Create a cache manager cache.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building result caching for evaluation pipeline"
+    },
+    {
+      "id": "q147",
+      "question": "What are the principles of test-driven development?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software development methodologies"
+    },
+    {
+      "id": "q148",
+      "question": "List all Org mode files in the filesystem-communication-space project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing", 
+      "context": "Exploring research documentation structure"
+    },
+    {
+      "id": "q149",
+      "question": "Read the 00-foundations.org from filesystem-communication-space",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding filesystem communication research foundations"
+    },
+    {
+      "id": "q150",
+      "question": "Find all references to 'IPC' in filesystem-communication-space",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Understanding inter-process communication patterns"
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_007",
+  "created_at": "2025-07-31T10:20:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q151",
+      "question": "What is the difference between a stack and a queue?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Fundamental data structures"
+    },
+    {
+      "id": "q152",
+      "question": "List all Python files in the anker-a1263-serial-reader project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring hardware interface and OCR project"
+    },
+    {
+      "id": "q153",
+      "question": "Read the a1263_reader.py main implementation",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding serial device communication"
+    },
+    {
+      "id": "q154",
+      "question": "Search for 'OCR' processing in anker-a1263-serial-reader",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding optical character recognition implementation"
+    },
+    {
+      "id": "q155",
+      "question": "Create a message queue handler queue.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building async message processing for evaluation"
+    },
+    {
+      "id": "q156",
+      "question": "What is the Byzantine Generals Problem?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Distributed systems theory"
+    },
+    {
+      "id": "q157",
+      "question": "List all shell scripts in the pi-setup project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Raspberry Pi configuration automation"
+    },
+    {
+      "id": "q158",
+      "question": "Read the setup.shell from pi-setup",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding system setup automation"
+    },
+    {
+      "id": "q159",
+      "question": "Find all references to 'telemetry' in the pi-setup project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Understanding monitoring and observability setup"
+    },
+    {
+      "id": "q160",
+      "question": "Show the directory structure of the formal-methods project",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding formal verification project layout"
+    },
+    {
+      "id": "q161",
+      "question": "Read the REVIEW-REPORT.md from formal-methods",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding formal verification analysis results"
+    },
+    {
+      "id": "q162",
+      "question": "What is the difference between imperative and declarative programming?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Programming paradigms"
+    },
+    {
+      "id": "q163",
+      "question": "Search for 'formal' verification patterns in the formal-methods project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding mathematical proof and verification code"
+    },
+    {
+      "id": "q164",
+      "question": "Create a batch processor batch.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building batch evaluation processing"
+    },
+    {
+      "id": "q165",
+      "question": "List all TypeScript files in the claude-code-logger project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Node.js logging infrastructure"
+    },
+    {
+      "id": "q166",
+      "question": "Read the logger.js implementation from claude-code-logger",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding logging system implementation"
+    },
+    {
+      "id": "q167",
+      "question": "What is event-driven architecture?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "System architecture patterns"
+    },
+    {
+      "id": "q168",
+      "question": "Find all package.json configurations in the gemini-repl projects",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "node-config",
+      "context": "Locating Node.js project configurations"
+    },
+    {
+      "id": "q169",
+      "question": "Show the package.json from gemini-repl-001",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Node.js REPL project dependencies"
+    },
+    {
+      "id": "q170",
+      "question": "Search for 'shadow-cljs' build configuration in gemini-repl projects",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding ClojureScript build setup"
+    },
+    {
+      "id": "q171",
+      "question": "Create a scheduler module scheduler.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building task scheduling for evaluation pipeline"
+    },
+    {
+      "id": "q172",
+      "question": "What is the difference between unit tests and integration tests?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Software testing methodologies"
+    },
+    {
+      "id": "q173",
+      "question": "List all Lisp files in the FRL frame representation project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring frame-based knowledge representation in Lisp"
+    },
+    {
+      "id": "q174",
+      "question": "Read the frl.manual documentation from FRL",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding frame representation language manual"
+    },
+    {
+      "id": "q175",
+      "question": "Find all references to 'frame' structures in the FRL project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Understanding knowledge frame implementation patterns"
+    }
+  ]
+}

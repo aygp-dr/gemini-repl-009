@@ -1,0 +1,182 @@
+{
+  "batch_id": "batch_008",
+  "created_at": "2025-07-31T10:25:00Z",
+  "model_target": "gemini-2.0-flash-lite",
+  "questions": [
+    {
+      "id": "q176",
+      "question": "What is the difference between symmetric and asymmetric encryption?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Cryptography and security"
+    },
+    {
+      "id": "q177",
+      "question": "List all Go files in the cmapv2 concurrent map project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring concurrent data structure implementation"
+    },
+    {
+      "id": "q178",
+      "question": "Read the cmap.go main implementation from cmapv2",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding concurrent hash map implementation"
+    },
+    {
+      "id": "q179",
+      "question": "Search for 'shard' patterns in the cmapv2 implementation",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding data sharding and concurrency patterns"
+    },
+    {
+      "id": "q180",
+      "question": "Create a error handler module errors.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building error handling for evaluation pipeline"
+    },
+    {
+      "id": "q181",
+      "question": "What is the principle of least privilege in security?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Security best practices"
+    },
+    {
+      "id": "q182",
+      "question": "List all Gren files in the formal-workbench-tui project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring functional TUI framework"
+    },
+    {
+      "id": "q183",
+      "question": "Read the gren.json configuration from formal-workbench-tui",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Gren language project configuration"
+    },
+    {
+      "id": "q184",
+      "question": "Find all setup scripts in the formal-workbench-tui project",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "setup-scripts",
+      "context": "Locating project initialization and build scripts"
+    },
+    {
+      "id": "q185",
+      "question": "Show the project structure of the balanced-ternary project",
+      "expected_tool_calls": ["list_files"],
+      "category": "directory-structure",
+      "context": "Understanding ternary number system implementation"
+    },
+    {
+      "id": "q186",
+      "question": "Read the ternary.py implementation from balanced-ternary",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding balanced ternary arithmetic implementation"
+    },
+    {
+      "id": "q187",
+      "question": "What is the difference between mutable and immutable data structures?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Data structure design principles"
+    },
+    {
+      "id": "q188",
+      "question": "Search for 'ternary' arithmetic operations in balanced-ternary",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding ternary number system operations"
+    },
+    {
+      "id": "q189",
+      "question": "Create a memory manager memory.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building memory optimization for evaluation"
+    },
+    {
+      "id": "q190",
+      "question": "List all Ruby files in the prism parsing library project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring Ruby syntax parsing implementation"
+    },
+    {
+      "id": "q191",
+      "question": "Read the prism.gemspec from the prism project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding Ruby gem specification"
+    },
+    {
+      "id": "q192",
+      "question": "What is the difference between parsing and lexing?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Compiler and interpreter theory"
+    },
+    {
+      "id": "q193",
+      "question": "Find all test files in the prism Ruby parsing project",
+      "expected_tool_calls": ["search_code", "list_files"],
+      "category": "test-discovery",
+      "context": "Locating parser test infrastructure"
+    },
+    {
+      "id": "q194",
+      "question": "Show the Makefile from the prism project",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding build system for Ruby parser"
+    },
+    {
+      "id": "q195",
+      "question": "Search for 'AST' patterns in the prism parsing implementation",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Finding abstract syntax tree construction code"
+    },
+    {
+      "id": "q196",
+      "question": "Create a profiler module profiler.py in experiments/027-gemini-flash-lite-deep-eval/src",
+      "expected_tool_calls": ["write_file"],
+      "category": "file-creation",
+      "context": "Building performance profiling for evaluation"
+    },
+    {
+      "id": "q197",
+      "question": "What are the main differences between SQL and NoSQL databases?",
+      "expected_tool_calls": [],
+      "category": "non-tool",
+      "context": "Database systems comparison"
+    },
+    {
+      "id": "q198",
+      "question": "List all Python files in the Backblaze-Drive-Stats project",
+      "expected_tool_calls": ["list_files"],
+      "category": "file-listing",
+      "context": "Exploring hard drive reliability analysis"
+    },
+    {
+      "id": "q199",
+      "question": "Read the find_reliable_cmr_drives.py from Backblaze-Drive-Stats",
+      "expected_tool_calls": ["read_file"],
+      "category": "file-reading",
+      "context": "Understanding drive reliability analysis implementation"
+    },
+    {
+      "id": "q200",
+      "question": "Find all SQL queries in the Backblaze-Drive-Stats project",
+      "expected_tool_calls": ["search_code"],
+      "category": "code-search",
+      "context": "Locating database query implementations for drive analysis"
+    }
+  ]
+}
