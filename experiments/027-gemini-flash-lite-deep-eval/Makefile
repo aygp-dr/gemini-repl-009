@@ -1,4 +1,4 @@
-.PHONY: all test test-batch test-full generate-evals clean
+.PHONY: all test test-batch test-small test-full generate-evals clean
 
 MODEL ?= gemini-2.0-flash-lite
 BATCH_SIZE ?= 25
@@ -9,6 +9,10 @@ all: generate-evals
 generate-evals:
 	@echo "Generating evaluation questions..."
 	cargo run --bin generate-evals
+
+test-small:
+	@echo "Running small baseline test (first batch, 25 questions)..."
+	cargo run --bin run-eval -- --start-batch 1 --model $(MODEL)
 
 test-batch:
 	@echo "Running batch test with $(BATCH_SIZE) questions..."

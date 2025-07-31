@@ -72,7 +72,7 @@ struct BatchResult {
     completed_at: String,
 }
 
-async fn evaluate_question(question: &Question, model: &str) -> EvalResult {
+async fn evaluate_question(question: &Question, _model: &str) -> EvalResult {
     let start = std::time::Instant::now();
     
     // TODO: Implement actual API call to Gemini

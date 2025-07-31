@@ -1,0 +1,288 @@
+{
+  "batch_id": "batch_001",
+  "model": "gemini-2.0-flash-lite",
+  "total_questions": 25,
+  "successful": 6,
+  "failed": 19,
+  "success_rate": 0.24,
+  "results": [
+    {
+      "question_id": "q001",
+      "question": "What is the primary purpose of a REPL?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": true,
+      "response_time_ms": 0,
+      "error": null
+    },
+    {
+      "question_id": "q002",
+      "question": "List all Python files in the experiments/023-function-calling directory",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q003",
+      "question": "Show me the contents of the Makefile in experiments/025-function-calling-proof",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q004",
+      "question": "Explain the concept of idempotency in distributed systems",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q005",
+      "question": "Find all files containing 'gemini-2.0-flash-lite' in the experiments directory",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 0,
+      "error": null
+    },
+    {
+      "question_id": "q006",
+      "question": "Create a new test file test_model_switching.py in experiments/027-gemini-flash-lite-deep-eval/src with a basic pytest structure",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q007",
+      "question": "What files are in the claude-monitor project root?",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q008",
+      "question": "Show the implementation of the main function in experiments/023-function-calling/src/main.rs",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q009",
+      "question": "What is a monad and why is it useful?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q010",
+      "question": "Search for all occurrences of 'TodoWrite' in the gemini-repl-009 codebase",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q011",
+      "question": "Read the README.org file in the mccarthy-lisp-explorer project",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [
+        "read_file"
+      ],
+      "success": true,
+      "response_time_ms": 0,
+      "error": null
+    },
+    {
+      "question_id": "q012",
+      "question": "List all Cargo.toml files in the experiments directory",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q013",
+      "question": "How does garbage collection work in modern programming languages?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q014",
+      "question": "Create a simple Python script data_analyzer.py in experiments/027-gemini-flash-lite-deep-eval/src that loads JSON results",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q015",
+      "question": "Find all shell scripts in the freebsd-sysmap project",
+      "expected_tools": [
+        "list_files",
+        "search_code"
+      ],
+      "actual_tools": [
+        "list_files",
+        "search_code"
+      ],
+      "success": true,
+      "response_time_ms": 0,
+      "error": null
+    },
+    {
+      "question_id": "q016",
+      "question": "Show me the pyproject.toml from the claude-code-metrics-lab project",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q017",
+      "question": "What is the CAP theorem?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q018",
+      "question": "Search for test files in the mal-ruby-minimal project",
+      "expected_tools": [
+        "search_code",
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q019",
+      "question": "Read the CLAUDE.md file from the balanced-ternary project",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q020",
+      "question": "List all markdown files in the llm-context-pruning-experiments directory",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q021",
+      "question": "Create a README.md file for experiments/027-gemini-flash-lite-deep-eval explaining the evaluation methodology",
+      "expected_tools": [
+        "write_file"
+      ],
+      "actual_tools": [
+        "write_file"
+      ],
+      "success": true,
+      "response_time_ms": 0,
+      "error": null
+    },
+    {
+      "question_id": "q022",
+      "question": "What is the difference between concurrency and parallelism?",
+      "expected_tools": [],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q023",
+      "question": "Find all Python files that import 'asyncio' in the persistent-tree-server project",
+      "expected_tools": [
+        "search_code"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q024",
+      "question": "Show the Dockerfile from the armv8-neon-explorer project",
+      "expected_tools": [
+        "read_file"
+      ],
+      "actual_tools": [],
+      "success": false,
+      "response_time_ms": 0,
+      "error": "Mock failure"
+    },
+    {
+      "question_id": "q025",
+      "question": "List all subdirectories in the experiments folder",
+      "expected_tools": [
+        "list_files"
+      ],
+      "actual_tools": [
+        "list_files"
+      ],
+      "success": true,
+      "response_time_ms": 0,
+      "error": null
+    }
+  ],
+  "started_at": "2025-07-31T04:02:45.729911185+00:00",
+  "completed_at": "2025-07-31T04:03:33.782707867+00:00"
+}
