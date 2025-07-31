@@ -1,0 +1,155 @@
+{
+  "batch_id": "030",
+  "questions_range": "726-750",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["robotics", "embedded systems", "real-time computing"],
+  "questions": [
+    {
+      "id": 726,
+      "type": "tool-calling",
+      "question": "Create a comprehensive robotic control system with inverse kinematics and trajectory planning",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 727,
+      "type": "tool-calling",
+      "question": "Find all embedded firmware code and implement real-time operating system with deterministic scheduling",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 728,
+      "type": "non-tool",
+      "question": "Explain the challenges of real-time computing in safety-critical embedded systems like automotive or aerospace"
+    },
+    {
+      "id": 729,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive sensor fusion system with Kalman filtering for autonomous navigation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 730,
+      "type": "tool-calling",
+      "question": "Search for all motor control implementations and add advanced PID control with adaptive tuning",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 731,
+      "type": "tool-calling",
+      "question": "Create a comprehensive robotic vision system with object recognition and depth estimation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 732,
+      "type": "tool-calling",
+      "question": "Find all communication protocol implementations and add CAN bus and industrial Ethernet support",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 733,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive path planning algorithm with obstacle avoidance and dynamic re-routing",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 734,
+      "type": "non-tool",
+      "question": "What are the key considerations for power management in battery-powered embedded systems?"
+    },
+    {
+      "id": 735,
+      "type": "tool-calling",
+      "question": "Search for all signal processing implementations and add digital filters with noise reduction",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 736,
+      "type": "tool-calling",
+      "question": "Create a comprehensive SLAM (Simultaneous Localization and Mapping) system for mobile robots",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 737,
+      "type": "tool-calling",
+      "question": "Find all actuator control systems and implement force feedback with haptic interfaces",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 738,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive drone flight control system with GPS waypoint navigation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 739,
+      "type": "tool-calling",
+      "question": "Search for all interrupt handling code and optimize for low-latency real-time response",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 740,
+      "type": "tool-calling",
+      "question": "Create a comprehensive robotic arm simulation with physics-based modeling and collision detection",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 741,
+      "type": "non-tool",
+      "question": "Describe the trade-offs between different microcontroller architectures for embedded applications"
+    },
+    {
+      "id": 742,
+      "type": "tool-calling",
+      "question": "Find all safety monitoring systems and implement watchdog timers with fail-safe mechanisms",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 743,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive swarm robotics coordination system with distributed consensus algorithms",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 744,
+      "type": "tool-calling",
+      "question": "Search for all battery management implementations and add state-of-charge estimation with thermal monitoring",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 745,
+      "type": "tool-calling",
+      "question": "Create a comprehensive industrial automation system with programmable logic controller integration",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 746,
+      "type": "tool-calling",
+      "question": "Find all wireless communication implementations and add mesh networking with adaptive routing",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 747,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive robotic gripper control system with tactile feedback and object manipulation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 748,
+      "type": "non-tool",
+      "question": "What are the certification requirements and testing standards for safety-critical embedded systems?"
+    },
+    {
+      "id": 749,
+      "type": "tool-calling",
+      "question": "Search for all edge computing implementations and add federated learning for distributed AI",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 750,
+      "type": "tool-calling",
+      "question": "Create a comprehensive telemetry system for remote monitoring and control of robotic systems",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

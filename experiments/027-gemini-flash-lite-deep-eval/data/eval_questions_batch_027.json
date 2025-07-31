@@ -1,0 +1,155 @@
+{
+  "batch_id": "027",
+  "questions_range": "651-675",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["game development", "graphics programming", "virtual reality"],
+  "questions": [
+    {
+      "id": 651,
+      "type": "tool-calling",
+      "question": "Create a comprehensive 2D game engine with physics simulation, collision detection, and sprite animation",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 652,
+      "type": "tool-calling",
+      "question": "Find all WebGL shader implementations and optimize them for mobile GPU performance",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 653,
+      "type": "non-tool",
+      "question": "Explain the differences between immediate mode and retained mode graphics rendering systems"
+    },
+    {
+      "id": 654,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive virtual reality interface system with hand tracking and spatial audio",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 655,
+      "type": "tool-calling",
+      "question": "Search for all 3D model loading and implement efficient mesh optimization with level-of-detail",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 656,
+      "type": "tool-calling",
+      "question": "Create a comprehensive multiplayer game server with authoritative physics and anti-cheat mechanisms",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 657,
+      "type": "tool-calling",
+      "question": "Find all particle system implementations and create advanced visual effects with GPU acceleration",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 658,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive procedural content generation system for infinite terrain and dungeons",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 659,
+      "type": "non-tool",
+      "question": "What are the key considerations for implementing real-time ray tracing in modern game engines?"
+    },
+    {
+      "id": 660,
+      "type": "tool-calling",
+      "question": "Search for all animation state machines and implement smooth character animation transitions",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 661,
+      "type": "tool-calling",
+      "question": "Create a comprehensive AI behavior system with pathfinding, decision trees, and goal-oriented planning",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 662,
+      "type": "tool-calling",
+      "question": "Find all audio processing implementations and create 3D positional audio with environmental effects",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 663,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive game asset pipeline with automatic texture compression and optimization",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 664,
+      "type": "tool-calling",
+      "question": "Search for all input handling systems and implement comprehensive controller and touch support",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 665,
+      "type": "tool-calling",
+      "question": "Create a comprehensive virtual reality locomotion system with comfort settings and motion sickness prevention",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 666,
+      "type": "non-tool",
+      "question": "Describe the trade-offs between different game networking architectures for multiplayer games"
+    },
+    {
+      "id": 667,
+      "type": "tool-calling",
+      "question": "Find all lighting systems and implement physically-based rendering with global illumination",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 668,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive game state management system with save/load functionality and checkpoints",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 669,
+      "type": "tool-calling",
+      "question": "Search for all performance profiling tools and implement real-time frame rate optimization",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 670,
+      "type": "tool-calling",
+      "question": "Create a comprehensive augmented reality game system with marker tracking and occlusion handling",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 671,
+      "type": "tool-calling",
+      "question": "Find all memory management implementations and optimize for low-latency garbage collection",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 672,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive game analytics system with player behavior tracking and A/B testing",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 673,
+      "type": "non-tool",
+      "question": "What are the ethical considerations in game design regarding addiction, monetization, and player wellbeing?"
+    },
+    {
+      "id": 674,
+      "type": "tool-calling",
+      "question": "Search for all shader compilation systems and implement runtime shader optimization and caching",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 675,
+      "type": "tool-calling",
+      "question": "Create a comprehensive cross-platform game deployment system with automatic testing and distribution",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}

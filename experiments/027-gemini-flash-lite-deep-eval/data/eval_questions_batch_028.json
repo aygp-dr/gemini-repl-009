@@ -1,0 +1,155 @@
+{
+  "batch_id": "028",
+  "questions_range": "676-700",
+  "total_questions": 25,
+  "tool_calling_ratio": "80%",
+  "focus_areas": ["quantum computing", "advanced algorithms", "compiler design"],
+  "questions": [
+    {
+      "id": 676,
+      "type": "tool-calling",
+      "question": "Create a comprehensive quantum circuit simulator with support for common quantum gates and measurements",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 677,
+      "type": "tool-calling",
+      "question": "Find all graph algorithm implementations and optimize them using advanced data structures like Fibonacci heaps",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 678,
+      "type": "non-tool",
+      "question": "Explain the fundamental principles of quantum computing and how quantum algorithms achieve speedup over classical algorithms"
+    },
+    {
+      "id": 679,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive lexical analyzer and parser for a domain-specific language with error recovery",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 680,
+      "type": "tool-calling",
+      "question": "Search for all cryptographic implementations and add post-quantum cryptography algorithms",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 681,
+      "type": "tool-calling",
+      "question": "Create a comprehensive quantum error correction system with surface code implementation",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 682,
+      "type": "tool-calling",
+      "question": "Find all sorting algorithm implementations and create hybrid algorithms optimized for different data patterns",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 683,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive compiler optimization framework with loop unrolling and vectorization",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 684,
+      "type": "non-tool",
+      "question": "What are the theoretical and practical limitations of current quantum computing technologies?"
+    },
+    {
+      "id": 685,
+      "type": "tool-calling",
+      "question": "Search for all linear algebra operations and implement quantum-inspired optimization algorithms",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 686,
+      "type": "tool-calling",
+      "question": "Create a comprehensive abstract syntax tree manipulation system with pattern matching and rewriting",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 687,
+      "type": "tool-calling",
+      "question": "Find all dynamic programming solutions and optimize them using space-efficient techniques",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 688,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive quantum machine learning framework with variational quantum eigensolvers",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 689,
+      "type": "tool-calling",
+      "question": "Search for all constraint satisfaction problems and implement advanced backtracking with constraint propagation",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 690,
+      "type": "tool-calling",
+      "question": "Create a comprehensive register allocation system for compilers with graph coloring and spilling",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 691,
+      "type": "non-tool",
+      "question": "Describe the complexity classes P, NP, and BQP and their relationships in computational complexity theory"
+    },
+    {
+      "id": 692,
+      "type": "tool-calling",
+      "question": "Find all approximate algorithms and implement FPTAS (Fully Polynomial-Time Approximation Schemes)",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 693,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive quantum communication protocol with quantum key distribution",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 694,
+      "type": "tool-calling",
+      "question": "Search for all string matching algorithms and implement advanced pattern matching with suffix arrays",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 695,
+      "type": "tool-calling",
+      "question": "Create a comprehensive code generation system with instruction scheduling and pipeline optimization",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    },
+    {
+      "id": 696,
+      "type": "tool-calling",
+      "question": "Find all numerical computation implementations and add quantum-enhanced linear solver algorithms",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 697,
+      "type": "tool-calling",
+      "question": "Generate a comprehensive formal verification system for quantum programs with theorem proving",
+      "expected_tools": ["read_file", "write_file", "search_code"]
+    },
+    {
+      "id": 698,
+      "type": "non-tool",
+      "question": "What are the implications of quantum supremacy for cybersecurity and current encryption methods?"
+    },
+    {
+      "id": 699,
+      "type": "tool-calling",
+      "question": "Search for all optimization problems and implement quantum annealing solutions with D-Wave integration",
+      "expected_tools": ["search_code", "read_file", "write_file"]
+    },
+    {
+      "id": 700,
+      "type": "tool-calling",
+      "question": "Create a comprehensive programming language interpreter with quantum instruction set support",
+      "expected_tools": ["read_file", "write_file", "list_files"]
+    }
+  ]
+}
