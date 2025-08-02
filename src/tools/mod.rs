@@ -5,17 +5,19 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 pub mod file_tools;
 pub mod code_analysis;
 pub mod rust_tools;
 pub mod self_awareness;
+pub mod ed_tools;
 
 use file_tools::{ReadFileTool, WriteFileTool, EditFileTool, ListFilesTool};
 use code_analysis::{AnalyzeRustCodeTool, FindFunctionTool, FindStructTool};
 use rust_tools::{CargoBuildTool, CargoTestTool, RustfmtTool, ClippyTool, CargoCheckTool};
 use self_awareness::{ProjectMapTool, GetCurrentCapabilitiesTool, ExplainArchitectureTool};
+use ed_tools::EdTool;
 
 /// Tool trait that all tools must implement
 #[async_trait]
@@ -33,19 +35,35 @@ pub trait Tool: Send + Sync {
     async fn execute(&self, params: Value) -> Result<Value>;
     
     /// Validate parameters before execution
-    fn validate_params(&self, params: &Value) -> Result<()> {
+    fn validate_params(&self, _params: &Value) -> Result<()> {
         // Default implementation - tools can override
         Ok(())
     }
 }
 
 /// Tool information for listing
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ToolInfo {
     pub name: String,
     pub description: String,
     pub category: String,
     pub self_modification: bool,
+}
+
+impl ToolInfo {
+    pub fn new(
+        name: impl Into<String>,
+        description: impl Into<String>,
+        category: impl Into<String>,
+        self_modification: bool,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            description: description.into(),
+            category: category.into(),
+            self_modification,
+        }
+    }
 }
 
 /// Registry for managing available tools
@@ -96,6 +114,9 @@ impl ToolRegistry {
         self.register_tool(Box::new(GetCurrentCapabilitiesTool::new()))?;
         self.register_tool(Box::new(ExplainArchitectureTool::new(self.workspace.clone())))?;
         
+        // Ed-based editing tools
+        self.register_tool(Box::new(EdTool::new(self.workspace.clone())))?;
+        
         Ok(())
     }
     
@@ -131,7 +152,7 @@ impl ToolRegistry {
                     name.as_str(),
                     "edit_file" | "analyze_rust_code" | "find_function" | "find_struct" |
                     "cargo_build" | "cargo_test" | "cargo_check" | "clippy" | "rustfmt" | 
-                    "project_map" | "get_current_capabilities" | "explain_architecture"
+                    "project_map" | "get_current_capabilities" | "explain_architecture" | "ed_editor"
                 );
                 
                 ToolInfo {
@@ -213,7 +234,7 @@ pub mod security {
         // Check for sensitive files
         if let Some(file_name) = path.file_name() {
             let name = file_name.to_string_lossy();
-            if name.starts_with('.env') || 
+            if name.starts_with(".env") || 
                name == ".git" || 
                name.contains("secret") ||
                name.contains("password") {

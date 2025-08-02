@@ -1,20 +1,26 @@
 //! Code analysis tools for understanding Rust code structure
 
 use super::Tool;
-use anyhow::{bail, Result};
+use anyhow::Result;
 use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
-use syn::{parse_file, Item, ItemFn, ItemStruct, ItemEnum, ItemImpl, ItemTrait};
+use syn::{parse_file, Item, ItemFn, ItemStruct, ItemEnum, ItemImpl, ItemTrait, Visibility};
 
 /// Tool for analyzing Rust code
 pub struct AnalyzeRustCodeTool;
 
+impl Default for AnalyzeRustCodeTool {
+    fn default() -> Self {
+        Self
+    }
+}
+
 impl AnalyzeRustCodeTool {
     pub fn new() -> Self {
-        Self
+        Self::default()
     }
 }
 
@@ -50,7 +56,9 @@ impl Tool for AnalyzeRustCodeTool {
         let params: Params = serde_json::from_value(params)?;
         
         // Parse the Rust code
-        let syntax_tree = parse_file(&params.code)?;
+        let syntax_tree = parse_file(&params.code).map_err(|e| {
+            anyhow::anyhow!("Failed to parse Rust code: {}", e)
+        })?;
         
         let mut functions = Vec::new();
         let mut structs = Vec::new();
@@ -67,7 +75,7 @@ impl Tool for AnalyzeRustCodeTool {
                 Item::Struct(item_struct) => {
                     structs.push(json!({
                         "name": item_struct.ident.to_string(),
-                        "visibility": format!("{:?}", item_struct.vis),
+                        "visibility": visibility_to_string(&item_struct.vis),
                         "generics": item_struct.generics.params.len(),
                         "fields": match &item_struct.fields {
                             syn::Fields::Named(fields) => fields.named.len(),
@@ -79,14 +87,14 @@ impl Tool for AnalyzeRustCodeTool {
                 Item::Enum(item_enum) => {
                     enums.push(json!({
                         "name": item_enum.ident.to_string(),
-                        "visibility": format!("{:?}", item_enum.vis),
+                        "visibility": visibility_to_string(&item_enum.vis),
                         "variants": item_enum.variants.len(),
                     }));
                 }
                 Item::Trait(item_trait) => {
                     traits.push(json!({
                         "name": item_trait.ident.to_string(),
-                        "visibility": format!("{:?}", item_trait.vis),
+                        "visibility": visibility_to_string(&item_trait.vis),
                         "methods": item_trait.items.len(),
                     }));
                 }
@@ -139,7 +147,7 @@ fn analyze_function(item_fn: &ItemFn) -> Value {
     
     json!({
         "name": item_fn.sig.ident.to_string(),
-        "visibility": format!("{:?}", item_fn.vis),
+        "visibility": visibility_to_string(&item_fn.vis),
         "async": item_fn.sig.asyncness.is_some(),
         "params": params,
         "return_type": match &item_fn.sig.output {
@@ -203,7 +211,7 @@ impl Tool for FindFunctionTool {
             if let Ok(syntax_tree) = parse_file(&content) {
                 for item in syntax_tree.items {
                     if let Item::Fn(item_fn) = item {
-                        if item_fn.sig.ident.to_string() == params.name {
+                        if item_fn.sig.ident == params.name {
                             results.push(json!({
                                 "file": file_path.strip_prefix(&self.workspace)
                                     .unwrap_or(file_path)
@@ -280,14 +288,14 @@ impl Tool for FindStructTool {
             if let Ok(syntax_tree) = parse_file(&content) {
                 for item in syntax_tree.items {
                     if let Item::Struct(item_struct) = item {
-                        if item_struct.ident.to_string() == params.name {
+                        if item_struct.ident == params.name {
                             let fields = match &item_struct.fields {
                                 syn::Fields::Named(fields) => {
                                     fields.named.iter()
                                         .map(|f| json!({
                                             "name": f.ident.as_ref().map(|i| i.to_string()),
                                             "type": quote::quote!(#f.ty).to_string(),
-                                            "visibility": format!("{:?}", f.vis),
+                                            "visibility": visibility_to_string(&f.vis),
                                         }))
                                         .collect::<Vec<_>>()
                                 }
@@ -297,7 +305,7 @@ impl Tool for FindStructTool {
                                         .map(|(i, f)| json!({
                                             "index": i,
                                             "type": quote::quote!(#f.ty).to_string(),
-                                            "visibility": format!("{:?}", f.vis),
+                                            "visibility": visibility_to_string(&f.vis),
                                         }))
                                         .collect::<Vec<_>>()
                                 }
@@ -310,7 +318,7 @@ impl Tool for FindStructTool {
                                     .to_string_lossy(),
                                 "struct": {
                                     "name": item_struct.ident.to_string(),
-                                    "visibility": format!("{:?}", item_struct.vis),
+                                    "visibility": visibility_to_string(&item_struct.vis),
                                     "generics": item_struct.generics.params.len(),
                                     "fields": fields,
                                 },
@@ -340,9 +348,9 @@ where
         callback(path, &content);
     } else if path.is_dir() {
         for entry in walkdir::WalkDir::new(path)
-            .follow_links(true)
+            .follow_links(false) // Don't follow symlinks for security
             .into_iter()
-            .filter_map(|e| e.ok())
+            .filter_map(Result::ok)
         {
             let path = entry.path();
             if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("rs") {
@@ -353,4 +361,15 @@ where
         }
     }
     Ok(())
+}
+
+/// Convert a Visibility to a string representation
+fn visibility_to_string(vis: &Visibility) -> String {
+    match vis {
+        Visibility::Public(_) => "pub".to_string(),
+        Visibility::Restricted(restricted) => {
+            format!("pub({})", quote::quote!(#restricted.path))
+        }
+        Visibility::Inherited => "private".to_string(),
+    }
 }

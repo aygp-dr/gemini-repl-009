@@ -9,43 +9,48 @@ repository = "https://github.com/aygp-dr/gemini-repl-009"
 keywords = ["gemini", "repl", "ai", "cli", "self-modifying"]
 categories = ["command-line-utilities", "development-tools"]
 
+# Feature flags
+[features]
+default = ["self-modification", "api-client"]
+self-modification = ["code-analysis", "rust-tools"]
+code-analysis = ["syn", "quote", "proc-macro2"]
+rust-tools = ["which", "tempfile"]
+api-client = []
+full-logging = ["tracing-subscriber/json"]
+
 [dependencies]
-# Core dependencies
+# Core async runtime and error handling
 anyhow = "1.0"
-tokio = { version = "1.40", features = ["full"] }
+tokio = { version = "1.40", features = ["rt-multi-thread", "macros", "fs", "process", "time"] }
 async-trait = "0.1"
 futures = "0.3"
 
 # CLI and REPL
 clap = { version = "4.5", features = ["derive", "env"] }
-rustyline = "14.0"
+rustyline = { version = "14.0", default-features = false }
 
-# HTTP and API
+# HTTP and API (optional)
 reqwest = { version = "0.12", features = ["json", "stream"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-# Logging and debugging
+# Logging
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
-env_logger = "0.11"
-log = "0.4"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "std", "registry"] }
 
-# Utilities
+# Core utilities
 uuid = { version = "1.10", features = ["v4", "serde"] }
-chrono = { version = "0.4", features = ["serde"] }
-regex = "1.11"
+chrono = { version = "0.4", features = ["serde"], default-features = false }
 dirs = "5.0"
-base64 = "0.22"
 
-# Code analysis and manipulation
-syn = { version = "2.0", features = ["full", "visit", "parsing"] }
-quote = "1.0"
-proc-macro2 = "1.0"
+# Code analysis and manipulation (optional)
+syn = { version = "2.0", features = ["full", "visit", "parsing"], optional = true }
+quote = { version = "1.0", optional = true }
+proc-macro2 = { version = "1.0", optional = true }
 
-# Security and sandboxing
-tempfile = "3.13"
-which = "6.0"
+# Security and sandboxing (optional)
+tempfile = { version = "3.13", optional = true }
+which = { version = "6.0", optional = true }
 
 # File operations
 walkdir = "2.5"
@@ -58,9 +63,10 @@ mockito = "1.5"
 proptest = "1.5"
 criterion = "0.5"
 
-[[bench]]
-name = "api_performance"
-harness = false
+# Benchmarks will be added later
+# [[bench]]
+# name = "api_performance"
+# harness = false
 
 [profile.release]
 opt-level = 3

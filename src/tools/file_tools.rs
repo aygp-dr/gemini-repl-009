@@ -3,7 +3,7 @@
 use super::{Tool, security};
 use anyhow::{bail, Result};
 use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -267,9 +267,17 @@ impl Tool for EditFileTool {
                     let search = op.search.ok_or_else(|| anyhow::anyhow!("search required for replace"))?;
                     let replace = op.replace.ok_or_else(|| anyhow::anyhow!("replace required for replace"))?;
                     
-                    let new_content = lines.join("\n").replace(&search, &replace);
-                    lines = new_content.lines().map(|l| l.to_string()).collect();
-                    changes += 1;
+                    // More efficient string replacement without intermediate allocation
+                    let mut modified = false;
+                    for line in &mut lines {
+                        if line.contains(&search) {
+                            *line = line.replace(&search, &replace);
+                            modified = true;
+                        }
+                    }
+                    if modified {
+                        changes += 1;
+                    }
                 }
                 "insert" => {
                     let line = op.line.ok_or_else(|| anyhow::anyhow!("line required for insert"))?;

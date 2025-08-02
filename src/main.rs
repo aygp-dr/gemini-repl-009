@@ -12,6 +12,7 @@ mod logging;
 mod models;
 mod utils;
 mod self_modification;
+mod errors;
 
 use api::{Content, GeminiClient, Part};
 use tools::ToolRegistry;

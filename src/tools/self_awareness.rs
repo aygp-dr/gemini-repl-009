@@ -3,7 +3,7 @@
 use super::Tool;
 use anyhow::Result;
 use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -348,7 +348,7 @@ fn identify_key_files(workspace: &Path) -> Result<Vec<Value>> {
     Ok(key_files)
 }
 
-fn get_implementation_details(workspace: &Path) -> Result<Value> {
+fn get_implementation_details(_workspace: &Path) -> Result<Value> {
     // This would analyze the actual implementation details
     // For now, return a placeholder
     Ok(json!({

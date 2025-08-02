@@ -1,12 +1,11 @@
 //! Rust-specific tools for building, testing, and formatting code
 
-use super::{Tool, security};
-use anyhow::{bail, Result};
+use super::Tool;
+use anyhow::Result;
 use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, Value};
 use std::path::PathBuf;
-use std::process::Command;
 use tokio::process::Command as AsyncCommand;
 
 /// Tool for running cargo build
@@ -83,7 +82,11 @@ impl Tool for CargoBuildTool {
             cmd.arg(target);
         }
         
-        let output = cmd.output().await?;
+        let output = tokio::time::timeout(
+            std::time::Duration::from_secs(300), // 5 minutes timeout
+            cmd.output()
+        ).await
+        .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
         
         Ok(json!({
             "success": output.status.success(),
@@ -178,7 +181,11 @@ impl Tool for CargoTestTool {
             cmd.arg(test_name);
         }
         
-        let output = cmd.output().await?;
+        let output = tokio::time::timeout(
+            std::time::Duration::from_secs(300), // 5 minutes timeout
+            cmd.output()
+        ).await
+        .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
         
         Ok(json!({
             "success": output.status.success(),
@@ -246,7 +253,11 @@ impl Tool for RustfmtTool {
         }
         cmd.arg(temp_file.path());
         
-        let output = cmd.output().await?;
+        let output = tokio::time::timeout(
+            std::time::Duration::from_secs(300), // 5 minutes timeout
+            cmd.output()
+        ).await
+        .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
         
         let formatted_code = if !params.check && output.status.success() {
             std::fs::read_to_string(temp_file.path())?
@@ -333,7 +344,11 @@ impl Tool for ClippyTool {
         cmd.arg("-D");
         cmd.arg("warnings");
         
-        let output = cmd.output().await?;
+        let output = tokio::time::timeout(
+            std::time::Duration::from_secs(300), // 5 minutes timeout
+            cmd.output()
+        ).await
+        .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
         
         Ok(json!({
             "success": output.status.success(),
@@ -410,7 +425,11 @@ impl Tool for CargoCheckTool {
             }
         }
         
-        let output = cmd.output().await?;
+        let output = tokio::time::timeout(
+            std::time::Duration::from_secs(300), // 5 minutes timeout
+            cmd.output()
+        ).await
+        .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
         
         Ok(json!({
             "success": output.status.success(),

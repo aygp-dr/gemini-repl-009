@@ -3,7 +3,7 @@
 use anyhow::{bail, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::Value;
 use std::time::Duration;
 
 /// Gemini API client
@@ -140,20 +140,7 @@ impl GeminiClient {
         }
         
         let part = &candidate.content.parts[0];
-        part.text.clone().unwrap_or_else(|| "No text in response".to_string())
-            .pipe(Ok)
+        Ok(part.text.clone().unwrap_or_else(|| "No text in response".to_string()))
     }
 }
 
-// Helper trait for pipeline operations
-trait Pipe<T> {
-    fn pipe<F, U>(self, f: F) -> U
-    where
-        F: FnOnce(Self) -> U,
-        Self: Sized,
-    {
-        f(self)
-    }
-}
-
-impl<T> Pipe<T> for T {}
