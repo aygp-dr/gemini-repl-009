@@ -7,7 +7,7 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
-use syn::{parse_file, Item, ItemFn, ItemStruct, ItemEnum, ItemImpl, ItemTrait, Visibility};
+use syn::{parse_file, Item, ItemFn, Visibility};
 
 /// Tool for analyzing Rust code
 pub struct AnalyzeRustCodeTool;

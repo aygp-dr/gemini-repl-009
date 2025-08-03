@@ -3,19 +3,11 @@
 avoid-breaking-exported-api = false
 msrv = "1.80.0"
 
-# Warn on common issues
-warn = [
-    "clippy::all",
-    "clippy::pedantic",
-    "clippy::nursery",
-    "clippy::cargo",
-]
+# Cognitive complexity threshold
+cognitive-complexity-threshold = 20
 
-# Allow some pedantic lints
-allow = [
-    "clippy::module_name_repetitions",
-    "clippy::must_use_candidate",
-    "clippy::missing_errors_doc",
-    "clippy::missing_panics_doc",
-    "clippy::struct_excessive_bools",
-]
+# Too many arguments threshold
+too-many-arguments-threshold = 7
+
+# Large error threshold
+large-error-threshold = 128
