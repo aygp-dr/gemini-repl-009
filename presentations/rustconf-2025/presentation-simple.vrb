@@ -1,0 +1,17 @@
+\frametitle{Error Handling - Rust's Secret Weapon}
+\begin{lstlisting}
+#[derive(Debug, thiserror::Error)]
+pub enum GeminiError {
+    #[error("API error: {0}")]
+    Api(#[from] ApiError),
+
+    #[error("Tool execution failed: {0}")]
+    Tool(#[from] ToolError),
+
+    #[error("Security violation: {0}")]
+    Security(#[from] SecurityError),
+}
+// No unwrap() - prevents runtime panics
+\end{lstlisting}
+
+Every function that can fail returns \texttt{Result<T, E>}
