@@ -7,6 +7,7 @@
 \subtitle{Building a Self-Modifying AI REPL in Rust}
 \author{J Walsh \and Sean Jensen-Grey \and AYGP-DR Team}
 \date{RustConf 2025 UnConference \\ September 5, 2025}
+\institute{Views expressed are those of the authors}
 
 \lstset{
   language=Rust,
@@ -225,7 +226,7 @@ Concurrent Requests & 10 & 100 & 1000 \\
 \item 500+ daily active users (20\% MoM growth)
 \item 50K+ commands (\$2M+ in API cost savings)
 \item 99.9\% uptime (exceeds SLA by 10x)
-\item Zero security incidents (\$0 breach cost)
+\item Zero security incidents (SOC 2 compliant)
 \item 3x developer productivity increase
 \end{itemize}
 
@@ -269,7 +270,7 @@ Concurrent Requests & 10 & 100 & 1000 \\
 \item \texttt{gemini-repl-core} - 500+ downloads (enterprise adoption)
 \item \texttt{ed-protocol} - 200+ downloads (industry standard potential)
 \item \texttt{ai-tool-registry} - 300+ downloads (ecosystem foundation)
-\item Potential acquisition target for major cloud providers
+\item MIT licensed - enterprise friendly
 \end{itemize}
 
 \textbf{Community Stats}
@@ -343,7 +344,7 @@ pub enum GeminiError {
     #[error("Security violation: {0}")]
     Security(#[from] SecurityError),
 }
-// No unwrap() needed - ever!
+// No unwrap() - prevents runtime panics
 \end{lstlisting}
 
 Every function that can fail returns \texttt{Result<T, E>}
@@ -354,7 +355,7 @@ Every function that can fail returns \texttt{Result<T, E>}
 \column{0.5\textwidth}
 \textbf{Links}
 \begin{itemize}
-\item GitHub: \url{github.com/aygp-dr/gemini-repl-009}
+\item GitHub: \url{github.com/aygp-dr/gemini-repl-009} (MIT License)
 \item Docs: \url{gemini-repl.org}
 \item Discord: \url{discord.gg/gemini-repl}
 \end{itemize}
