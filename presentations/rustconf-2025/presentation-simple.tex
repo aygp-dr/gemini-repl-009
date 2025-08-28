@@ -84,7 +84,7 @@ Rust & 201-009 & \textbf{Optimal} & Fearless concurrency \\
 \end{tabular}
 \end{center}
 
-\textbf{Architectural Decision:} Rust's ownership model aligned perfectly with our\\security requirements while maintaining C-level performance
+\textbf{Architectural Decision:} Rust's ownership model provides memory safety\\guarantees without sacrificing performance
 \end{frame}
 
 \begin{frame}[fragile]{Architecture Overview}
@@ -109,10 +109,10 @@ trait ModelProvider: Send + Sync + 'static {
 \begin{frame}{Phase 1: Foundation}
 \textbf{What We Built}
 \begin{itemize}
-\item Core REPL loop with proper error handling
-\item Signal handling (Ctrl+C shouldn't crash)
-\item Async from the start saves refactoring
-\item Comprehensive error types prevent panics
+\item Core REPL loop with robust error handling
+\item Signal handling ensures graceful interruption (Ctrl+C)
+\item Asynchronous architecture from inception
+\item Type-safe error handling prevents runtime failures
 \end{itemize}
 
 \textbf{Timeline: 2 weeks}
@@ -164,9 +164,9 @@ impl SecuritySandbox {
 \end{frame}
 
 \begin{frame}[fragile]{The Ed Tool Innovation}
-\textbf{Problem:} AI models struggle with large file editing
+\textbf{Challenge:} AI models require excessive tokens for large file editing
 
-\textbf{Solution:} Ed protocol - 50+ year old tool perfect for AI
+\textbf{Solution:} Ed protocol - a time-tested, deterministic editing interface
 \begin{lstlisting}
 // Compact, unambiguous editing commands
 let commands = vec![
@@ -175,7 +175,7 @@ let commands = vec![
     "/TODO/c",    // Change lines with TODO
     "w",          // Write file
 ];
-// Reduced token usage by 90%!
+// Result: 90% reduction in token consumption
 \end{lstlisting}
 \end{frame}
 
