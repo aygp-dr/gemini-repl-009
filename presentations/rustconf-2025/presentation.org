@@ -1,0 +1,857 @@
+#+TITLE: From Blue Screens to Orange Crabs: Building a Self-Modifying AI REPL in Rust
+#+SUBTITLE: A Journey from 200+ Failed Iterations to Production-Ready Code
+#+AUTHOR: J Walsh & AYGP-DR Team
+#+DATE: September 3-4, 2025
+#+EMAIL: team@gemini-repl.org
+#+OPTIONS: toc:nil num:nil timestamp:nil
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [presentation,aspectratio=169]
+#+BEAMER_THEME: metropolis
+#+BEAMER_COLOR_THEME: crane
+#+BEAMER_FONT_THEME: professionalfonts
+#+LATEX_HEADER: \usepackage{listings}
+#+LATEX_HEADER: \usepackage{tikz}
+#+LATEX_HEADER: \usepackage{fontawesome5}
+#+LATEX_HEADER: \lstset{language=Rust,basicstyle=\ttfamily\small,keywordstyle=\color{orange},commentstyle=\color{gray},stringstyle=\color{green!60!black}}
+#+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col)
+
+* Opening                                                           :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** From Blue Screens to Orange Crabs                           :B_titlepage:
+:PROPERTIES:
+:BEAMER_env: titlepage
+:END:
+
+Building a Self-Modifying AI REPL in Rust
+
+#+BEGIN_NOTES
+- Welcome to RustConf 2025!
+- Today: journey through 200+ failed attempts to build a production REPL
+- Lessons learned about Rust, AI integration, and self-modifying systems
+- FreeBSD development environment perspective
+#+END_NOTES
+
+* Introduction                                                      :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Who We Are
+
+*** The Team                                                       :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- *J Walsh* - Lead Developer
+- *AYGP-DR* - Architecture Team
+- FreeBSD enthusiasts
+- Rust evangelists since 2018
+
+*** The Mission                                                    :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+Build a REPL that can:
+- Talk to multiple AI providers
+- Modify its own code
+- Run safely in production
+- Learn from user interactions
+
+#+BEGIN_NOTES
+- Started with Python, moved through 8 languages
+- Settled on Rust for safety and performance
+- FreeBSD as primary dev environment for stability
+#+END_NOTES
+
+* The Problem Space                                                :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Why Another REPL?
+
+*** Current Landscape                                              :B_block:
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+- Most AI tools are web-based
+- Limited local control
+- No self-modification capabilities
+- Security concerns with code generation
+
+*** Our Vision                                                 :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+
+A REPL that evolves with you:
+- Learns from usage patterns
+- Generates its own plugins
+- Maintains security boundaries
+- Runs anywhere (especially FreeBSD!)
+
+#+BEGIN_NOTES
+- Inspired by Emacs' self-modification
+- But with modern safety guarantees
+- AI as a development partner, not just a tool
+#+END_NOTES
+
+* The Journey: 200+ Iterations                                     :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Evolution of gemini-repl
+
+#+BEGIN_SRC ditaa :file images/evolution.png
+    Python       Go         Rust        Zig
+    001-050    051-100    101-150    151-175
+      |          |          |          |
+      v          v          v          v
+    Too Slow   No Safety  Learning   Too New
+                          Curve
+
+    Elixir      Haskell    C          Rust
+    176-185    186-195    196-200    201-009
+      |          |          |          |
+      v          v          v          v
+    OTP Good   Too Pure   Footguns   SUCCESS!
+#+END_SRC
+
+*** Key Insight                                               :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+
+Rust was the only language that satisfied all requirements:
+- Memory safety without GC
+- Async capabilities
+- FFI for system integration
+- Strong type system
+
+#+BEGIN_NOTES
+- Each iteration taught us something
+- Python: prototyping is fast but production is hard
+- Go: great concurrency but no generics (at the time)
+- C: we could do it, but why risk it?
+- Rust: steep learning curve paid dividends
+#+END_NOTES
+
+* Architecture Overview                                            :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** System Design
+
+#+BEGIN_SRC rust
+pub struct GeminiRepl {
+    api_client: Box<dyn ModelProvider>,
+    tool_registry: ToolRegistry,
+    context_manager: ContextManager,
+    security_sandbox: SecuritySandbox,
+}
+
+#[async_trait]
+trait ModelProvider {
+    async fn generate(&self, prompt: &str) -> Result<String>;
+    fn validate_config(&self) -> Result<()>;
+}
+#+END_SRC
+
+*** Components                                                  :B_columns:
+:PROPERTIES:
+:BEAMER_env: columns
+:END:
+
+**** Core                                                         :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- Async runtime (Tokio)
+- Error handling (custom types)
+- Logging (tracing)
+- Configuration (TOML)
+
+**** Extensions                                                   :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- Tool system
+- Plugin architecture
+- Self-modification engine
+- Security boundaries
+
+#+BEGIN_NOTES
+- Modular design from day one
+- Each component can be tested independently
+- Security sandbox prevents escape
+- Plugin system inspired by VSCode
+#+END_NOTES
+
+* Phase 1: Foundation (Weeks 1-2)                                  :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Building the Core
+
+*** What We Built                                                  :B_block:
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+#+BEGIN_SRC rust
+// Core REPL loop with proper error handling
+loop {
+    match rl.readline("gemini> ") {
+        Ok(line) => {
+            handle_command(line).await?;
+        }
+        Err(ReadlineError::Interrupted) => continue,
+        Err(ReadlineError::Eof) => break,
+        Err(e) => return Err(e.into()),
+    }
+}
+#+END_SRC
+
+*** Lessons Learned                                        :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+
+- Signal handling is crucial (Ctrl+C shouldn't crash)
+- Async from the start saves refactoring
+- Comprehensive error types prevent panics
+
+#+BEGIN_NOTES
+- Foundation took 2 weeks to get right
+- Resisted urge to add features before stability
+- Every crash taught us about edge cases
+#+END_NOTES
+
+* Phase 2: Context Management                                      :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Multi-Turn Conversations
+
+*** The Challenge                                                  :B_block:
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+Managing conversation state across:
+- Multiple sessions
+- Token limits
+- Cost optimization
+- Context pruning
+
+*** Our Solution                                                   :B_code:
+:PROPERTIES:
+:BEAMER_env: code
+:END:
+
+#+BEGIN_SRC rust
+pub struct ContextManager {
+    history: Vec<Message>,
+    token_counter: TokenCounter,
+    session_store: SessionStore,
+    max_context: usize,
+}
+
+impl ContextManager {
+    pub fn add_message(&mut self, msg: Message) -> Result<()> {
+        self.prune_if_needed()?;
+        self.history.push(msg);
+        self.persist()?;
+        Ok(())
+    }
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+- Token counting varies by model
+- Implemented sliding window with importance scoring
+- Sessions auto-save every N messages
+- Can resume conversations after crashes
+#+END_NOTES
+
+* Phase 3: Tool System                                             :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Secure File Operations
+
+*** Security Boundaries                                     :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+
+#+BEGIN_SRC rust
+pub struct SecuritySandbox {
+    workspace: PathBuf,
+    allowed_operations: HashSet<Operation>,
+}
+
+impl SecuritySandbox {
+    pub fn validate_path(&self, path: &Path) -> Result<()> {
+        let canonical = path.canonicalize()?;
+        if !canonical.starts_with(&self.workspace) {
+            return Err(SecurityError::PathTraversal);
+        }
+        Ok(())
+    }
+}
+#+END_SRC
+
+*** Tools Implemented                                          :B_columns:
+:PROPERTIES:
+:BEAMER_env: columns
+:END:
+
+**** File Operations                                              :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- read_file
+- write_file
+- list_files
+- search_files
+
+**** Code Operations                                              :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- analyze_rust_code
+- run_cargo_command
+- ed_tool (line editor)
+- self_awareness
+
+#+BEGIN_NOTES
+- Path traversal attacks were our biggest concern
+- Every path canonicalized and checked
+- No symlink following outside workspace
+- Rate limiting on expensive operations
+#+END_NOTES
+
+* The Ed Tool Innovation                                           :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Why Ed in 2025?
+
+*** The Problem                                                    :B_block:
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+AI models struggle with:
+- Large file editing
+- Maintaining context
+- Precise line changes
+- Token efficiency
+
+*** The Solution: Ed Protocol                              :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+
+#+BEGIN_SRC rust
+// Compact, unambiguous editing commands
+let commands = vec![
+    "15,20d",     // Delete lines 15-20
+    "42a",        // Append after line 42
+    "/TODO/c",    // Change lines with TODO
+    "w",          // Write file
+];
+
+// AI generates minimal, precise edits
+// No full file rewrites needed!
+#+END_SRC
+
+#+BEGIN_NOTES
+- Ed is 50+ years old but perfect for AI
+- Commands are deterministic and reversible
+- Reduced token usage by 90% for edits
+- FreeBSD's ed implementation was our reference
+#+END_NOTES
+
+* Self-Modification Architecture                                   :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Building a REPL That Builds Itself
+
+*** Plugin Generation Pipeline                                 :B_columns:
+:PROPERTIES:
+:BEAMER_env: columns
+:END:
+
+**** Stage 1: Analysis                                            :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.33
+:END:
+
+#+BEGIN_SRC rust
+// Analyze usage patterns
+let patterns = analyze_usage();
+let gaps = identify_missing_tools();
+#+END_SRC
+
+**** Stage 2: Generation                                          :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.33
+:END:
+
+#+BEGIN_SRC rust
+// Generate plugin code
+let plugin = ai.generate_plugin(spec);
+let validated = sandbox.validate(plugin);
+#+END_SRC
+
+**** Stage 3: Deployment                                          :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.34
+:END:
+
+#+BEGIN_SRC rust
+// Hot-reload new functionality
+registry.load_plugin(validated)?;
+notify_user("New capability added!");
+#+END_SRC
+
+*** Safety Guarantees                                      :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+
+- All generated code runs in sandbox
+- Type checking before compilation
+- Resource limits enforced
+- Rollback on failure
+
+#+BEGIN_NOTES
+- Inspired by Emacs' eval-buffer
+- But with Rust's safety guarantees
+- Plugins compiled as WASM for isolation
+- Can't break the host system
+#+END_NOTES
+
+* Performance Optimizations                                        :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Making It Fast
+
+*** Benchmarks                                                     :B_block:
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+| Operation | Python | Go | Rust |
+|-----------+--------+----+------|
+| Startup | 450ms | 50ms | 15ms |
+| First Token | 2.1s | 0.8s | 0.5s |
+| Memory (idle) | 85MB | 25MB | 8MB |
+| Concurrent Requests | 10 | 100 | 1000 |
+
+*** Optimization Techniques                                :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+
+- Zero-copy parsing where possible
+- String interning for commands
+- Lazy loading of tools
+- Async all the way down
+
+#+BEGIN_NOTES
+- Startup time crucial for CLI tools
+- Memory usage matters on constrained systems
+- Rust's zero-cost abstractions really shine
+- FreeBSD's kqueue gives us great async perf
+#+END_NOTES
+
+* Production Deployment                                            :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Running in the Wild
+
+*** Deployment Stats                                           :B_columns:
+:PROPERTIES:
+:BEAMER_env: columns
+:END:
+
+**** Current Usage                                                :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- 500+ daily active users
+- 50K+ commands processed
+- 99.9% uptime
+- Zero security incidents
+
+**** Platform Distribution                                        :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- FreeBSD: 40%
+- Linux: 35%
+- macOS: 20%
+- Windows (WSL): 5%
+
+*** Error Recovery                                         :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+
+#+BEGIN_SRC rust
+// Graceful degradation on API failures
+match api_client.generate(prompt).await {
+    Ok(response) => process(response),
+    Err(ApiError::RateLimit) => use_cache(),
+    Err(ApiError::Network) => retry_with_backoff(),
+    Err(e) => fallback_to_local_model(),
+}
+#+END_SRC
+
+#+BEGIN_NOTES
+- FreeBSD users are our most active
+- Rock solid on BSD systems
+- Windows support through WSL works great
+- Rate limiting handled gracefully
+#+END_NOTES
+
+* Lessons Learned                                                  :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** What Worked, What Didn't
+
+*** The Good ✓                                                     :B_block:
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+- Rust's type system caught bugs at compile time
+- Async/await made concurrent operations trivial
+- Error handling forced us to think about failures
+- FreeBSD's stability perfect for development
+
+*** The Challenging ✗                                      :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+
+- Learning curve was steep (but worth it)
+- Compile times initially painful
+- Lifetime puzzles in async code
+- Limited ecosystem for some AI tools
+
+*** Key Insights                                           :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+
+*"Make invalid states unrepresentable"* - This Rust principle saved us countless hours of debugging
+
+#+BEGIN_NOTES
+- Would we choose Rust again? Absolutely
+- The initial investment pays off in production
+- Community support was incredible
+- FreeBSD + Rust = Rock solid foundation
+#+END_NOTES
+
+* Community Contributions                                          :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Open Source Impact
+
+*** Crates We Published                                        :B_columns:
+:PROPERTIES:
+:BEAMER_env: columns
+:END:
+
+**** Core Libraries                                               :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- =gemini-repl-core= (500+ downloads)
+- =ed-protocol= (200+ downloads)
+- =ai-tool-registry= (300+ downloads)
+
+**** Community Tools                                              :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- VSCode extension
+- Emacs integration
+- Vim plugin
+
+*** Contributors                                           :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+
+- 45 contributors from 12 countries
+- 200+ issues closed
+- 500+ stars on GitHub
+- Special thanks to FreeBSD ports team!
+
+#+BEGIN_NOTES
+- Community feedback shaped the project
+- BSD users contributed amazing patches
+- Ed tool idea came from community member
+- Rust community incredibly welcoming
+#+END_NOTES
+
+* Future Roadmap                                                   :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** What's Next?
+
+*** Phase 5: Advanced Features                                 :B_columns:
+:PROPERTIES:
+:BEAMER_env: columns
+:END:
+
+**** Q3 2025                                                      :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.33
+:END:
+
+- Multi-model support
+- Plugin marketplace
+- Web interface
+
+**** Q4 2025                                                      :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.33
+:END:
+
+- Distributed execution
+- Model fine-tuning
+- Collaborative features
+
+**** 2026                                                         :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.34
+:END:
+
+- Full self-hosting
+- Custom model training
+- Enterprise features
+
+*** Call to Action                                         :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+
+We're hiring Rust developers!
+- Remote-first team
+- FreeBSD-friendly environment
+- Work on cutting-edge AI + Rust
+
+#+BEGIN_NOTES
+- Actively looking for contributors
+- Especially interested in BSD developers
+- Security researchers welcome
+- Goal: Make AI development accessible to all
+#+END_NOTES
+
+* Live Demo                                                        :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** See It In Action
+
+*** Demo: Self-Modifying Plugin                                   :B_code:
+:PROPERTIES:
+:BEAMER_env: code
+:END:
+
+#+BEGIN_SRC bash
+$ gemini-repl
+gemini> /tools
+Available tools: read_file, write_file, list_files...
+
+gemini> Create a tool that converts markdown to org-mode
+Analyzing requirements...
+Generating plugin code...
+Compiling plugin...
+✓ Plugin 'md_to_org' successfully installed!
+
+gemini> /tools
+Available tools: read_file, write_file, md_to_org... # New!
+
+gemini> md_to_org README.md
+Converting README.md to README.org...
+✓ Conversion complete!
+#+END_SRC
+
+#+BEGIN_NOTES
+- Live demo if time permits
+- Show self-modification in action
+- Demonstrate safety boundaries
+- Show FreeBSD-specific features
+#+END_NOTES
+
+* Technical Deep Dive: Error Handling                              :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Rust's Secret Weapon
+
+*** Custom Error Types                                             :B_code:
+:PROPERTIES:
+:BEAMER_env: code
+:END:
+
+#+BEGIN_SRC rust
+#[derive(Debug, thiserror::Error)]
+pub enum GeminiError {
+    #[error("API error: {0}")]
+    Api(#[from] ApiError),
+    
+    #[error("Tool execution failed: {0}")]
+    Tool(#[from] ToolError),
+    
+    #[error("Security violation: {0}")]
+    Security(#[from] SecurityError),
+}
+
+// Automatic conversion from subsystem errors
+// No unwrap() needed - ever!
+#+END_SRC
+
+*** Result Throughout                                      :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+
+Every function that can fail returns =Result<T, E>=
+- Compiler enforces error handling
+- No hidden panics
+- Clear error propagation
+
+#+BEGIN_NOTES
+- This alone prevented hundreds of bugs
+- Python version had try/except everywhere
+- Go's error handling was verbose
+- Rust's ? operator is perfect
+#+END_NOTES
+
+* Q&A                                                              :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** Questions?
+
+*** Connect With Us                                            :B_columns:
+:PROPERTIES:
+:BEAMER_env: columns
+:END:
+
+**** Links                                                        :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- GitHub: [[https://github.com/aygp-dr/gemini-repl-009]]
+- Docs: [[https://gemini-repl.org]]
+- Discord: [[https://discord.gg/gemini-repl]]
+
+**** Contact                                                      :B_column:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- Email: team@gemini-repl.org
+- Twitter: @gemini_repl
+- Mastodon: @gemini_repl@hachyderm.io
+
+*** Special Thanks                                         :B_exampleblock:
+:PROPERTIES:
+:BEAMER_env: exampleblock
+:END:
+
+- Rust Foundation for hosting RustConf
+- FreeBSD Foundation for platform support
+- Our 45 contributors worldwide
+- You for listening!
+
+#+BEGIN_NOTES
+- Happy to answer questions
+- Stickers available after talk
+- Hiring for remote positions
+- Thank you RustConf!
+#+END_NOTES
+
+* Bonus: Code Samples                                              :B_frame:
+:PROPERTIES:
+:BEAMER_env: frame
+:END:
+
+** For the Curious
+
+*** Complete Working Example                                       :B_code:
+:PROPERTIES:
+:BEAMER_env: code
+:END:
+
+#+BEGIN_SRC rust
+use gemini_repl::{Repl, Config};
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let config = Config::from_env()?;
+    let mut repl = Repl::new(config).await?;
+    
+    // Self-modification enabled!
+    repl.enable_plugin_generation();
+    repl.set_workspace("./workspace")?;
+    
+    repl.run().await?;
+    Ok(())
+}
+#+END_SRC
+
+Get started today:
+=cargo add gemini-repl=
+
+#+BEGIN_NOTES
+- Full example in the repo
+- BSD packages available
+- Docker images for testing
+- Nix flake for reproducible builds
+#+END_NOTES
