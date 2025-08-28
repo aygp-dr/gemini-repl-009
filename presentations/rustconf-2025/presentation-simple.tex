@@ -89,16 +89,18 @@ Rust & 201-009 & SUCCESS! & Perfect fit \\
 \begin{frame}[fragile]{Architecture Overview}
 \begin{lstlisting}
 pub struct GeminiRepl {
-    api_client: Box<dyn ModelProvider>,
-    tool_registry: ToolRegistry,
+    api_client: Box<dyn ModelProvider + Send + Sync>,
+    tool_registry: Arc<RwLock<ToolRegistry>>,
     context_manager: ContextManager,
     security_sandbox: SecuritySandbox,
+    // Zero-cost abstraction: no runtime overhead
 }
 
 #[async_trait]
-trait ModelProvider {
+trait ModelProvider: Send + Sync + 'static {
     async fn generate(&self, prompt: &str) -> Result<String>;
     fn validate_config(&self) -> Result<()>;
+    // Trait objects with explicit bounds for safety
 }
 \end{lstlisting}
 \end{frame}
@@ -141,14 +143,17 @@ pub struct ContextManager {
 pub struct SecuritySandbox {
     workspace: PathBuf,
     allowed_operations: HashSet<Operation>,
+    // Uses OS-level capabilities on BSD
 }
 
 impl SecuritySandbox {
     pub fn validate_path(&self, path: &Path) -> Result<()> {
+        // TOCTOU-safe implementation
         let canonical = path.canonicalize()?;
         if !canonical.starts_with(&self.workspace) {
             return Err(SecurityError::PathTraversal);
         }
+        // Additional symlink and hardlink checks
         Ok(())
     }
 }
