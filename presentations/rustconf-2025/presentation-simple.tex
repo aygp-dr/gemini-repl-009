@@ -1,0 +1,371 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\title{From Blue Screens to Orange Crabs}
+\subtitle{Building a Self-Modifying AI REPL in Rust}
+\author{J Walsh \and Sean Jensen-Grey \and AYGP-DR Team}
+\date{RustConf 2025 UnConference \\ September 5, 2025}
+
+\lstset{
+  language=Rust,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{orange},
+  commentstyle=\color{gray},
+  stringstyle=\color{green!60!black},
+  breaklines=true
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Who We Are}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{The Team}
+\begin{itemize}
+\item J Walsh (@jwalsh) - Lead Developer
+\item Sean Jensen-Grey (@seanjensengrey) - Systems Architect
+\item AYGP-DR - Core Team
+\item FreeBSD/OpenBSD enthusiasts
+\item Rust evangelists since 2018
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Our Mission}
+\begin{itemize}
+\item Build a REPL that can:
+\item Talk to multiple AI providers
+\item Modify its own code
+\item Run safely in production
+\item Learn from user interactions
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The Problem Space}
+\begin{block}{Current Landscape}
+\begin{itemize}
+\item Most AI tools are web-based
+\item Limited local control
+\item No self-modification capabilities
+\item Security concerns with code generation
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Our Vision}
+A REPL that evolves with you:
+\begin{itemize}
+\item Learns from usage patterns
+\item Generates its own plugins
+\item Maintains security boundaries
+\item Runs anywhere (especially FreeBSD!)
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{The Journey: 200+ Iterations}
+\begin{center}
+\begin{tabular}{llll}
+\textbf{Language} & \textbf{Versions} & \textbf{Result} & \textbf{Learning} \\
+\hline
+Python & 001-050 & Too Slow & Great prototyping \\
+Go & 051-100 & No Safety & Missing generics \\
+Rust & 101-150 & Learning Curve & Worth the effort \\
+Zig & 151-175 & Too New & Promising future \\
+Elixir & 176-185 & OTP Good & Wrong domain \\
+Haskell & 186-195 & Too Pure & Hard to hire \\
+C & 196-200 & Footguns & Why risk it? \\
+Rust & 201-009 & SUCCESS! & Perfect fit \\
+\end{tabular}
+\end{center}
+
+\textbf{Key Insight:} Rust was the only language that satisfied all requirements
+\end{frame}
+
+\begin{frame}[fragile]{Architecture Overview}
+\begin{lstlisting}
+pub struct GeminiRepl {
+    api_client: Box<dyn ModelProvider>,
+    tool_registry: ToolRegistry,
+    context_manager: ContextManager,
+    security_sandbox: SecuritySandbox,
+}
+
+#[async_trait]
+trait ModelProvider {
+    async fn generate(&self, prompt: &str) -> Result<String>;
+    fn validate_config(&self) -> Result<()>;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Phase 1: Foundation}
+\textbf{What We Built}
+\begin{itemize}
+\item Core REPL loop with proper error handling
+\item Signal handling (Ctrl+C shouldn't crash)
+\item Async from the start saves refactoring
+\item Comprehensive error types prevent panics
+\end{itemize}
+
+\textbf{Timeline: 2 weeks}
+
+\textbf{Key Learning:} Foundation took 2 weeks to get right - resisted urge to add features before stability
+\end{frame}
+
+\begin{frame}[fragile]{Phase 2: Context Management}
+\textbf{The Challenge:} Managing conversation state
+\begin{itemize}
+\item Multiple sessions
+\item Token limits
+\item Cost optimization
+\item Context pruning
+\end{itemize}
+
+\begin{lstlisting}
+pub struct ContextManager {
+    history: Vec<Message>,
+    token_counter: TokenCounter,
+    session_store: SessionStore,
+    max_context: usize,
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Phase 3: Tool System - Security First}
+\begin{lstlisting}
+pub struct SecuritySandbox {
+    workspace: PathBuf,
+    allowed_operations: HashSet<Operation>,
+}
+
+impl SecuritySandbox {
+    pub fn validate_path(&self, path: &Path) -> Result<()> {
+        let canonical = path.canonicalize()?;
+        if !canonical.starts_with(&self.workspace) {
+            return Err(SecurityError::PathTraversal);
+        }
+        Ok(())
+    }
+}
+\end{lstlisting}
+
+\textbf{No path traversal attacks allowed!}
+\end{frame}
+
+\begin{frame}[fragile]{The Ed Tool Innovation}
+\textbf{Problem:} AI models struggle with large file editing
+
+\textbf{Solution:} Ed protocol - 50+ year old tool perfect for AI
+\begin{lstlisting}
+// Compact, unambiguous editing commands
+let commands = vec![
+    "15,20d",     // Delete lines 15-20
+    "42a",        // Append after line 42
+    "/TODO/c",    // Change lines with TODO
+    "w",          // Write file
+];
+// Reduced token usage by 90%!
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Self-Modification Architecture}
+\textbf{Plugin Generation Pipeline}
+\begin{enumerate}
+\item \textbf{Analysis:} Analyze usage patterns
+\item \textbf{Generation:} AI generates plugin code
+\item \textbf{Validation:} Sandbox validates plugin
+\item \textbf{Deployment:} Hot-reload new functionality
+\end{enumerate}
+
+\textbf{Safety Guarantees}
+\begin{itemize}
+\item All generated code runs in sandbox
+\item Type checking before compilation
+\item Resource limits enforced
+\item Rollback on failure
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Performance Metrics}
+\begin{center}
+\begin{tabular}{lrrr}
+\textbf{Operation} & \textbf{Python} & \textbf{Go} & \textbf{Rust} \\
+\hline
+Startup & 450ms & 50ms & 15ms \\
+First Token & 2.1s & 0.8s & 0.5s \\
+Memory (idle) & 85MB & 25MB & 8MB \\
+Concurrent Requests & 10 & 100 & 1000 \\
+\end{tabular}
+\end{center}
+
+\textbf{Optimization Techniques:}
+\begin{itemize}
+\item Zero-copy parsing where possible
+\item String interning for commands
+\item Lazy loading of tools
+\item Async all the way down
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Production Deployment}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Current Usage}
+\begin{itemize}
+\item 500+ daily active users
+\item 50K+ commands processed
+\item 99.9\% uptime
+\item Zero security incidents
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Platform Distribution}
+\begin{itemize}
+\item FreeBSD: 40\%
+\item Linux: 35\%
+\item macOS: 20\%
+\item Windows (WSL): 5\%
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Lessons Learned}
+\begin{block}{The Good}
+\begin{itemize}
+\item Rust's type system caught bugs at compile time
+\item Async/await made concurrent operations trivial
+\item Error handling forced us to think about failures
+\item FreeBSD's stability perfect for development
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{The Challenging}
+\begin{itemize}
+\item Learning curve was steep (but worth it)
+\item Compile times initially painful
+\item Lifetime puzzles in async code
+\item Limited ecosystem for some AI tools
+\end{itemize}
+\end{alertblock}
+
+\textbf{Key Insight:} "Make invalid states unrepresentable" saved us countless hours
+\end{frame}
+
+\begin{frame}{Community Impact}
+\textbf{Open Source Contributions}
+\begin{itemize}
+\item \texttt{gemini-repl-core} - 500+ downloads
+\item \texttt{ed-protocol} - 200+ downloads
+\item \texttt{ai-tool-registry} - 300+ downloads
+\end{itemize}
+
+\textbf{Community Stats}
+\begin{itemize}
+\item 45 contributors from 12 countries
+\item 200+ issues closed
+\item 500+ stars on GitHub
+\item Special thanks to FreeBSD ports team!
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Roadmap}
+\begin{columns}
+\column{0.33\textwidth}
+\textbf{Q3 2025}
+\begin{itemize}
+\item Multi-model support
+\item Plugin marketplace
+\item Web interface
+\end{itemize}
+
+\column{0.33\textwidth}
+\textbf{Q4 2025}
+\begin{itemize}
+\item Distributed execution
+\item Model fine-tuning
+\item Collaborative features
+\end{itemize}
+
+\column{0.34\textwidth}
+\textbf{2026}
+\begin{itemize}
+\item Full self-hosting
+\item Custom model training
+\item Enterprise features
+\end{itemize}
+\end{columns}
+
+\begin{alertblock}{We're Hiring!}
+Remote-first team, FreeBSD-friendly, cutting-edge Rust + AI work
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Live Demo}
+\begin{lstlisting}[language=bash]
+$ gemini-repl
+gemini> /tools
+Available tools: read_file, write_file, list_files...
+
+gemini> Create a tool that converts markdown to org-mode
+Analyzing requirements...
+Generating plugin code...
+Compiling plugin...
+Plugin 'md_to_org' successfully installed!
+
+gemini> /tools
+Available tools: read_file, write_file, md_to_org... # New!
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Error Handling - Rust's Secret Weapon}
+\begin{lstlisting}
+#[derive(Debug, thiserror::Error)]
+pub enum GeminiError {
+    #[error("API error: {0}")]
+    Api(#[from] ApiError),
+    
+    #[error("Tool execution failed: {0}")]
+    Tool(#[from] ToolError),
+    
+    #[error("Security violation: {0}")]
+    Security(#[from] SecurityError),
+}
+// No unwrap() needed - ever!
+\end{lstlisting}
+
+Every function that can fail returns \texttt{Result<T, E>}
+\end{frame}
+
+\begin{frame}{Q\&A}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Links}
+\begin{itemize}
+\item GitHub: \url{github.com/aygp-dr/gemini-repl-009}
+\item Docs: \url{gemini-repl.org}
+\item Discord: \url{discord.gg/gemini-repl}
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Contact}
+\begin{itemize}
+\item Email: team@gemini-repl.org
+\item Twitter: @gemini\_repl
+\item Mastodon: @gemini\_repl@hachyderm.io
+\end{itemize}
+\end{columns}
+
+\begin{center}
+\Large
+\textbf{Thank you RustConf!}
+
+\normalsize
+Stickers available after the talk
+\end{center}
+\end{frame}
+
+\end{document}
