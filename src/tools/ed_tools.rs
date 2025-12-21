@@ -3,13 +3,13 @@
 //! This module implements file operations using ed(1) semantics,
 //! providing a line-oriented approach to text manipulation.
 
-use super::Tool;
+use super::{security, Tool};
 use anyhow::{bail, Result};
 use async_trait::async_trait;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 /// Represents a line in the ed buffer
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -524,13 +524,27 @@ impl Tool for EdTool {
 
         let params: Params = serde_json::from_value(params)?;
 
+        // Validate file path if provided
+        let validated_path = if let Some(ref file) = params.file {
+            let path = Path::new(file);
+
+            // Security validation
+            if !security::is_path_safe(path) {
+                bail!("Access denied: unsafe path");
+            }
+
+            let full_path = self.workspace.join(path);
+            Some(security::validate_path(&full_path, &self.workspace)?)
+        } else {
+            None
+        };
+
         // Create buffer
         let mut buffer = if let Some(content) = params.content {
             EdBuffer::from_string(&content)
-        } else if let Some(file) = &params.file {
-            let file_path = self.workspace.join(file);
+        } else if let Some(ref file_path) = validated_path {
             if file_path.exists() {
-                let content = std::fs::read_to_string(&file_path)?;
+                let content = std::fs::read_to_string(file_path)?;
                 EdBuffer::from_string(&content)
             } else {
                 EdBuffer::new()
@@ -592,11 +606,10 @@ impl Tool for EdTool {
             }
         }
 
-        // Save to file if specified
-        let file_ref = if let Some(ref file) = params.file {
-            let file_path = self.workspace.join(file);
-            std::fs::write(&file_path, buffer.contents())?;
-            Some(file.clone())
+        // Save to file if specified (use validated path)
+        let file_ref = if let Some(ref file_path) = validated_path {
+            std::fs::write(file_path, buffer.contents())?;
+            params.file.clone()
         } else {
             None
         };

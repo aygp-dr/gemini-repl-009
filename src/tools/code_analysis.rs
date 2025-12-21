@@ -1,7 +1,7 @@
 //! Code analysis tools for understanding Rust code structure
 
-use super::Tool;
-use anyhow::Result;
+use super::{security, Tool};
+use anyhow::{bail, Result};
 use async_trait::async_trait;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -207,10 +207,18 @@ impl Tool for FindFunctionTool {
 
         let params: Params = serde_json::from_value(params)?;
         let search_path = params.path.unwrap_or_else(|| "src".to_string());
-        let full_path = self.workspace.join(&search_path);
+        let path = Path::new(&search_path);
+
+        // Security validation
+        if !security::is_path_safe(path) {
+            bail!("Access denied: unsafe path");
+        }
+
+        let full_path = self.workspace.join(path);
+        let validated_path = security::validate_path(&full_path, &self.workspace)?;
 
         let mut results = Vec::new();
-        search_rust_files(&full_path, |file_path, content| {
+        search_rust_files(&validated_path, |file_path, content| {
             if let Ok(syntax_tree) = parse_file(content) {
                 for item in syntax_tree.items {
                     if let Item::Fn(item_fn) = item {
@@ -284,10 +292,18 @@ impl Tool for FindStructTool {
 
         let params: Params = serde_json::from_value(params)?;
         let search_path = params.path.unwrap_or_else(|| "src".to_string());
-        let full_path = self.workspace.join(&search_path);
+        let path = Path::new(&search_path);
+
+        // Security validation
+        if !security::is_path_safe(path) {
+            bail!("Access denied: unsafe path");
+        }
+
+        let full_path = self.workspace.join(path);
+        let validated_path = security::validate_path(&full_path, &self.workspace)?;
 
         let mut results = Vec::new();
-        search_rust_files(&full_path, |file_path, content| {
+        search_rust_files(&validated_path, |file_path, content| {
             if let Ok(syntax_tree) = parse_file(content) {
                 for item in syntax_tree.items {
                     if let Item::Struct(item_struct) = item {

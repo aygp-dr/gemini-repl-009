@@ -218,7 +218,7 @@ impl ToolRegistry {
 /// Security utilities for path validation
 pub mod security {
     use anyhow::{bail, Result};
-    use std::path::{Path, PathBuf};
+    use std::path::{Component, Path, PathBuf};
 
     /// Validate that a path is within the workspace
     pub fn validate_path(path: &Path, workspace: &Path) -> Result<PathBuf> {
@@ -244,26 +244,103 @@ pub mod security {
     }
 
     /// Check if a path is safe to read/write
+    /// This provides early rejection of obviously malicious paths before
+    /// the more expensive canonicalization in validate_path
     pub fn is_path_safe(path: &Path) -> bool {
-        // Check for path traversal attempts
+        let path_str = path.to_string_lossy();
+
+        // Reject absolute paths - must be relative to workspace
+        if path.is_absolute() {
+            return false;
+        }
+
+        // Reject paths starting with ~ (home directory expansion)
+        if path_str.starts_with('~') {
+            return false;
+        }
+
+        // Check for path traversal attempts using .. components
         for component in path.components() {
-            if let std::path::Component::ParentDir = component {
-                return false;
+            match component {
+                Component::ParentDir => return false,
+                Component::RootDir => return false, // Redundant with is_absolute, but explicit
+                _ => {}
             }
+        }
+
+        // Check for null bytes (shouldn't happen in Rust, but defense in depth)
+        if path_str.contains('\0') {
+            return false;
         }
 
         // Check for sensitive files
         if let Some(file_name) = path.file_name() {
             let name = file_name.to_string_lossy();
-            if name.starts_with(".env")
-                || name == ".git"
-                || name.contains("secret")
-                || name.contains("password")
+            let name_lower = name.to_lowercase();
+            if name_lower.starts_with(".env")
+                || name_lower == ".git"
+                || name_lower.contains("secret")
+                || name_lower.contains("password")
+                || name_lower.contains("credential")
+                || name_lower == ".ssh"
+                || name_lower == ".gnupg"
+                || name_lower == ".aws"
             {
                 return false;
             }
         }
 
         true
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn test_rejects_absolute_paths() {
+            assert!(!is_path_safe(Path::new("/etc/passwd")));
+            assert!(!is_path_safe(Path::new("/home/user/file.txt")));
+        }
+
+        #[test]
+        fn test_rejects_parent_traversal() {
+            assert!(!is_path_safe(Path::new("../secret.txt")));
+            assert!(!is_path_safe(Path::new("foo/../../../etc/passwd")));
+            assert!(!is_path_safe(Path::new("a/b/c/../../..")));
+        }
+
+        #[test]
+        fn test_rejects_home_expansion() {
+            assert!(!is_path_safe(Path::new("~/secret.txt")));
+            assert!(!is_path_safe(Path::new("~root/.ssh/id_rsa")));
+        }
+
+        #[test]
+        fn test_rejects_sensitive_files() {
+            assert!(!is_path_safe(Path::new(".env")));
+            assert!(!is_path_safe(Path::new(".env.local")));
+            assert!(!is_path_safe(Path::new("config/.git")));
+            assert!(!is_path_safe(Path::new("db_password.txt")));
+            assert!(!is_path_safe(Path::new("secret_key.pem")));
+            assert!(!is_path_safe(Path::new(".ssh")));
+            assert!(!is_path_safe(Path::new(".aws")));
+            assert!(!is_path_safe(Path::new("credentials.json")));
+        }
+
+        #[test]
+        fn test_allows_safe_paths() {
+            assert!(is_path_safe(Path::new("src/main.rs")));
+            assert!(is_path_safe(Path::new("Cargo.toml")));
+            assert!(is_path_safe(Path::new("tests/integration/test_api.rs")));
+            assert!(is_path_safe(Path::new("docs/README.md")));
+        }
+
+        #[test]
+        fn test_case_insensitive_sensitive_check() {
+            assert!(!is_path_safe(Path::new(".ENV")));
+            assert!(!is_path_safe(Path::new("SECRET.txt")));
+            assert!(!is_path_safe(Path::new("Password.json")));
+        }
     }
 }
