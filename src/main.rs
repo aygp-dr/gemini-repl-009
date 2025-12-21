@@ -7,9 +7,11 @@ use rustyline::DefaultEditor;
 use std::env;
 
 mod api;
+mod context;
 mod errors;
 mod logging;
 mod models;
+mod providers;
 mod self_modification;
 mod session;
 mod tools;
@@ -233,6 +235,10 @@ fn handle_command(
             print_stats(&stats);
             Some(false)
         }
+        "/tokens" => {
+            print_token_stats(conversation);
+            Some(false)
+        }
         "/sessions" => {
             print_sessions(session_manager);
             Some(false)
@@ -329,6 +335,47 @@ fn print_stats(stats: &SessionStats) {
     println!("  User messages: {}", stats.user_messages);
     println!("  Assistant messages: {}", stats.assistant_messages);
     println!("  Total characters: {}", stats.total_chars);
+}
+
+fn print_token_stats(conversation: &[Content]) {
+    use context::ContextManager;
+
+    let cm = ContextManager::default();
+    let stats = cm.count_tokens(conversation);
+
+    println!("Token Statistics:");
+    println!("  {}", cm.status(conversation));
+    println!();
+    println!("  By role:");
+    println!(
+        "    User:      {} tokens ({} messages)",
+        stats.user_tokens, stats.user_messages
+    );
+    println!(
+        "    Assistant: {} tokens ({} messages)",
+        stats.assistant_tokens, stats.assistant_messages
+    );
+    println!(
+        "    Function:  {} tokens ({} messages)",
+        stats.function_tokens, stats.function_messages
+    );
+    if stats.system_tokens > 0 {
+        println!("    System:    {} tokens", stats.system_tokens);
+    }
+    println!();
+    println!(
+        "  Avg tokens/message: {:.1}",
+        stats.avg_tokens_per_message()
+    );
+    println!(
+        "  Remaining capacity: {} tokens",
+        cm.remaining_tokens(conversation)
+    );
+
+    if cm.needs_warning(conversation) {
+        println!();
+        println!("  ⚠️  Warning: Approaching context limit!");
+    }
 }
 
 fn print_sessions(session_manager: &SessionManager) {
@@ -572,6 +619,7 @@ fn print_help(self_modification_enabled: bool) {
     println!("  /delete <name> - Delete a saved session");
     println!("  /reset         - Clear conversation history");
     println!("  /stats         - Show session statistics");
+    println!("  /tokens        - Show token usage and context capacity");
 
     if self_modification_enabled {
         println!();
