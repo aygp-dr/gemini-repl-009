@@ -44,6 +44,14 @@ struct Args {
     /// Enable self-modification features
     #[arg(long)]
     enable_self_modification: bool,
+
+    /// Continue a specific session by name
+    #[arg(short = 'C', long = "continue")]
+    continue_session: Option<String>,
+
+    /// Continue the most recent session
+    #[arg(long)]
+    continue_last: bool,
 }
 
 #[tokio::main]
@@ -90,6 +98,54 @@ async fn run_repl(
     let mut conversation: Vec<Content> = Vec::new();
     // Current session name (None if unsaved)
     let mut current_session: Option<String> = None;
+
+    // Handle session continuation
+    if let Some(session_name) = &args.continue_session {
+        match session_manager.load(session_name) {
+            Ok(session) => {
+                if session.model != args.model {
+                    println!(
+                        "Warning: Session was created with model '{}', current model is '{}'",
+                        session.model, args.model
+                    );
+                }
+                println!(
+                    "Continuing session '{}' ({} messages)",
+                    session.name, session.message_count
+                );
+                conversation = session.conversation;
+                current_session = Some(session.name);
+            }
+            Err(e) => {
+                eprintln!("Error loading session '{}': {}", session_name, e);
+                eprintln!("Starting new session instead.");
+            }
+        }
+    } else if args.continue_last {
+        match session_manager.get_last_session() {
+            Ok(Some(session)) => {
+                if session.model != args.model {
+                    println!(
+                        "Warning: Session was created with model '{}', current model is '{}'",
+                        session.model, args.model
+                    );
+                }
+                println!(
+                    "Continuing last session '{}' ({} messages)",
+                    session.name, session.message_count
+                );
+                conversation = session.conversation;
+                current_session = Some(session.name);
+            }
+            Ok(None) => {
+                println!("No previous sessions found. Starting new session.");
+            }
+            Err(e) => {
+                eprintln!("Error loading last session: {}", e);
+                eprintln!("Starting new session instead.");
+            }
+        }
+    }
 
     // Initialize readline
     let mut rl = DefaultEditor::new()?;
@@ -286,6 +342,10 @@ fn handle_command(
             }
             Some(false)
         }
+        "/continue" => {
+            continue_last_session(session_manager, &args.model, conversation, current_session);
+            Some(false)
+        }
         input if input.starts_with('/') => {
             println!("Unknown command: {input}. Type /help for available commands.");
             Some(false)
@@ -477,6 +537,36 @@ fn delete_session(
     }
 }
 
+fn continue_last_session(
+    session_manager: &SessionManager,
+    expected_model: &str,
+    conversation: &mut Vec<Content>,
+    current_session: &mut Option<String>,
+) {
+    match session_manager.get_last_session() {
+        Ok(Some(session)) => {
+            if session.model != expected_model {
+                println!(
+                    "Warning: Session was created with model '{}', current model is '{}'",
+                    session.model, expected_model
+                );
+            }
+            *conversation = session.conversation;
+            *current_session = Some(session.name.clone());
+            println!(
+                "Loaded last session '{}' ({} messages)",
+                session.name, session.message_count
+            );
+        }
+        Ok(None) => {
+            println!("No saved sessions found");
+        }
+        Err(e) => {
+            eprintln!("Error loading last session: {}", e);
+        }
+    }
+}
+
 async fn handle_user_input(
     input: &str,
     client: Option<&GeminiClient>,
@@ -615,11 +705,17 @@ fn print_help(self_modification_enabled: bool) {
     println!("Session management:");
     println!("  /save [name]   - Save session (auto-generates name if not provided)");
     println!("  /load <name>   - Load a saved session");
+    println!("  /continue      - Load the most recent session");
     println!("  /sessions      - List all saved sessions");
     println!("  /delete <name> - Delete a saved session");
     println!("  /reset         - Clear conversation history");
     println!("  /stats         - Show session statistics");
     println!("  /tokens        - Show token usage and context capacity");
+
+    println!();
+    println!("CLI options for session continuation:");
+    println!("  -C, --continue <name>  - Start with a specific session");
+    println!("  --continue-last        - Start with the most recent session");
 
     if self_modification_enabled {
         println!();

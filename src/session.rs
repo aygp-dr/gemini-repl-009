@@ -175,6 +175,25 @@ impl SessionManager {
     pub fn sessions_dir(&self) -> &Path {
         &self.sessions_dir
     }
+
+    /// Get the most recently updated session
+    pub fn get_last_session(&self) -> Result<Option<Session>> {
+        let sessions = self.list()?;
+        if sessions.is_empty() {
+            return Ok(None);
+        }
+        // Sessions are sorted by updated_at descending, so first is most recent
+        let last_info = &sessions[0];
+        let session = self.load(&last_info.name)?;
+        Ok(Some(session))
+    }
+
+    /// Check if a session exists
+    pub fn exists(&self, name: &str) -> bool {
+        let filename = sanitize_filename(name);
+        let path = self.sessions_dir.join(format!("{}.json", filename));
+        path.exists()
+    }
 }
 
 /// Summary info for a session (without full conversation)
@@ -422,6 +441,23 @@ mod tests {
             let name = manager.generate_name();
             assert!(name.starts_with("session_"));
             assert!(name.len() > 8); // session_ + date/time
+        }
+    }
+
+    #[test]
+    fn test_session_manager_exists() {
+        if let Ok(manager) = SessionManager::new() {
+            // Non-existent session should return false
+            assert!(!manager.exists("nonexistent_session_12345"));
+        }
+    }
+
+    #[test]
+    fn test_session_manager_get_last_session_empty() {
+        if let Ok(manager) = SessionManager::new() {
+            // This test depends on whether there are existing sessions
+            // Just verify it doesn't crash
+            let _ = manager.get_last_session();
         }
     }
 }
