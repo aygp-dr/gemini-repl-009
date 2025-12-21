@@ -240,3 +240,139 @@ impl GeminiClient {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn test_content_serialization() {
+        let content = Content {
+            role: "user".to_string(),
+            parts: vec![Part {
+                text: Some("Hello, world!".to_string()),
+                function_call: None,
+                function_response: None,
+            }],
+        };
+
+        let json = serde_json::to_string(&content).unwrap();
+        assert!(json.contains("\"role\":\"user\""));
+        assert!(json.contains("\"text\":\"Hello, world!\""));
+
+        let deserialized: Content = serde_json::from_str(&json).unwrap();
+        assert_eq!(deserialized.role, "user");
+        assert_eq!(
+            deserialized.parts[0].text,
+            Some("Hello, world!".to_string())
+        );
+    }
+
+    #[test]
+    fn test_function_call_serialization() {
+        let fc = FunctionCall {
+            name: "read_file".to_string(),
+            args: json!({"path": "test.txt"}),
+        };
+
+        let json = serde_json::to_string(&fc).unwrap();
+        assert!(json.contains("\"name\":\"read_file\""));
+
+        let deserialized: FunctionCall = serde_json::from_str(&json).unwrap();
+        assert_eq!(deserialized.name, "read_file");
+        assert_eq!(deserialized.args["path"], "test.txt");
+    }
+
+    #[test]
+    fn test_response_to_content_text() {
+        let response = ApiResponse::Text("Hello!".to_string());
+        let content = GeminiClient::response_to_content(&response);
+
+        assert_eq!(content.role, "model");
+        assert_eq!(content.parts.len(), 1);
+        assert_eq!(content.parts[0].text, Some("Hello!".to_string()));
+        assert!(content.parts[0].function_call.is_none());
+    }
+
+    #[test]
+    fn test_response_to_content_function_call() {
+        let fc = FunctionCall {
+            name: "list_files".to_string(),
+            args: json!({"path": "."}),
+        };
+        let response = ApiResponse::FunctionCall(fc);
+        let content = GeminiClient::response_to_content(&response);
+
+        assert_eq!(content.role, "model");
+        assert_eq!(content.parts.len(), 1);
+        assert!(content.parts[0].text.is_none());
+        assert!(content.parts[0].function_call.is_some());
+        assert_eq!(
+            content.parts[0].function_call.as_ref().unwrap().name,
+            "list_files"
+        );
+    }
+
+    #[test]
+    fn test_response_to_content_text_with_function_call() {
+        let fc = FunctionCall {
+            name: "write_file".to_string(),
+            args: json!({"path": "out.txt", "content": "data"}),
+        };
+        let response = ApiResponse::TextWithFunctionCall {
+            text: "I'll write that file for you.".to_string(),
+            function_call: fc,
+        };
+        let content = GeminiClient::response_to_content(&response);
+
+        assert_eq!(content.role, "model");
+        assert_eq!(content.parts.len(), 2);
+        assert_eq!(
+            content.parts[0].text,
+            Some("I'll write that file for you.".to_string())
+        );
+        assert!(content.parts[1].function_call.is_some());
+    }
+
+    #[test]
+    fn test_create_function_response_content() {
+        let response = json!({"success": true, "data": "file contents"});
+        let content = GeminiClient::create_function_response_content("read_file", response.clone());
+
+        assert_eq!(content.role, "function");
+        assert_eq!(content.parts.len(), 1);
+        assert!(content.parts[0].text.is_none());
+        assert!(content.parts[0].function_call.is_none());
+        assert!(content.parts[0].function_response.is_some());
+
+        let fr = content.parts[0].function_response.as_ref().unwrap();
+        assert_eq!(fr.name, "read_file");
+        assert_eq!(fr.response["success"], true);
+    }
+
+    #[test]
+    fn test_part_with_all_fields() {
+        let part = Part {
+            text: Some("explanation".to_string()),
+            function_call: Some(FunctionCall {
+                name: "test".to_string(),
+                args: json!({}),
+            }),
+            function_response: None,
+        };
+
+        let json = serde_json::to_string(&part).unwrap();
+        let deserialized: Part = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(deserialized.text, Some("explanation".to_string()));
+        assert!(deserialized.function_call.is_some());
+        assert!(deserialized.function_response.is_none());
+    }
+
+    #[test]
+    fn test_gemini_client_creation() {
+        let client = GeminiClient::new("test-api-key".to_string(), "gemini-pro".to_string());
+        assert!(client.is_ok());
+    }
+}

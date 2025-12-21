@@ -249,6 +249,7 @@ impl SessionStats {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::api::Part;
 
     #[test]
     fn test_sanitize_filename() {
@@ -258,11 +259,169 @@ mod tests {
     }
 
     #[test]
+    fn test_sanitize_filename_special_chars() {
+        assert_eq!(sanitize_filename("file:name"), "file_name");
+        assert_eq!(sanitize_filename("path\\to\\file"), "path_to_file");
+        assert_eq!(
+            sanitize_filename("name*with?special<>chars"),
+            "name_with_special__chars"
+        );
+        assert_eq!(sanitize_filename("quote\"test"), "quote_test");
+        assert_eq!(sanitize_filename("pipe|test"), "pipe_test");
+    }
+
+    #[test]
     fn test_session_new() {
         let session = Session::new("test", "gemini-2.0-flash-exp");
         assert_eq!(session.name, "test");
         assert_eq!(session.model, "gemini-2.0-flash-exp");
         assert_eq!(session.message_count, 0);
         assert!(session.conversation.is_empty());
+    }
+
+    #[test]
+    fn test_session_from_conversation() {
+        let conversation = vec![
+            Content {
+                role: "user".to_string(),
+                parts: vec![Part {
+                    text: Some("Hello".to_string()),
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+            Content {
+                role: "model".to_string(),
+                parts: vec![Part {
+                    text: Some("Hi there!".to_string()),
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+        ];
+
+        let session =
+            Session::from_conversation("test_session", "gemini-pro", conversation.clone());
+
+        assert_eq!(session.name, "test_session");
+        assert_eq!(session.model, "gemini-pro");
+        assert_eq!(session.message_count, 2);
+        assert_eq!(session.conversation.len(), 2);
+    }
+
+    #[test]
+    fn test_session_update() {
+        let mut session = Session::new("test", "gemini-pro");
+        let original_updated = session.updated_at;
+
+        let conversation = vec![Content {
+            role: "user".to_string(),
+            parts: vec![Part {
+                text: Some("New message".to_string()),
+                function_call: None,
+                function_response: None,
+            }],
+        }];
+
+        // Small delay to ensure different timestamps
+        std::thread::sleep(std::time::Duration::from_millis(10));
+        session.update(conversation);
+
+        assert_eq!(session.message_count, 1);
+        assert_eq!(session.conversation.len(), 1);
+        assert!(session.updated_at >= original_updated);
+    }
+
+    #[test]
+    fn test_session_stats_empty() {
+        let conversation: Vec<Content> = vec![];
+        let stats = SessionStats::from_conversation(&conversation, None);
+
+        assert_eq!(stats.message_count, 0);
+        assert_eq!(stats.user_messages, 0);
+        assert_eq!(stats.assistant_messages, 0);
+        assert_eq!(stats.total_chars, 0);
+        assert!(stats.session_name.is_none());
+    }
+
+    #[test]
+    fn test_session_stats_with_messages() {
+        let conversation = vec![
+            Content {
+                role: "user".to_string(),
+                parts: vec![Part {
+                    text: Some("Hello".to_string()), // 5 chars
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+            Content {
+                role: "model".to_string(),
+                parts: vec![Part {
+                    text: Some("Hi there!".to_string()), // 9 chars
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+            Content {
+                role: "user".to_string(),
+                parts: vec![Part {
+                    text: Some("Goodbye".to_string()), // 7 chars
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+        ];
+
+        let stats =
+            SessionStats::from_conversation(&conversation, Some("test_session".to_string()));
+
+        assert_eq!(stats.message_count, 3);
+        assert_eq!(stats.user_messages, 2);
+        assert_eq!(stats.assistant_messages, 1);
+        assert_eq!(stats.total_chars, 21); // 5 + 9 + 7
+        assert_eq!(stats.session_name, Some("test_session".to_string()));
+    }
+
+    #[test]
+    fn test_session_stats_function_role() {
+        let conversation = vec![Content {
+            role: "function".to_string(),
+            parts: vec![Part {
+                text: Some("result".to_string()),
+                function_call: None,
+                function_response: None,
+            }],
+        }];
+
+        let stats = SessionStats::from_conversation(&conversation, None);
+
+        assert_eq!(stats.message_count, 1);
+        assert_eq!(stats.user_messages, 0);
+        assert_eq!(stats.assistant_messages, 0);
+        assert_eq!(stats.total_chars, 6);
+    }
+
+    #[test]
+    fn test_session_serialization() {
+        let session = Session::new("serialize_test", "gemini-pro");
+        let json = serde_json::to_string(&session).unwrap();
+
+        assert!(json.contains("\"name\":\"serialize_test\""));
+        assert!(json.contains("\"model\":\"gemini-pro\""));
+
+        let deserialized: Session = serde_json::from_str(&json).unwrap();
+        assert_eq!(deserialized.name, "serialize_test");
+        assert_eq!(deserialized.model, "gemini-pro");
+    }
+
+    #[test]
+    fn test_session_manager_generate_name() {
+        // Skip if we can't create a session manager (no home dir)
+        if let Ok(manager) = SessionManager::new() {
+            let name = manager.generate_name();
+            assert!(name.starts_with("session_"));
+            assert!(name.len() > 8); // session_ + date/time
+        }
     }
 }

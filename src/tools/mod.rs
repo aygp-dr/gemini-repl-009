@@ -344,3 +344,158 @@ pub mod security {
         }
     }
 }
+
+#[cfg(test)]
+mod registry_tests {
+    use super::*;
+    use serde_json::json;
+
+    // Simple test tool for registry testing
+    struct MockTool {
+        name: String,
+    }
+
+    impl MockTool {
+        fn new(name: &str) -> Self {
+            Self {
+                name: name.to_string(),
+            }
+        }
+    }
+
+    #[async_trait]
+    impl Tool for MockTool {
+        fn name(&self) -> &str {
+            &self.name
+        }
+
+        fn description(&self) -> &str {
+            "A mock tool for testing"
+        }
+
+        fn parameters_schema(&self) -> Value {
+            json!({
+                "type": "object",
+                "properties": {}
+            })
+        }
+
+        async fn execute(&self, _params: Value) -> anyhow::Result<Value> {
+            Ok(json!({"success": true, "tool": self.name}))
+        }
+    }
+
+    #[test]
+    fn test_registry_creation() {
+        let registry = ToolRegistry::new();
+        assert!(registry.list_tools().is_empty());
+    }
+
+    #[test]
+    fn test_register_tool() {
+        let mut registry = ToolRegistry::new();
+        let result = registry.register_tool(Box::new(MockTool::new("test_tool")));
+        assert!(result.is_ok());
+        assert_eq!(registry.list_tools().len(), 1);
+    }
+
+    #[test]
+    fn test_register_duplicate_tool() {
+        let mut registry = ToolRegistry::new();
+        registry
+            .register_tool(Box::new(MockTool::new("duplicate")))
+            .unwrap();
+        let result = registry.register_tool(Box::new(MockTool::new("duplicate")));
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_get_tool() {
+        let mut registry = ToolRegistry::new();
+        registry
+            .register_tool(Box::new(MockTool::new("find_me")))
+            .unwrap();
+
+        assert!(registry.get_tool("find_me").is_some());
+        assert!(registry.get_tool("not_found").is_none());
+    }
+
+    #[test]
+    fn test_list_tools() {
+        let mut registry = ToolRegistry::new();
+        registry
+            .register_tool(Box::new(MockTool::new("tool_a")))
+            .unwrap();
+        registry
+            .register_tool(Box::new(MockTool::new("tool_b")))
+            .unwrap();
+
+        let tools = registry.list_tools();
+        assert_eq!(tools.len(), 2);
+
+        let names: Vec<&str> = tools.iter().map(|t| t.name.as_str()).collect();
+        assert!(names.contains(&"tool_a"));
+        assert!(names.contains(&"tool_b"));
+    }
+
+    #[test]
+    fn test_get_tool_definitions() {
+        let mut registry = ToolRegistry::new();
+        registry
+            .register_tool(Box::new(MockTool::new("api_tool")))
+            .unwrap();
+
+        let definitions = registry.get_tool_definitions();
+        assert_eq!(definitions.len(), 1);
+
+        let def = &definitions[0];
+        assert_eq!(def["name"], "api_tool");
+        assert_eq!(def["description"], "A mock tool for testing");
+        assert!(def["parameters"].is_object());
+    }
+
+    #[tokio::test]
+    async fn test_execute_tool() {
+        let mut registry = ToolRegistry::new();
+        registry
+            .register_tool(Box::new(MockTool::new("executable")))
+            .unwrap();
+
+        let result = registry.execute_tool("executable", json!({})).await;
+        assert!(result.is_ok());
+
+        let value = result.unwrap();
+        assert_eq!(value["success"], true);
+        assert_eq!(value["tool"], "executable");
+    }
+
+    #[tokio::test]
+    async fn test_execute_nonexistent_tool() {
+        let registry = ToolRegistry::new();
+        let result = registry.execute_tool("nonexistent", json!({})).await;
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_tool_info() {
+        let info = ToolInfo::new("my_tool", "Does things", "category", true);
+        assert_eq!(info.name, "my_tool");
+        assert_eq!(info.description, "Does things");
+        assert_eq!(info.category, "category");
+        assert!(info.self_modification);
+    }
+
+    #[test]
+    fn test_initialize_default_tools() {
+        let mut registry = ToolRegistry::new();
+        let result = registry.initialize_default_tools();
+        assert!(result.is_ok());
+
+        // Should have at least read_file, write_file, list_files
+        let tools = registry.list_tools();
+        let names: Vec<&str> = tools.iter().map(|t| t.name.as_str()).collect();
+        assert!(names.contains(&"read_file"));
+        assert!(names.contains(&"write_file"));
+        assert!(names.contains(&"list_files"));
+    }
+}
