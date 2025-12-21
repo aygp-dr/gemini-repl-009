@@ -11,11 +11,13 @@ mod errors;
 mod logging;
 mod models;
 mod self_modification;
+mod session;
 mod tools;
 mod utils;
 
 use api::{Content, GeminiClient, Part};
 use logging::{init_logging, is_debug_mode};
+use session::{Session, SessionManager, SessionStats};
 use tools::ToolRegistry;
 
 #[derive(Parser, Debug)]
@@ -63,8 +65,11 @@ async fn main() -> Result<()> {
     // Print welcome message
     print_welcome(&args, client.is_some());
 
+    // Initialize session manager
+    let session_manager = SessionManager::new()?;
+
     // Run the REPL
-    run_repl(client, &args, tool_registry).await?;
+    run_repl(client, &args, tool_registry, session_manager).await?;
 
     tracing::info!("Gemini REPL shutting down");
     Ok(())
@@ -74,9 +79,12 @@ async fn run_repl(
     client: Option<GeminiClient>,
     args: &Args,
     tool_registry: ToolRegistry,
+    session_manager: SessionManager,
 ) -> Result<()> {
     // Conversation history
     let mut conversation: Vec<Content> = Vec::new();
+    // Current session name (None if unsaved)
+    let mut current_session: Option<String> = None;
 
     // Initialize readline
     let mut rl = DefaultEditor::new()?;
@@ -95,9 +103,14 @@ async fn run_repl(
                     continue;
                 }
 
-                if let Some(should_break) =
-                    handle_command(trimmed, args, &conversation, &tool_registry)
-                {
+                if let Some(should_break) = handle_command(
+                    trimmed,
+                    args,
+                    &mut conversation,
+                    &tool_registry,
+                    &session_manager,
+                    &mut current_session,
+                ) {
                     if should_break {
                         break;
                     }
@@ -167,8 +180,10 @@ fn print_welcome(args: &Args, has_client: bool) {
 fn handle_command(
     trimmed: &str,
     args: &Args,
-    conversation: &[Content],
+    conversation: &mut Vec<Content>,
     tool_registry: &ToolRegistry,
+    session_manager: &SessionManager,
+    current_session: &mut Option<String>,
 ) -> Option<bool> {
     match trimmed {
         "/exit" | "/quit" => {
@@ -201,6 +216,64 @@ fn handle_command(
                 print_capabilities();
             } else {
                 println!("Self-modification features are disabled. Use --enable-self-modification to enable.");
+            }
+            Some(false)
+        }
+        "/reset" => {
+            conversation.clear();
+            *current_session = None;
+            println!("Conversation reset");
+            Some(false)
+        }
+        "/stats" => {
+            let stats = SessionStats::from_conversation(conversation, current_session.clone());
+            print_stats(&stats);
+            Some(false)
+        }
+        "/sessions" => {
+            print_sessions(session_manager);
+            Some(false)
+        }
+        input if input.starts_with("/save") => {
+            let name = input.strip_prefix("/save").unwrap().trim();
+            let session_name = if name.is_empty() {
+                current_session
+                    .clone()
+                    .unwrap_or_else(|| session_manager.generate_name())
+            } else {
+                name.to_string()
+            };
+            save_session(
+                session_manager,
+                &session_name,
+                &args.model,
+                conversation,
+                current_session,
+            );
+            Some(false)
+        }
+        input if input.starts_with("/load") => {
+            let name = input.strip_prefix("/load").unwrap().trim();
+            if name.is_empty() {
+                println!("Usage: /load <session_name>");
+                println!("Use /sessions to list available sessions");
+            } else {
+                load_session(
+                    session_manager,
+                    name,
+                    &args.model,
+                    conversation,
+                    current_session,
+                );
+            }
+            Some(false)
+        }
+        input if input.starts_with("/delete") => {
+            let name = input.strip_prefix("/delete").unwrap().trim();
+            if name.is_empty() {
+                println!("Usage: /delete <session_name>");
+            } else {
+                delete_session(session_manager, name, current_session);
             }
             Some(false)
         }
@@ -240,6 +313,118 @@ fn print_capabilities() {
     println!("  - Apply patches with validation");
     println!("  - Create new tools dynamically");
     println!("  - Extend functionality through plugins");
+}
+
+fn print_stats(stats: &SessionStats) {
+    println!("Session Statistics:");
+    if let Some(name) = &stats.session_name {
+        println!("  Session name: {}", name);
+    } else {
+        println!("  Session name: (unsaved)");
+    }
+    println!("  Total messages: {}", stats.message_count);
+    println!("  User messages: {}", stats.user_messages);
+    println!("  Assistant messages: {}", stats.assistant_messages);
+    println!("  Total characters: {}", stats.total_chars);
+}
+
+fn print_sessions(session_manager: &SessionManager) {
+    match session_manager.list() {
+        Ok(sessions) => {
+            if sessions.is_empty() {
+                println!("No saved sessions found");
+                println!(
+                    "Sessions are stored in: {}",
+                    session_manager.sessions_dir().display()
+                );
+            } else {
+                println!("Saved sessions:");
+                for session in sessions {
+                    println!(
+                        "  {} - {} messages ({})",
+                        session.name,
+                        session.message_count,
+                        session.updated_at.format("%Y-%m-%d %H:%M")
+                    );
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Error listing sessions: {}", e);
+        }
+    }
+}
+
+fn save_session(
+    session_manager: &SessionManager,
+    name: &str,
+    model: &str,
+    conversation: &[Content],
+    current_session: &mut Option<String>,
+) {
+    if conversation.is_empty() {
+        println!("No conversation to save");
+        return;
+    }
+
+    let session = Session::from_conversation(name, model, conversation.to_vec());
+    match session_manager.save(&session) {
+        Ok(path) => {
+            *current_session = Some(name.to_string());
+            println!("Session saved: {}", name);
+            tracing::debug!("Session saved to: {}", path.display());
+        }
+        Err(e) => {
+            eprintln!("Error saving session: {}", e);
+        }
+    }
+}
+
+fn load_session(
+    session_manager: &SessionManager,
+    name: &str,
+    expected_model: &str,
+    conversation: &mut Vec<Content>,
+    current_session: &mut Option<String>,
+) {
+    match session_manager.load(name) {
+        Ok(session) => {
+            if session.model != expected_model {
+                println!(
+                    "Warning: Session was created with model '{}', but current model is '{}'",
+                    session.model, expected_model
+                );
+            }
+            *conversation = session.conversation;
+            *current_session = Some(session.name.clone());
+            println!(
+                "Loaded session '{}' ({} messages)",
+                session.name, session.message_count
+            );
+        }
+        Err(e) => {
+            eprintln!("Error loading session: {}", e);
+        }
+    }
+}
+
+fn delete_session(
+    session_manager: &SessionManager,
+    name: &str,
+    current_session: &mut Option<String>,
+) {
+    match session_manager.delete(name) {
+        Ok(()) => {
+            println!("Deleted session: {}", name);
+            // Clear current session if it was the deleted one
+            if current_session.as_deref() == Some(name) {
+                *current_session = None;
+            }
+        }
+        Err(e) => {
+            eprintln!("Error deleting session: {}", e);
+        }
+    }
 }
 
 async fn handle_user_input(
@@ -291,19 +476,30 @@ async fn handle_user_input(
 
 fn print_help(self_modification_enabled: bool) {
     println!("Available commands:");
-    println!("  /help       - Show this help message");
-    println!("  /exit       - Exit the REPL (/quit also works)");
-    println!("  /model      - Show current model");
-    println!("  /clear      - Clear the screen");
-    println!("  /context    - Show conversation history");
-    println!("  /tools      - List available tools");
+    println!("  /help          - Show this help message");
+    println!("  /exit          - Exit the REPL (/quit also works)");
+    println!("  /model         - Show current model");
+    println!("  /clear         - Clear the screen");
+    println!("  /context       - Show conversation history");
+    println!("  /tools         - List available tools");
+
+    println!();
+    println!("Session management:");
+    println!("  /save [name]   - Save session (auto-generates name if not provided)");
+    println!("  /load <name>   - Load a saved session");
+    println!("  /sessions      - List all saved sessions");
+    println!("  /delete <name> - Delete a saved session");
+    println!("  /reset         - Clear conversation history");
+    println!("  /stats         - Show session statistics");
 
     if self_modification_enabled {
-        println!("  /capabilities - Show self-modification capabilities");
+        println!();
+        println!("Self-modification:");
+        println!("  /capabilities  - Show self-modification capabilities");
     }
 
     println!();
     println!("Signal handling:");
-    println!("  Ctrl+C      - Cancel current input");
-    println!("  Ctrl+D      - Exit the REPL");
+    println!("  Ctrl+C         - Cancel current input");
+    println!("  Ctrl+D         - Exit the REPL");
 }
