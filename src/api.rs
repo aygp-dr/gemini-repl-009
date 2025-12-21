@@ -66,6 +66,20 @@ struct Candidate {
     content: Content,
 }
 
+/// Response from the Gemini API that may contain text or a function call
+#[derive(Debug, Clone)]
+pub enum ApiResponse {
+    /// A text response
+    Text(String),
+    /// A function call request from the model
+    FunctionCall(FunctionCall),
+    /// A response with both text and function call (model explaining what it's doing)
+    TextWithFunctionCall {
+        text: String,
+        function_call: FunctionCall,
+    },
+}
+
 impl GeminiClient {
     /// Create a new Gemini client
     pub fn new(api_key: String, model: String) -> Result<Self> {
@@ -79,18 +93,25 @@ impl GeminiClient {
         })
     }
 
-    /// Send a message without tools
+    /// Send a message without tools (returns text only)
     #[allow(dead_code)]
     pub async fn send_message(&self, conversation: &[Content]) -> Result<String> {
-        self.send_message_with_tools(conversation, None).await
+        let response = self.send_message_with_tools(conversation, None).await?;
+        match response {
+            ApiResponse::Text(text) => Ok(text),
+            ApiResponse::FunctionCall(_) => {
+                Ok("(Function call received but no tools available)".to_string())
+            }
+            ApiResponse::TextWithFunctionCall { text, .. } => Ok(text),
+        }
     }
 
-    /// Send a message with tool definitions
+    /// Send a message with tool definitions (returns raw ApiResponse)
     pub async fn send_message_with_tools(
         &self,
         conversation: &[Content],
         tools: Option<Vec<Value>>,
-    ) -> Result<String> {
+    ) -> Result<ApiResponse> {
         let url = format!(
             "{}/models/{}:generateContent?key={}",
             self.base_url, self.model, self.api_key
@@ -140,10 +161,82 @@ impl GeminiClient {
             bail!("No parts in candidate content");
         }
 
-        let part = &candidate.content.parts[0];
-        Ok(part
-            .text
-            .clone()
-            .unwrap_or_else(|| "No text in response".to_string()))
+        // Parse the response - check for function calls and text
+        let mut text_content = None;
+        let mut function_call = None;
+
+        for part in &candidate.content.parts {
+            if let Some(fc) = &part.function_call {
+                function_call = Some(fc.clone());
+            }
+            if let Some(t) = &part.text {
+                text_content = Some(t.clone());
+            }
+        }
+
+        match (text_content, function_call) {
+            (Some(text), Some(fc)) => Ok(ApiResponse::TextWithFunctionCall {
+                text,
+                function_call: fc,
+            }),
+            (None, Some(fc)) => Ok(ApiResponse::FunctionCall(fc)),
+            (Some(text), None) => Ok(ApiResponse::Text(text)),
+            (None, None) => Ok(ApiResponse::Text("No response content".to_string())),
+        }
+    }
+
+    /// Get the full Content from the response (for adding to conversation history)
+    pub fn response_to_content(response: &ApiResponse) -> Content {
+        match response {
+            ApiResponse::Text(text) => Content {
+                role: "model".to_string(),
+                parts: vec![Part {
+                    text: Some(text.clone()),
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+            ApiResponse::FunctionCall(fc) => Content {
+                role: "model".to_string(),
+                parts: vec![Part {
+                    text: None,
+                    function_call: Some(fc.clone()),
+                    function_response: None,
+                }],
+            },
+            ApiResponse::TextWithFunctionCall {
+                text,
+                function_call,
+            } => Content {
+                role: "model".to_string(),
+                parts: vec![
+                    Part {
+                        text: Some(text.clone()),
+                        function_call: None,
+                        function_response: None,
+                    },
+                    Part {
+                        text: None,
+                        function_call: Some(function_call.clone()),
+                        function_response: None,
+                    },
+                ],
+            },
+        }
+    }
+
+    /// Create a function response content for the conversation
+    pub fn create_function_response_content(name: &str, response: Value) -> Content {
+        Content {
+            role: "function".to_string(),
+            parts: vec![Part {
+                text: None,
+                function_call: None,
+                function_response: Some(FunctionResponse {
+                    name: name.to_string(),
+                    response,
+                }),
+            }],
+        }
     }
 }

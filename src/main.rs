@@ -15,10 +15,13 @@ mod session;
 mod tools;
 mod utils;
 
-use api::{Content, GeminiClient, Part};
+use api::{ApiResponse, Content, GeminiClient, Part};
 use logging::{init_logging, is_debug_mode};
 use session::{Session, SessionManager, SessionStats};
 use tools::ToolRegistry;
+
+/// Maximum number of tool call iterations to prevent infinite loops
+const MAX_TOOL_ITERATIONS: usize = 10;
 
 #[derive(Parser, Debug)]
 #[command(name = "gemini-repl")]
@@ -444,27 +447,105 @@ async fn handle_user_input(
             }],
         });
 
-        // Make API call with tools
+        // Make API call with tools - may require multiple iterations for tool calls
         let tools = tool_registry.get_tool_definitions();
-        match client
-            .send_message_with_tools(conversation, Some(tools))
-            .await
-        {
-            Ok(response) => {
-                println!("{response}");
 
-                // Add assistant response to conversation
-                conversation.push(Content {
-                    role: "model".to_string(),
-                    parts: vec![Part {
-                        text: Some(response),
-                        function_call: None,
-                        function_response: None,
-                    }],
-                });
+        for iteration in 0..MAX_TOOL_ITERATIONS {
+            match client
+                .send_message_with_tools(conversation, Some(tools.clone()))
+                .await
+            {
+                Ok(response) => {
+                    match &response {
+                        ApiResponse::Text(text) => {
+                            // Simple text response - print and add to conversation
+                            println!("{text}");
+                            conversation.push(GeminiClient::response_to_content(&response));
+                            break;
+                        }
+                        ApiResponse::FunctionCall(fc) => {
+                            // Execute the function and continue the conversation
+                            tracing::info!("Executing tool: {}", fc.name);
+                            println!("[Calling tool: {}]", fc.name);
+
+                            // Add the function call to conversation
+                            conversation.push(GeminiClient::response_to_content(&response));
+
+                            // Execute the tool
+                            match tool_registry.execute_tool(&fc.name, fc.args.clone()).await {
+                                Ok(result) => {
+                                    tracing::debug!("Tool result: {}", result);
+                                    // Add function response to conversation
+                                    let func_response =
+                                        GeminiClient::create_function_response_content(
+                                            &fc.name, result,
+                                        );
+                                    conversation.push(func_response);
+                                    // Continue loop to get model's response to the tool result
+                                }
+                                Err(e) => {
+                                    eprintln!("Tool execution error: {e}");
+                                    // Add error as function response
+                                    let error_response =
+                                        GeminiClient::create_function_response_content(
+                                            &fc.name,
+                                            serde_json::json!({
+                                                "error": e.to_string()
+                                            }),
+                                        );
+                                    conversation.push(error_response);
+                                }
+                            }
+                        }
+                        ApiResponse::TextWithFunctionCall {
+                            text,
+                            function_call,
+                        } => {
+                            // Print the text, then handle the function call
+                            println!("{text}");
+                            tracing::info!("Executing tool: {}", function_call.name);
+                            println!("[Calling tool: {}]", function_call.name);
+
+                            // Add the response to conversation
+                            conversation.push(GeminiClient::response_to_content(&response));
+
+                            // Execute the tool
+                            match tool_registry
+                                .execute_tool(&function_call.name, function_call.args.clone())
+                                .await
+                            {
+                                Ok(result) => {
+                                    tracing::debug!("Tool result: {}", result);
+                                    let func_response =
+                                        GeminiClient::create_function_response_content(
+                                            &function_call.name,
+                                            result,
+                                        );
+                                    conversation.push(func_response);
+                                }
+                                Err(e) => {
+                                    eprintln!("Tool execution error: {e}");
+                                    let error_response =
+                                        GeminiClient::create_function_response_content(
+                                            &function_call.name,
+                                            serde_json::json!({
+                                                "error": e.to_string()
+                                            }),
+                                        );
+                                    conversation.push(error_response);
+                                }
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error: {e}");
+                    break;
+                }
             }
-            Err(e) => {
-                eprintln!("Error: {e}");
+
+            if iteration == MAX_TOOL_ITERATIONS - 1 {
+                eprintln!("Warning: Maximum tool iterations reached");
             }
         }
     } else {
