@@ -7,16 +7,16 @@ use rustyline::DefaultEditor;
 use std::env;
 
 mod api;
-mod tools;
+mod errors;
 mod logging;
 mod models;
-mod utils;
 mod self_modification;
-mod errors;
+mod tools;
+mod utils;
 
 use api::{Content, GeminiClient, Part};
-use tools::ToolRegistry;
 use logging::{init_logging, is_debug_mode};
+use tools::ToolRegistry;
 
 #[derive(Parser, Debug)]
 #[command(name = "gemini-repl")]
@@ -70,7 +70,11 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn run_repl(client: Option<GeminiClient>, args: &Args, tool_registry: ToolRegistry) -> Result<()> {
+async fn run_repl(
+    client: Option<GeminiClient>,
+    args: &Args,
+    tool_registry: ToolRegistry,
+) -> Result<()> {
     // Conversation history
     let mut conversation: Vec<Content> = Vec::new();
 
@@ -91,13 +95,16 @@ async fn run_repl(client: Option<GeminiClient>, args: &Args, tool_registry: Tool
                     continue;
                 }
 
-                if let Some(should_break) = handle_command(trimmed, args, &conversation, &tool_registry) {
+                if let Some(should_break) =
+                    handle_command(trimmed, args, &conversation, &tool_registry)
+                {
                     if should_break {
                         break;
                     }
                 } else {
                     // Handle user input
-                    handle_user_input(trimmed, client.as_ref(), &mut conversation, &tool_registry).await;
+                    handle_user_input(trimmed, client.as_ref(), &mut conversation, &tool_registry)
+                        .await;
                 }
             }
             Err(ReadlineError::Interrupted) => {
@@ -157,7 +164,12 @@ fn print_welcome(args: &Args, has_client: bool) {
     }
 }
 
-fn handle_command(trimmed: &str, args: &Args, conversation: &[Content], tool_registry: &ToolRegistry) -> Option<bool> {
+fn handle_command(
+    trimmed: &str,
+    args: &Args,
+    conversation: &[Content],
+    tool_registry: &ToolRegistry,
+) -> Option<bool> {
     match trimmed {
         "/exit" | "/quit" => {
             println!("Goodbye!");
@@ -285,11 +297,11 @@ fn print_help(self_modification_enabled: bool) {
     println!("  /clear      - Clear the screen");
     println!("  /context    - Show conversation history");
     println!("  /tools      - List available tools");
-    
+
     if self_modification_enabled {
         println!("  /capabilities - Show self-modification capabilities");
     }
-    
+
     println!();
     println!("Signal handling:");
     println!("  Ctrl+C      - Cancel current input");

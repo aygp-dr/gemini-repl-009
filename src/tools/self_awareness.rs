@@ -24,11 +24,11 @@ impl Tool for ProjectMapTool {
     fn name(&self) -> &str {
         "project_map"
     }
-    
+
     fn description(&self) -> &str {
         "Generate a comprehensive map of the project structure and key files"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -46,7 +46,7 @@ impl Tool for ProjectMapTool {
             }
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
@@ -55,23 +55,29 @@ impl Tool for ProjectMapTool {
             #[serde(default = "default_depth")]
             max_depth: usize,
         }
-        
-        fn default_depth() -> usize { 3 }
-        
+
+        fn default_depth() -> usize {
+            3
+        }
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         // Analyze Cargo.toml
         let cargo_info = analyze_cargo_toml(&self.workspace)?;
-        
+
         // Map source structure
-        let src_structure = map_directory(&self.workspace.join("src"), params.max_depth, params.include_hidden)?;
-        
+        let src_structure = map_directory(
+            &self.workspace.join("src"),
+            params.max_depth,
+            params.include_hidden,
+        )?;
+
         // Identify key files
         let key_files = identify_key_files(&self.workspace)?;
-        
+
         // Get dependencies
         let dependencies = cargo_info.get("dependencies").cloned().unwrap_or_default();
-        
+
         Ok(json!({
             "success": true,
             "project": {
@@ -108,18 +114,18 @@ impl Tool for GetCurrentCapabilitiesTool {
     fn name(&self) -> &str {
         "get_current_capabilities"
     }
-    
+
     fn description(&self) -> &str {
         "List all current capabilities and available tools"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
             "properties": {}
         })
     }
-    
+
     async fn execute(&self, _params: Value) -> Result<Value> {
         let capabilities = json!({
             "file_operations": {
@@ -151,7 +157,7 @@ impl Tool for GetCurrentCapabilitiesTool {
                 "safe_execution": "Sandboxed command execution"
             }
         });
-        
+
         Ok(json!({
             "success": true,
             "capabilities": capabilities,
@@ -181,11 +187,11 @@ impl Tool for ExplainArchitectureTool {
     fn name(&self) -> &str {
         "explain_architecture"
     }
-    
+
     fn description(&self) -> &str {
         "Explain the system architecture and design patterns"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -199,18 +205,20 @@ impl Tool for ExplainArchitectureTool {
             }
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
             #[serde(default = "default_medium")]
             detail_level: String,
         }
-        
-        fn default_medium() -> String { "medium".to_string() }
-        
+
+        fn default_medium() -> String {
+            "medium".to_string()
+        }
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         let architecture = json!({
             "overview": {
                 "type": "Self-Modifying AI REPL",
@@ -245,7 +253,7 @@ impl Tool for ExplainArchitectureTool {
                 "5_testing": "Automated testing of modifications"
             }
         });
-        
+
         let detail = match params.detail_level.as_str() {
             "high" => json!({
                 "architecture": architecture,
@@ -260,7 +268,7 @@ impl Tool for ExplainArchitectureTool {
             }),
             _ => architecture,
         };
-        
+
         Ok(json!({
             "success": true,
             "explanation": detail
@@ -283,18 +291,18 @@ fn map_directory(path: &Path, max_depth: usize, include_hidden: bool) -> Result<
     if !path.exists() {
         return Ok(json!(null));
     }
-    
+
     let mut files = Vec::new();
     let mut dirs = Vec::new();
-    
+
     for entry in fs::read_dir(path)? {
         let entry = entry?;
         let name = entry.file_name().to_string_lossy().to_string();
-        
+
         if !include_hidden && name.starts_with('.') {
             continue;
         }
-        
+
         let metadata = entry.metadata()?;
         if metadata.is_file() {
             files.push(json!({
@@ -312,7 +320,7 @@ fn map_directory(path: &Path, max_depth: usize, include_hidden: bool) -> Result<
             }));
         }
     }
-    
+
     Ok(json!({
         "files": files,
         "directories": dirs
@@ -321,7 +329,7 @@ fn map_directory(path: &Path, max_depth: usize, include_hidden: bool) -> Result<
 
 fn identify_key_files(workspace: &Path) -> Result<Vec<Value>> {
     let mut key_files = Vec::new();
-    
+
     let important_files = [
         ("Cargo.toml", "Project configuration"),
         ("README.md", "Project documentation"),
@@ -331,7 +339,7 @@ fn identify_key_files(workspace: &Path) -> Result<Vec<Value>> {
         (".gitignore", "Git ignore rules"),
         ("LICENSE", "License information"),
     ];
-    
+
     for (file, description) in important_files {
         let path = workspace.join(file);
         if path.exists() {
@@ -344,7 +352,7 @@ fn identify_key_files(workspace: &Path) -> Result<Vec<Value>> {
             }));
         }
     }
-    
+
     Ok(key_files)
 }
 
@@ -364,7 +372,7 @@ fn get_implementation_details(_workspace: &Path) -> Result<Value> {
 fn analyze_dependencies(workspace: &Path) -> Result<Value> {
     let cargo_toml = analyze_cargo_toml(workspace)?;
     let deps = cargo_toml.get("dependencies").cloned().unwrap_or_default();
-    
+
     Ok(json!({
         "production": deps,
         "development": cargo_toml.get("dev-dependencies").cloned().unwrap_or_default(),

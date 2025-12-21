@@ -1,5 +1,5 @@
 //! Ed-based file manipulation tools
-//! 
+//!
 //! This module implements file operations using ed(1) semantics,
 //! providing a line-oriented approach to text manipulation.
 
@@ -26,9 +26,10 @@ impl Line {
 }
 
 /// Ed buffer implementation with line-oriented operations
+#[derive(Default)]
 pub struct EdBuffer {
     lines: Vec<Line>,
-    current: usize,  // Current line number (1-indexed, 0 means before first line)
+    current: usize, // Current line number (1-indexed, 0 means before first line)
     modified: bool,
     marks: HashMap<char, usize>,
     filename: Option<String>,
@@ -45,18 +46,6 @@ pub enum EdResult {
     Error(String),
 }
 
-impl Default for EdBuffer {
-    fn default() -> Self {
-        Self {
-            lines: Vec::new(),
-            current: 0,
-            modified: false,
-            marks: HashMap::new(),
-            filename: None,
-        }
-    }
-}
-
 impl EdBuffer {
     /// Create a new empty buffer
     pub fn new() -> Self {
@@ -65,11 +54,8 @@ impl EdBuffer {
 
     /// Create buffer from file contents
     pub fn from_string(content: &str) -> Self {
-        let lines: Vec<Line> = content
-            .lines()
-            .map(Line::new)
-            .collect();
-        
+        let lines: Vec<Line> = content.lines().map(Line::new).collect();
+
         let line_count = lines.len();
         Self {
             lines,
@@ -159,7 +145,7 @@ impl EdBuffer {
 
         // Parse address and command
         let trimmed = command.trim();
-        
+
         // Handle simple address (just a number or special address)
         if let Ok(addr) = self.parse_address(trimmed) {
             if addr <= self.lines.len() {
@@ -170,7 +156,7 @@ impl EdBuffer {
 
         // Extract command character and address
         let (addr_part, cmd_part) = self.split_command(trimmed)?;
-        
+
         match cmd_part.chars().next() {
             Some('a') => self.cmd_append(addr_part),
             Some('i') => self.cmd_insert(addr_part),
@@ -178,7 +164,7 @@ impl EdBuffer {
             Some('c') => self.cmd_change(addr_part),
             Some('p') => self.cmd_print(addr_part),
             Some('n') => self.cmd_number(addr_part),
-            Some('w') => self.cmd_write(&cmd_part[1..].trim()),
+            Some('w') => self.cmd_write(cmd_part[1..].trim()),
             Some('q') => self.cmd_quit(),
             Some('s') => self.cmd_substitute(addr_part, &cmd_part[1..]),
             Some('m') => self.cmd_move(addr_part, &cmd_part[1..]),
@@ -206,7 +192,7 @@ impl EdBuffer {
         } else {
             self.parse_address(addr)?
         };
-        
+
         // In a real implementation, this would read from input
         // For now, we'll just mark as ready for append
         self.current = line_num;
@@ -220,7 +206,7 @@ impl EdBuffer {
         } else {
             self.parse_address(addr)?
         };
-        
+
         self.current = if line_num > 0 { line_num - 1 } else { 0 };
         Ok(EdResult::Success)
     }
@@ -245,8 +231,8 @@ impl EdBuffer {
         }
 
         self.modified = true;
-        self.current = if start > 1 { start - 1 } else { 0 };
-        
+        self.current = start.saturating_sub(1);
+
         Ok(EdResult::Success)
     }
 
@@ -303,14 +289,14 @@ impl EdBuffer {
     /// Write buffer to file
     fn cmd_write(&mut self, filename: &str) -> Result<EdResult> {
         let fname = if filename.is_empty() {
-            self.filename.as_ref().ok_or_else(|| anyhow::anyhow!("No filename"))?
+            self.filename
+                .as_ref()
+                .ok_or_else(|| anyhow::anyhow!("No filename"))?
         } else {
             filename
         };
 
-        let content: Vec<String> = self.lines.iter()
-            .map(|l| l.content.clone())
-            .collect();
+        let content: Vec<String> = self.lines.iter().map(|l| l.content.clone()).collect();
         let text = content.join("\n");
         let bytes = text.len();
 
@@ -359,7 +345,7 @@ impl EdBuffer {
                 } else {
                     self.lines[i - 1].content.replacen(pattern, replacement, 1)
                 };
-                
+
                 if new_content != self.lines[i - 1].content {
                     self.lines[i - 1].content = new_content;
                     changed = true;
@@ -464,7 +450,7 @@ impl EdBuffer {
     }
 
     /// Get buffer contents as string
-    pub fn to_string(&self) -> String {
+    pub fn contents(&self) -> String {
         if self.lines.is_empty() {
             String::new()
         } else {
@@ -472,7 +458,7 @@ impl EdBuffer {
                 .map(|l| l.content.len() + 1) // +1 for newline
                 .sum::<usize>()
                 .saturating_sub(1); // Remove last newline
-            
+
             let mut result = String::with_capacity(capacity);
             for (i, line) in self.lines.iter().enumerate() {
                 if i > 0 {
@@ -501,11 +487,11 @@ impl Tool for EdTool {
     fn name(&self) -> &str {
         "ed_editor"
     }
-    
+
     fn description(&self) -> &str {
         "Ed-style line editor for precise text manipulation"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -527,7 +513,7 @@ impl Tool for EdTool {
             "required": ["commands"]
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
@@ -535,9 +521,9 @@ impl Tool for EdTool {
             commands: Vec<String>,
             content: Option<String>,
         }
-        
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         // Create buffer
         let mut buffer = if let Some(content) = params.content {
             EdBuffer::from_string(&content)
@@ -552,53 +538,51 @@ impl Tool for EdTool {
         } else {
             EdBuffer::new()
         };
-        
+
         // Execute commands
         let mut results = Vec::new();
         for command in params.commands {
             match buffer.execute_command(&command) {
-                Ok(result) => {
-                    match result {
-                        EdResult::Lines(lines) => {
-                            results.push(json!({
-                                "command": command,
-                                "output": lines
-                            }));
-                        }
-                        EdResult::Success => {
-                            results.push(json!({
-                                "command": command,
-                                "status": "success"
-                            }));
-                        }
-                        EdResult::Written(bytes) => {
-                            results.push(json!({
-                                "command": command,
-                                "status": "written",
-                                "bytes": bytes
-                            }));
-                        }
-                        EdResult::Read(bytes) => {
-                            results.push(json!({
-                                "command": command,
-                                "status": "read",
-                                "bytes": bytes
-                            }));
-                        }
-                        EdResult::CurrentLine(line) => {
-                            results.push(json!({
-                                "command": command,
-                                "current_line": line
-                            }));
-                        }
-                        EdResult::Error(msg) => {
-                            results.push(json!({
-                                "command": command,
-                                "error": msg
-                            }));
-                        }
+                Ok(result) => match result {
+                    EdResult::Lines(lines) => {
+                        results.push(json!({
+                            "command": command,
+                            "output": lines
+                        }));
                     }
-                }
+                    EdResult::Success => {
+                        results.push(json!({
+                            "command": command,
+                            "status": "success"
+                        }));
+                    }
+                    EdResult::Written(bytes) => {
+                        results.push(json!({
+                            "command": command,
+                            "status": "written",
+                            "bytes": bytes
+                        }));
+                    }
+                    EdResult::Read(bytes) => {
+                        results.push(json!({
+                            "command": command,
+                            "status": "read",
+                            "bytes": bytes
+                        }));
+                    }
+                    EdResult::CurrentLine(line) => {
+                        results.push(json!({
+                            "command": command,
+                            "current_line": line
+                        }));
+                    }
+                    EdResult::Error(msg) => {
+                        results.push(json!({
+                            "command": command,
+                            "error": msg
+                        }));
+                    }
+                },
                 Err(e) => {
                     results.push(json!({
                         "command": command,
@@ -607,21 +591,21 @@ impl Tool for EdTool {
                 }
             }
         }
-        
+
         // Save to file if specified
         let file_ref = if let Some(ref file) = params.file {
             let file_path = self.workspace.join(file);
-            std::fs::write(&file_path, buffer.to_string())?;
+            std::fs::write(&file_path, buffer.contents())?;
             Some(file.clone())
         } else {
             None
         };
-        
+
         Ok(json!({
             "success": true,
             "file": file_ref,
             "results": results,
-            "final_content": buffer.to_string(),
+            "final_content": buffer.contents(),
             "line_count": buffer.line_count(),
             "current_line": buffer.current_line()
         }))
@@ -635,7 +619,7 @@ mod tests {
     #[test]
     fn test_basic_operations() {
         let mut ed = EdBuffer::from_string("line1\nline2\nline3");
-        
+
         // Test print
         match ed.execute_command("2p").unwrap() {
             EdResult::Lines(lines) => assert_eq!(lines, vec!["line2"]),
@@ -657,7 +641,7 @@ mod tests {
     #[test]
     fn test_range_operations() {
         let mut ed = EdBuffer::from_string("a\nb\nc\nd\ne");
-        
+
         // Test range print
         match ed.execute_command("2,4p").unwrap() {
             EdResult::Lines(lines) => assert_eq!(lines, vec!["b", "c", "d"]),

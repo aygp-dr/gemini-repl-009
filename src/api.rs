@@ -69,10 +69,8 @@ struct Candidate {
 impl GeminiClient {
     /// Create a new Gemini client
     pub fn new(api_key: String, model: String) -> Result<Self> {
-        let client = Client::builder()
-            .timeout(Duration::from_secs(30))
-            .build()?;
-        
+        let client = Client::builder().timeout(Duration::from_secs(30)).build()?;
+
         Ok(Self {
             client,
             api_key,
@@ -80,19 +78,24 @@ impl GeminiClient {
             base_url: "https://generativelanguage.googleapis.com/v1beta".to_string(),
         })
     }
-    
+
     /// Send a message without tools
+    #[allow(dead_code)]
     pub async fn send_message(&self, conversation: &[Content]) -> Result<String> {
         self.send_message_with_tools(conversation, None).await
     }
-    
+
     /// Send a message with tool definitions
-    pub async fn send_message_with_tools(&self, conversation: &[Content], tools: Option<Vec<Value>>) -> Result<String> {
+    pub async fn send_message_with_tools(
+        &self,
+        conversation: &[Content],
+        tools: Option<Vec<Value>>,
+    ) -> Result<String> {
         let url = format!(
             "{}/models/{}:generateContent?key={}",
             self.base_url, self.model, self.api_key
         );
-        
+
         // Add system instruction for function calling
         let system_instruction = if tools.is_some() {
             Some(SystemInstruction {
@@ -103,44 +106,44 @@ impl GeminiClient {
         } else {
             None
         };
-        
+
         let request = GenerateContentRequest {
             contents: conversation.to_vec(),
             tools,
             system_instruction,
         };
-        
-        tracing::debug!("Sending request to Gemini API: {}", serde_json::to_string_pretty(&request)?);
-        
-        let response = self
-            .client
-            .post(&url)
-            .json(&request)
-            .send()
-            .await?;
-        
+
+        tracing::debug!(
+            "Sending request to Gemini API: {}",
+            serde_json::to_string_pretty(&request)?
+        );
+
+        let response = self.client.post(&url).json(&request).send().await?;
+
         if !response.status().is_success() {
             let status = response.status();
             let error_text = response.text().await?;
             bail!("API request failed with status {}: {}", status, error_text);
         }
-        
+
         let response_text = response.text().await?;
         tracing::debug!("Received response from Gemini API: {}", response_text);
-        
+
         let response: GenerateContentResponse = serde_json::from_str(&response_text)?;
-        
+
         if response.candidates.is_empty() {
             bail!("No candidates in response");
         }
-        
+
         let candidate = &response.candidates[0];
         if candidate.content.parts.is_empty() {
             bail!("No parts in candidate content");
         }
-        
+
         let part = &candidate.content.parts[0];
-        Ok(part.text.clone().unwrap_or_else(|| "No text in response".to_string()))
+        Ok(part
+            .text
+            .clone()
+            .unwrap_or_else(|| "No text in response".to_string()))
     }
 }
-

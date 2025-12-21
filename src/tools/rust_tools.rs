@@ -24,11 +24,11 @@ impl Tool for CargoBuildTool {
     fn name(&self) -> &str {
         "cargo_build"
     }
-    
+
     fn description(&self) -> &str {
         "Build the Rust project using cargo"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -50,7 +50,7 @@ impl Tool for CargoBuildTool {
             }
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
@@ -59,35 +59,36 @@ impl Tool for CargoBuildTool {
             features: Option<Vec<String>>,
             target: Option<String>,
         }
-        
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         let mut cmd = AsyncCommand::new("cargo");
         cmd.arg("build");
         cmd.current_dir(&self.workspace);
-        
+
         if params.release {
             cmd.arg("--release");
         }
-        
+
         if let Some(features) = params.features {
             if !features.is_empty() {
                 cmd.arg("--features");
                 cmd.arg(features.join(","));
             }
         }
-        
+
         if let Some(target) = params.target {
             cmd.arg("--target");
             cmd.arg(target);
         }
-        
+
         let output = tokio::time::timeout(
             std::time::Duration::from_secs(300), // 5 minutes timeout
-            cmd.output()
-        ).await
+            cmd.output(),
+        )
+        .await
         .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
-        
+
         Ok(json!({
             "success": output.status.success(),
             "exit_code": output.status.code(),
@@ -113,11 +114,11 @@ impl Tool for CargoTestTool {
     fn name(&self) -> &str {
         "cargo_test"
     }
-    
+
     fn description(&self) -> &str {
         "Run tests using cargo test"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -144,7 +145,7 @@ impl Tool for CargoTestTool {
             }
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
@@ -155,38 +156,39 @@ impl Tool for CargoTestTool {
             #[serde(default)]
             verbose: bool,
         }
-        
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         let mut cmd = AsyncCommand::new("cargo");
         cmd.arg("test");
         cmd.current_dir(&self.workspace);
-        
+
         if params.release {
             cmd.arg("--release");
         }
-        
+
         if let Some(features) = params.features {
             if !features.is_empty() {
                 cmd.arg("--features");
                 cmd.arg(features.join(","));
             }
         }
-        
+
         if params.verbose {
             cmd.arg("--verbose");
         }
-        
+
         if let Some(test_name) = params.test_name {
             cmd.arg(test_name);
         }
-        
+
         let output = tokio::time::timeout(
             std::time::Duration::from_secs(300), // 5 minutes timeout
-            cmd.output()
-        ).await
+            cmd.output(),
+        )
+        .await
         .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
-        
+
         Ok(json!({
             "success": output.status.success(),
             "exit_code": output.status.code(),
@@ -210,11 +212,11 @@ impl Tool for RustfmtTool {
     fn name(&self) -> &str {
         "rustfmt"
     }
-    
+
     fn description(&self) -> &str {
         "Format Rust code using rustfmt"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -232,7 +234,7 @@ impl Tool for RustfmtTool {
             "required": ["code"]
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
@@ -240,31 +242,32 @@ impl Tool for RustfmtTool {
             #[serde(default)]
             check: bool,
         }
-        
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         // Create a temporary file for the code
         let temp_file = tempfile::NamedTempFile::new()?;
         std::fs::write(temp_file.path(), &params.code)?;
-        
+
         let mut cmd = AsyncCommand::new("rustfmt");
         if params.check {
             cmd.arg("--check");
         }
         cmd.arg(temp_file.path());
-        
+
         let output = tokio::time::timeout(
             std::time::Duration::from_secs(300), // 5 minutes timeout
-            cmd.output()
-        ).await
+            cmd.output(),
+        )
+        .await
         .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
-        
+
         let formatted_code = if !params.check && output.status.success() {
             std::fs::read_to_string(temp_file.path())?
         } else {
             params.code.clone()
         };
-        
+
         Ok(json!({
             "success": output.status.success(),
             "exit_code": output.status.code(),
@@ -291,11 +294,11 @@ impl Tool for ClippyTool {
     fn name(&self) -> &str {
         "clippy"
     }
-    
+
     fn description(&self) -> &str {
         "Run clippy linter on the Rust code"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -313,7 +316,7 @@ impl Tool for ClippyTool {
             }
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
@@ -322,34 +325,37 @@ impl Tool for ClippyTool {
             #[serde(default = "default_true")]
             all_targets: bool,
         }
-        
-        fn default_true() -> bool { true }
-        
+
+        fn default_true() -> bool {
+            true
+        }
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         let mut cmd = AsyncCommand::new("cargo");
         cmd.arg("clippy");
         cmd.current_dir(&self.workspace);
-        
+
         if params.all_targets {
             cmd.arg("--all-targets");
         }
-        
+
         if params.fix {
             cmd.arg("--fix");
             cmd.arg("--allow-dirty");
         }
-        
+
         cmd.arg("--");
         cmd.arg("-D");
         cmd.arg("warnings");
-        
+
         let output = tokio::time::timeout(
             std::time::Duration::from_secs(300), // 5 minutes timeout
-            cmd.output()
-        ).await
+            cmd.output(),
+        )
+        .await
         .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
-        
+
         Ok(json!({
             "success": output.status.success(),
             "exit_code": output.status.code(),
@@ -375,11 +381,11 @@ impl Tool for CargoCheckTool {
     fn name(&self) -> &str {
         "cargo_check"
     }
-    
+
     fn description(&self) -> &str {
         "Check the Rust project for errors without building"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -397,7 +403,7 @@ impl Tool for CargoCheckTool {
             }
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
@@ -405,32 +411,35 @@ impl Tool for CargoCheckTool {
             all_targets: bool,
             features: Option<Vec<String>>,
         }
-        
-        fn default_true() -> bool { true }
-        
+
+        fn default_true() -> bool {
+            true
+        }
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         let mut cmd = AsyncCommand::new("cargo");
         cmd.arg("check");
         cmd.current_dir(&self.workspace);
-        
+
         if params.all_targets {
             cmd.arg("--all-targets");
         }
-        
+
         if let Some(features) = params.features {
             if !features.is_empty() {
                 cmd.arg("--features");
                 cmd.arg(features.join(","));
             }
         }
-        
+
         let output = tokio::time::timeout(
             std::time::Duration::from_secs(300), // 5 minutes timeout
-            cmd.output()
-        ).await
+            cmd.output(),
+        )
+        .await
         .map_err(|_| anyhow::anyhow!("Command timed out after 5 minutes"))??;
-        
+
         Ok(json!({
             "success": output.status.success(),
             "exit_code": output.status.code(),

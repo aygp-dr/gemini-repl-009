@@ -20,7 +20,7 @@ impl Default for AnalyzeRustCodeTool {
 
 impl AnalyzeRustCodeTool {
     pub fn new() -> Self {
-        Self::default()
+        Self
     }
 }
 
@@ -29,11 +29,11 @@ impl Tool for AnalyzeRustCodeTool {
     fn name(&self) -> &str {
         "analyze_rust_code"
     }
-    
+
     fn description(&self) -> &str {
         "Analyze Rust code to understand its structure (functions, structs, traits, etc.)"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -46,26 +46,25 @@ impl Tool for AnalyzeRustCodeTool {
             "required": ["code"]
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
             code: String,
         }
-        
+
         let params: Params = serde_json::from_value(params)?;
-        
+
         // Parse the Rust code
-        let syntax_tree = parse_file(&params.code).map_err(|e| {
-            anyhow::anyhow!("Failed to parse Rust code: {}", e)
-        })?;
-        
+        let syntax_tree = parse_file(&params.code)
+            .map_err(|e| anyhow::anyhow!("Failed to parse Rust code: {}", e))?;
+
         let mut functions = Vec::new();
         let mut structs = Vec::new();
         let mut enums = Vec::new();
         let mut traits = Vec::new();
         let mut impls = Vec::new();
-        
+
         // Analyze items
         for item in syntax_tree.items {
             match item {
@@ -100,11 +99,15 @@ impl Tool for AnalyzeRustCodeTool {
                 }
                 Item::Impl(item_impl) => {
                     let type_name = if let Some((_, path, _)) = &item_impl.trait_ {
-                        format!("{} for {}", quote::quote!(#path), quote::quote!(#item_impl.self_ty))
+                        format!(
+                            "{} for {}",
+                            quote::quote!(#path),
+                            quote::quote!(#item_impl.self_ty)
+                        )
                     } else {
                         format!("{}", quote::quote!(#item_impl.self_ty))
                     };
-                    
+
                     impls.push(json!({
                         "type": type_name,
                         "methods": item_impl.items.len(),
@@ -113,7 +116,7 @@ impl Tool for AnalyzeRustCodeTool {
                 _ => {}
             }
         }
-        
+
         Ok(json!({
             "success": true,
             "analysis": {
@@ -144,7 +147,7 @@ fn analyze_function(item_fn: &ItemFn) -> Value {
             }
         }
     }
-    
+
     json!({
         "name": item_fn.sig.ident.to_string(),
         "visibility": visibility_to_string(&item_fn.vis),
@@ -173,11 +176,11 @@ impl Tool for FindFunctionTool {
     fn name(&self) -> &str {
         "find_function"
     }
-    
+
     fn description(&self) -> &str {
         "Find function definitions in Rust files"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -194,21 +197,21 @@ impl Tool for FindFunctionTool {
             "required": ["name"]
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
             name: String,
             path: Option<String>,
         }
-        
+
         let params: Params = serde_json::from_value(params)?;
         let search_path = params.path.unwrap_or_else(|| "src".to_string());
         let full_path = self.workspace.join(&search_path);
-        
+
         let mut results = Vec::new();
         search_rust_files(&full_path, |file_path, content| {
-            if let Ok(syntax_tree) = parse_file(&content) {
+            if let Ok(syntax_tree) = parse_file(content) {
                 for item in syntax_tree.items {
                     if let Item::Fn(item_fn) = item {
                         if item_fn.sig.ident == params.name {
@@ -224,7 +227,7 @@ impl Tool for FindFunctionTool {
                 }
             }
         })?;
-        
+
         Ok(json!({
             "success": true,
             "query": params.name,
@@ -250,11 +253,11 @@ impl Tool for FindStructTool {
     fn name(&self) -> &str {
         "find_struct"
     }
-    
+
     fn description(&self) -> &str {
         "Find struct definitions in Rust files"
     }
-    
+
     fn parameters_schema(&self) -> Value {
         json!({
             "type": "object",
@@ -271,47 +274,51 @@ impl Tool for FindStructTool {
             "required": ["name"]
         })
     }
-    
+
     async fn execute(&self, params: Value) -> Result<Value> {
         #[derive(Deserialize)]
         struct Params {
             name: String,
             path: Option<String>,
         }
-        
+
         let params: Params = serde_json::from_value(params)?;
         let search_path = params.path.unwrap_or_else(|| "src".to_string());
         let full_path = self.workspace.join(&search_path);
-        
+
         let mut results = Vec::new();
         search_rust_files(&full_path, |file_path, content| {
-            if let Ok(syntax_tree) = parse_file(&content) {
+            if let Ok(syntax_tree) = parse_file(content) {
                 for item in syntax_tree.items {
                     if let Item::Struct(item_struct) = item {
                         if item_struct.ident == params.name {
                             let fields = match &item_struct.fields {
-                                syn::Fields::Named(fields) => {
-                                    fields.named.iter()
-                                        .map(|f| json!({
+                                syn::Fields::Named(fields) => fields
+                                    .named
+                                    .iter()
+                                    .map(|f| {
+                                        json!({
                                             "name": f.ident.as_ref().map(|i| i.to_string()),
                                             "type": quote::quote!(#f.ty).to_string(),
                                             "visibility": visibility_to_string(&f.vis),
-                                        }))
-                                        .collect::<Vec<_>>()
-                                }
-                                syn::Fields::Unnamed(fields) => {
-                                    fields.unnamed.iter()
-                                        .enumerate()
-                                        .map(|(i, f)| json!({
+                                        })
+                                    })
+                                    .collect::<Vec<_>>(),
+                                syn::Fields::Unnamed(fields) => fields
+                                    .unnamed
+                                    .iter()
+                                    .enumerate()
+                                    .map(|(i, f)| {
+                                        json!({
                                             "index": i,
                                             "type": quote::quote!(#f.ty).to_string(),
                                             "visibility": visibility_to_string(&f.vis),
-                                        }))
-                                        .collect::<Vec<_>>()
-                                }
+                                        })
+                                    })
+                                    .collect::<Vec<_>>(),
                                 syn::Fields::Unit => vec![],
                             };
-                            
+
                             results.push(json!({
                                 "file": file_path.strip_prefix(&self.workspace)
                                     .unwrap_or(file_path)
@@ -329,7 +336,7 @@ impl Tool for FindStructTool {
                 }
             }
         })?;
-        
+
         Ok(json!({
             "success": true,
             "query": params.name,

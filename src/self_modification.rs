@@ -1,4 +1,8 @@
 //! Self-modification capabilities (placeholder for future implementation)
+//!
+//! This module will contain advanced self-modification features
+
+#![allow(dead_code)]
 
 // This module will contain advanced self-modification features
 // Such as:
@@ -18,7 +22,7 @@ impl SelfModificationEngine {
     pub fn new(workspace: std::path::PathBuf) -> Self {
         Self { workspace }
     }
-    
+
     /// Validate that a proposed change is safe
     pub fn validate_change(&self, _change: &str) -> Result<bool> {
         // Future implementation will validate:
@@ -27,7 +31,7 @@ impl SelfModificationEngine {
         // - Test compatibility
         Ok(true)
     }
-    
+
     /// Apply a change with rollback capability
     pub fn apply_change(&self, _change: &str) -> Result<()> {
         // Future implementation will:

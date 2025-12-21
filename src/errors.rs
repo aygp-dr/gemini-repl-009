@@ -1,4 +1,9 @@
 //! Custom error types for the Gemini REPL
+//!
+//! These error types are scaffolded for future use when migrating
+//! from anyhow to structured error handling.
+
+#![allow(dead_code)]
 
 use std::fmt;
 
@@ -154,19 +159,19 @@ impl ToolError {
     pub fn not_found(name: impl Into<String>) -> Self {
         Self::NotFound(name.into())
     }
-    
+
     pub fn invalid_params(msg: impl Into<String>) -> Self {
         Self::InvalidParameters(msg.into())
     }
-    
+
     pub fn execution_failed(msg: impl Into<String>) -> Self {
         Self::ExecutionFailed(msg.into())
     }
-    
+
     pub fn analysis_failed(msg: impl Into<String>) -> Self {
         Self::AnalysisFailed(msg.into())
     }
-    
+
     pub fn build_failed(msg: impl Into<String>) -> Self {
         Self::BuildFailed(msg.into())
     }
@@ -176,11 +181,11 @@ impl SecurityError {
     pub fn path_traversal(path: impl Into<String>) -> Self {
         Self::PathTraversal(path.into())
     }
-    
+
     pub fn access_denied(resource: impl Into<String>) -> Self {
         Self::AccessDenied(resource.into())
     }
-    
+
     pub fn unsafe_operation(op: impl Into<String>) -> Self {
         Self::UnsafeOperation(op.into())
     }
@@ -190,11 +195,11 @@ impl ApiError {
     pub fn authentication(msg: impl Into<String>) -> Self {
         Self::Authentication(msg.into())
     }
-    
+
     pub fn network(msg: impl Into<String>) -> Self {
         Self::Network(msg.into())
     }
-    
+
     pub fn invalid_response(msg: impl Into<String>) -> Self {
         Self::InvalidResponse(msg.into())
     }
@@ -211,7 +216,9 @@ mod tests {
     fn test_error_display() {
         let tool_error = ToolError::not_found("test_tool");
         let gemini_error = GeminiError::from(tool_error);
-        assert!(gemini_error.to_string().contains("Tool 'test_tool' not found"));
+        assert!(gemini_error
+            .to_string()
+            .contains("Tool 'test_tool' not found"));
     }
 
     #[test]
