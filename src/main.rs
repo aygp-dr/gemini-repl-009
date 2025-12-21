@@ -19,7 +19,7 @@ mod utils;
 
 use api::{ApiResponse, Content, GeminiClient, Part};
 use logging::{init_logging, is_debug_mode};
-use session::{Session, SessionManager, SessionStats};
+use session::{ExportFormat, Session, SessionManager, SessionStats};
 use tools::ToolRegistry;
 
 /// Maximum number of tool call iterations to prevent infinite loops
@@ -346,6 +346,17 @@ fn handle_command(
             continue_last_session(session_manager, &args.model, conversation, current_session);
             Some(false)
         }
+        input if input.starts_with("/export") => {
+            let args_str = input.strip_prefix("/export").unwrap().trim();
+            export_session(
+                session_manager,
+                args_str,
+                &args.model,
+                conversation,
+                current_session,
+            );
+            Some(false)
+        }
         input if input.starts_with('/') => {
             println!("Unknown command: {input}. Type /help for available commands.");
             Some(false)
@@ -567,6 +578,117 @@ fn continue_last_session(
     }
 }
 
+fn export_session(
+    session_manager: &SessionManager,
+    args_str: &str,
+    model: &str,
+    conversation: &[Content],
+    current_session: &Option<String>,
+) {
+    // Parse: /export [session_name] [format] [output_file]
+    // Default: export current session to json, print to stdout
+    let parts: Vec<&str> = args_str.split_whitespace().collect();
+
+    // Determine session to export
+    let (session, format, output_file) = match parts.as_slice() {
+        [] => {
+            // Export current conversation
+            if conversation.is_empty() {
+                println!("No conversation to export");
+                return;
+            }
+            let name = current_session
+                .clone()
+                .unwrap_or_else(|| "unsaved".to_string());
+            let session = Session::from_conversation(&name, model, conversation.to_vec());
+            (session, ExportFormat::Json, None)
+        }
+        [format] => {
+            // Export current conversation in specified format
+            if conversation.is_empty() {
+                println!("No conversation to export");
+                return;
+            }
+            let fmt = match format.parse::<ExportFormat>() {
+                Ok(f) => f,
+                Err(e) => {
+                    eprintln!("{}", e);
+                    return;
+                }
+            };
+            let name = current_session
+                .clone()
+                .unwrap_or_else(|| "unsaved".to_string());
+            let session = Session::from_conversation(&name, model, conversation.to_vec());
+            (session, fmt, None)
+        }
+        [format, output] => {
+            // Export current conversation to file
+            if conversation.is_empty() {
+                println!("No conversation to export");
+                return;
+            }
+            let fmt = match format.parse::<ExportFormat>() {
+                Ok(f) => f,
+                Err(e) => {
+                    eprintln!("{}", e);
+                    return;
+                }
+            };
+            let name = current_session
+                .clone()
+                .unwrap_or_else(|| "unsaved".to_string());
+            let session = Session::from_conversation(&name, model, conversation.to_vec());
+            (session, fmt, Some(*output))
+        }
+        [session_name, format, output] => {
+            // Export specific session to file
+            let session = match session_manager.load(session_name) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("Error loading session '{}': {}", session_name, e);
+                    return;
+                }
+            };
+            let fmt = match format.parse::<ExportFormat>() {
+                Ok(f) => f,
+                Err(e) => {
+                    eprintln!("{}", e);
+                    return;
+                }
+            };
+            (session, fmt, Some(*output))
+        }
+        _ => {
+            println!("Usage: /export [format] [output_file]");
+            println!("       /export <session_name> <format> <output_file>");
+            println!("Formats: json, markdown (or md)");
+            return;
+        }
+    };
+
+    // Export the session
+    match session.export(format) {
+        Ok(content) => {
+            if let Some(path) = output_file {
+                match std::fs::write(path, &content) {
+                    Ok(()) => {
+                        println!("Exported to: {}", path);
+                    }
+                    Err(e) => {
+                        eprintln!("Error writing file: {}", e);
+                    }
+                }
+            } else {
+                println!("{}", content);
+            }
+        }
+        Err(e) => {
+            eprintln!("Error exporting session: {}", e);
+        }
+    }
+}
+
 async fn handle_user_input(
     input: &str,
     client: Option<&GeminiClient>,
@@ -708,6 +830,7 @@ fn print_help(self_modification_enabled: bool) {
     println!("  /continue      - Load the most recent session");
     println!("  /sessions      - List all saved sessions");
     println!("  /delete <name> - Delete a saved session");
+    println!("  /export [fmt] [file] - Export session (formats: json, markdown)");
     println!("  /reset         - Clear conversation history");
     println!("  /stats         - Show session statistics");
     println!("  /tokens        - Show token usage and context capacity");

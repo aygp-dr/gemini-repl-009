@@ -225,6 +225,91 @@ fn sanitize_filename(name: &str) -> String {
         .collect()
 }
 
+/// Export format for sessions
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExportFormat {
+    Json,
+    Markdown,
+}
+
+impl std::str::FromStr for ExportFormat {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        match s.to_lowercase().as_str() {
+            "json" => Ok(ExportFormat::Json),
+            "md" | "markdown" => Ok(ExportFormat::Markdown),
+            _ => bail!("Unknown export format: {}. Use 'json' or 'markdown'", s),
+        }
+    }
+}
+
+impl Session {
+    /// Export session to a string in the specified format
+    pub fn export(&self, format: ExportFormat) -> Result<String> {
+        match format {
+            ExportFormat::Json => {
+                serde_json::to_string_pretty(self).context("Failed to serialize session")
+            }
+            ExportFormat::Markdown => Ok(self.to_markdown()),
+        }
+    }
+
+    /// Convert session to markdown format
+    fn to_markdown(&self) -> String {
+        let mut md = String::new();
+
+        // Header
+        md.push_str(&format!("# Session: {}\n\n", self.name));
+        md.push_str(&format!("- **Model**: {}\n", self.model));
+        md.push_str(&format!(
+            "- **Created**: {}\n",
+            self.created_at.format("%Y-%m-%d %H:%M:%S UTC")
+        ));
+        md.push_str(&format!(
+            "- **Updated**: {}\n",
+            self.updated_at.format("%Y-%m-%d %H:%M:%S UTC")
+        ));
+        md.push_str(&format!("- **Messages**: {}\n\n", self.message_count));
+        md.push_str("---\n\n");
+
+        // Conversation
+        for content in &self.conversation {
+            let role = match content.role.as_str() {
+                "user" => "**User**",
+                "model" => "**Assistant**",
+                "function" => "**Function**",
+                _ => &content.role,
+            };
+
+            md.push_str(&format!("### {}\n\n", role));
+
+            for part in &content.parts {
+                if let Some(text) = &part.text {
+                    md.push_str(text);
+                    md.push_str("\n\n");
+                }
+                if let Some(fc) = &part.function_call {
+                    md.push_str(&format!(
+                        "```json\n// Function call: {}\n{}\n```\n\n",
+                        fc.name,
+                        serde_json::to_string_pretty(&fc.args).unwrap_or_default()
+                    ));
+                }
+                if let Some(fr) = &part.function_response {
+                    md.push_str(&format!(
+                        "```json\n// Function response: {}\n{}\n```\n\n",
+                        fr.name,
+                        serde_json::to_string_pretty(&fr.response).unwrap_or_default()
+                    ));
+                }
+            }
+        }
+
+        md
+    }
+}
+
 /// Session statistics
 #[derive(Debug)]
 pub struct SessionStats {
@@ -459,5 +544,60 @@ mod tests {
             // Just verify it doesn't crash
             let _ = manager.get_last_session();
         }
+    }
+
+    #[test]
+    fn test_export_format_from_str() {
+        assert_eq!("json".parse::<ExportFormat>().unwrap(), ExportFormat::Json);
+        assert_eq!(
+            "markdown".parse::<ExportFormat>().unwrap(),
+            ExportFormat::Markdown
+        );
+        assert_eq!(
+            "md".parse::<ExportFormat>().unwrap(),
+            ExportFormat::Markdown
+        );
+        assert!("invalid".parse::<ExportFormat>().is_err());
+    }
+
+    #[test]
+    fn test_session_export_json() {
+        let session = Session::new("test_export", "gemini-pro");
+        let json = session.export(ExportFormat::Json).unwrap();
+
+        assert!(json.contains("\"name\": \"test_export\""));
+        assert!(json.contains("\"model\": \"gemini-pro\""));
+    }
+
+    #[test]
+    fn test_session_export_markdown() {
+        let conversation = vec![
+            Content {
+                role: "user".to_string(),
+                parts: vec![Part {
+                    text: Some("Hello".to_string()),
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+            Content {
+                role: "model".to_string(),
+                parts: vec![Part {
+                    text: Some("Hi there!".to_string()),
+                    function_call: None,
+                    function_response: None,
+                }],
+            },
+        ];
+
+        let session = Session::from_conversation("md_test", "gemini-pro", conversation);
+        let md = session.export(ExportFormat::Markdown).unwrap();
+
+        assert!(md.contains("# Session: md_test"));
+        assert!(md.contains("**Model**: gemini-pro"));
+        assert!(md.contains("### **User**"));
+        assert!(md.contains("Hello"));
+        assert!(md.contains("### **Assistant**"));
+        assert!(md.contains("Hi there!"));
     }
 }
