@@ -17,8 +17,12 @@ mod session;
 mod tools;
 mod utils;
 
-use api::{ApiResponse, Content, GeminiClient, Part};
+use api::{Content, Part};
 use logging::{init_logging, is_debug_mode};
+use providers::{
+    create_provider, default_model_for_provider, detect_provider, Provider, ProviderConfig,
+    ProviderType,
+};
 use session::{ExportFormat, Session, SessionManager, SessionStats};
 use tools::ToolRegistry;
 
@@ -33,9 +37,17 @@ struct Args {
     #[arg(short, long, env = "GEMINI_API_KEY", hide_env_values = true)]
     api_key: Option<String>,
 
-    /// Model to use
-    #[arg(short, long, default_value = "gemini-2.0-flash-exp")]
-    model: String,
+    /// Model to use (provider-specific, e.g., "llama3.2", "gemini-2.0-flash-exp")
+    #[arg(short, long)]
+    model: Option<String>,
+
+    /// Provider to use: ollama, gemini, openai (auto-detects if not specified)
+    #[arg(short, long, env = "LLM_PROVIDER")]
+    provider: Option<String>,
+
+    /// Ollama server URL (default: http://localhost:11434)
+    #[arg(long, env = "OLLAMA_HOST")]
+    ollama_url: Option<String>,
 
     /// Enable debug logging
     #[arg(short, long)]
@@ -63,8 +75,8 @@ async fn main() -> Result<()> {
 
     tracing::info!("Starting Gemini REPL v{}", env!("CARGO_PKG_VERSION"));
 
-    // Initialize API client
-    let client = initialize_client(&args)?;
+    // Initialize provider (with auto-detection)
+    let provider = initialize_provider(&args).await;
 
     // Initialize tool registry
     let mut tool_registry = ToolRegistry::new();
@@ -76,20 +88,112 @@ async fn main() -> Result<()> {
     }
 
     // Print welcome message
-    print_welcome(&args, client.is_some());
+    print_welcome_v2(&args, provider.as_deref());
 
     // Initialize session manager
     let session_manager = SessionManager::new()?;
 
     // Run the REPL
-    run_repl(client, &args, tool_registry, session_manager).await?;
+    run_repl_v2(provider, &args, tool_registry, session_manager).await?;
 
     tracing::info!("Gemini REPL shutting down");
     Ok(())
 }
 
-async fn run_repl(
-    client: Option<GeminiClient>,
+/// Initialize the LLM provider with auto-detection
+async fn initialize_provider(args: &Args) -> Option<Box<dyn Provider>> {
+    // Check for noop mode
+    let noop_mode = env::var("NOOP_MODE")
+        .map(|v| v.to_lowercase() == "true" || v == "1")
+        .unwrap_or(false);
+
+    if noop_mode {
+        return None;
+    }
+
+    // If provider explicitly specified, use that
+    if let Some(provider_str) = &args.provider {
+        let provider_type: ProviderType = match provider_str.parse() {
+            Ok(pt) => pt,
+            Err(e) => {
+                eprintln!("Invalid provider: {}", e);
+                return None;
+            }
+        };
+
+        let model = args
+            .model
+            .clone()
+            .unwrap_or_else(|| default_model_for_provider(provider_type).to_string());
+
+        let config = ProviderConfig {
+            provider_type,
+            api_key: args.api_key.clone(),
+            base_url: args.ollama_url.clone(),
+            model,
+            timeout_secs: if provider_type == ProviderType::Ollama {
+                120
+            } else {
+                30
+            },
+        };
+
+        match create_provider(config) {
+            Ok(p) => return Some(p),
+            Err(e) => {
+                eprintln!("Failed to create provider: {}", e);
+                return None;
+            }
+        }
+    }
+
+    // Auto-detect provider (Ollama first, then Gemini)
+    if let Some(config) = detect_provider(args.api_key.clone(), args.ollama_url.clone()).await {
+        let model = args.model.clone().unwrap_or(config.model.clone());
+        let config = ProviderConfig { model, ..config };
+
+        match create_provider(config) {
+            Ok(p) => return Some(p),
+            Err(e) => {
+                tracing::warn!("Failed to create auto-detected provider: {}", e);
+            }
+        }
+    }
+
+    None
+}
+
+fn print_welcome_v2(args: &Args, provider: Option<&dyn Provider>) {
+    println!(
+        "Gemini REPL v{} - Type /help for commands, /exit to quit",
+        env!("CARGO_PKG_VERSION")
+    );
+
+    let noop_mode = env::var("NOOP_MODE")
+        .map(|v| v.to_lowercase() == "true" || v == "1")
+        .unwrap_or(false);
+
+    if noop_mode {
+        println!("Running in NOOP mode (no API calls will be made)");
+    } else if let Some(p) = provider {
+        println!(
+            "Connected to {} (model: {})",
+            p.name().to_uppercase(),
+            p.model()
+        );
+        if args.enable_self_modification {
+            println!("Self-modification features: ENABLED");
+        }
+    } else {
+        println!("Note: No provider available.");
+        println!("  - For Ollama: Start ollama serve");
+        println!("  - For Gemini: Set GEMINI_API_KEY or use --api-key");
+        println!("Running in noop mode");
+    }
+}
+
+async fn run_repl_v2(
+    provider: Option<Box<dyn Provider>>,
     args: &Args,
     tool_registry: ToolRegistry,
     session_manager: SessionManager,
@@ -99,14 +203,20 @@ async fn run_repl(
     // Current session name (None if unsaved)
     let mut current_session: Option<String> = None;
 
+    // Get model name for session
+    let model_name = provider
+        .as_ref()
+        .map(|p| p.model().to_string())
+        .unwrap_or_else(|| "unknown".to_string());
+
     // Handle session continuation
     if let Some(session_name) = &args.continue_session {
         match session_manager.load(session_name) {
             Ok(session) => {
-                if session.model != args.model {
+                if session.model != model_name {
                     println!(
                         "Warning: Session was created with model '{}', current model is '{}'",
-                        session.model, args.model
+                        session.model, model_name
                     );
                 }
                 println!(
@@ -124,10 +234,10 @@ async fn run_repl(
     } else if args.continue_last {
         match session_manager.get_last_session() {
             Ok(Some(session)) => {
-                if session.model != args.model {
+                if session.model != model_name {
                     println!(
                         "Warning: Session was created with model '{}', current model is '{}'",
-                        session.model, args.model
+                        session.model, model_name
                     );
                 }
                 println!(
@@ -152,7 +262,7 @@ async fn run_repl(
 
     // Main REPL loop
     loop {
-        match rl.readline("gemini> ") {
+        match rl.readline("repl> ") {
             Ok(line) => {
                 // Add to history
                 let _ = rl.add_history_entry(line.as_str());
@@ -164,21 +274,27 @@ async fn run_repl(
                     continue;
                 }
 
-                if let Some(should_break) = handle_command(
+                if let Some(should_break) = handle_command_v2(
                     trimmed,
-                    args,
+                    &model_name,
                     &mut conversation,
                     &tool_registry,
                     &session_manager,
                     &mut current_session,
+                    args.enable_self_modification,
                 ) {
                     if should_break {
                         break;
                     }
                 } else {
-                    // Handle user input
-                    handle_user_input(trimmed, client.as_ref(), &mut conversation, &tool_registry)
-                        .await;
+                    // Handle user input with provider
+                    handle_user_input_v2(
+                        trimmed,
+                        provider.as_deref(),
+                        &mut conversation,
+                        &tool_registry,
+                    )
+                    .await;
                 }
             }
             Err(ReadlineError::Interrupted) => {
@@ -198,53 +314,14 @@ async fn run_repl(
     Ok(())
 }
 
-fn initialize_client(args: &Args) -> Result<Option<GeminiClient>> {
-    // Check for noop mode
-    let noop_mode = env::var("NOOP_MODE")
-        .map(|v| v.to_lowercase() == "true" || v == "1")
-        .unwrap_or(false);
-
-    // Initialize API client if not in noop mode and API key is available
-    if !noop_mode && args.api_key.is_some() {
-        Ok(Some(GeminiClient::new(
-            args.api_key.clone().unwrap(),
-            args.model.clone(),
-        )?))
-    } else {
-        Ok(None)
-    }
-}
-
-fn print_welcome(args: &Args, has_client: bool) {
-    println!(
-        "Gemini REPL v{} - Type /help for commands, /exit to quit",
-        env!("CARGO_PKG_VERSION")
-    );
-
-    let noop_mode = env::var("NOOP_MODE")
-        .map(|v| v.to_lowercase() == "true" || v == "1")
-        .unwrap_or(false);
-
-    if noop_mode {
-        println!("Running in NOOP mode (no API calls will be made)");
-    } else if !has_client {
-        println!("Note: No API key provided. Set GEMINI_API_KEY or use --api-key");
-        println!("Running in noop mode");
-    } else {
-        println!("Connected to Gemini API (model: {})", args.model);
-        if args.enable_self_modification {
-            println!("Self-modification features: ENABLED");
-        }
-    }
-}
-
-fn handle_command(
+fn handle_command_v2(
     trimmed: &str,
-    args: &Args,
+    model: &str,
     conversation: &mut Vec<Content>,
     tool_registry: &ToolRegistry,
     session_manager: &SessionManager,
     current_session: &mut Option<String>,
+    self_modification_enabled: bool,
 ) -> Option<bool> {
     match trimmed {
         "/exit" | "/quit" => {
@@ -252,15 +329,14 @@ fn handle_command(
             Some(true)
         }
         "/help" => {
-            print_help(args.enable_self_modification);
+            print_help(self_modification_enabled);
             Some(false)
         }
         "/model" => {
-            println!("Current model: {}", args.model);
+            println!("Current model: {}", model);
             Some(false)
         }
         "/clear" => {
-            // Clear screen
             print!("\x1B[2J\x1B[1;1H");
             Some(false)
         }
@@ -273,7 +349,7 @@ fn handle_command(
             Some(false)
         }
         "/capabilities" => {
-            if args.enable_self_modification {
+            if self_modification_enabled {
                 print_capabilities();
             } else {
                 println!("Self-modification features are disabled. Use --enable-self-modification to enable.");
@@ -311,7 +387,7 @@ fn handle_command(
             save_session(
                 session_manager,
                 &session_name,
-                &args.model,
+                model,
                 conversation,
                 current_session,
             );
@@ -323,13 +399,7 @@ fn handle_command(
                 println!("Usage: /load <session_name>");
                 println!("Use /sessions to list available sessions");
             } else {
-                load_session(
-                    session_manager,
-                    name,
-                    &args.model,
-                    conversation,
-                    current_session,
-                );
+                load_session(session_manager, name, model, conversation, current_session);
             }
             Some(false)
         }
@@ -343,7 +413,7 @@ fn handle_command(
             Some(false)
         }
         "/continue" => {
-            continue_last_session(session_manager, &args.model, conversation, current_session);
+            continue_last_session(session_manager, model, conversation, current_session);
             Some(false)
         }
         input if input.starts_with("/export") => {
@@ -351,7 +421,7 @@ fn handle_command(
             export_session(
                 session_manager,
                 args_str,
-                &args.model,
+                model,
                 conversation,
                 current_session,
             );
@@ -362,6 +432,221 @@ fn handle_command(
             Some(false)
         }
         _ => None,
+    }
+}
+
+async fn handle_user_input_v2(
+    input: &str,
+    provider: Option<&dyn Provider>,
+    conversation: &mut Vec<Content>,
+    tool_registry: &ToolRegistry,
+) {
+    if let Some(provider) = provider {
+        // Add user message to conversation
+        conversation.push(Content {
+            role: "user".to_string(),
+            parts: vec![Part {
+                text: Some(input.to_string()),
+                function_call: None,
+                function_response: None,
+            }],
+        });
+
+        // Convert to provider messages
+        let messages: Vec<providers::Message> = conversation
+            .iter()
+            .map(|c| {
+                let role = match c.role.as_str() {
+                    "user" => providers::Role::User,
+                    "model" => providers::Role::Assistant,
+                    "function" => providers::Role::Function,
+                    "system" => providers::Role::System,
+                    _ => providers::Role::User,
+                };
+                let content = if let Some(text) = c.parts.first().and_then(|p| p.text.as_ref()) {
+                    providers::MessageContent::Text(text.clone())
+                } else if let Some(fc) = c.parts.first().and_then(|p| p.function_call.as_ref()) {
+                    providers::MessageContent::FunctionCall(providers::FunctionCall {
+                        name: fc.name.clone(),
+                        arguments: fc.args.clone(),
+                    })
+                } else if let Some(fr) = c.parts.first().and_then(|p| p.function_response.as_ref())
+                {
+                    providers::MessageContent::FunctionResponse(providers::FunctionResponse {
+                        name: fr.name.clone(),
+                        response: fr.response.clone(),
+                    })
+                } else {
+                    providers::MessageContent::Text(String::new())
+                };
+                providers::Message { role, content }
+            })
+            .collect();
+
+        // Get tool definitions
+        let api_tools = tool_registry.get_tool_definitions();
+        let provider_tools: Vec<providers::ToolDefinition> = api_tools
+            .iter()
+            .filter_map(|t| {
+                let name = t.get("name")?.as_str()?.to_string();
+                let description = t.get("description")?.as_str()?.to_string();
+                let parameters = t.get("parameters")?.clone();
+                Some(providers::ToolDefinition {
+                    name,
+                    description,
+                    parameters,
+                })
+            })
+            .collect();
+
+        // Generate response with tools
+        for iteration in 0..MAX_TOOL_ITERATIONS {
+            match provider.generate(&messages, Some(&provider_tools)).await {
+                Ok(response) => {
+                    match response {
+                        providers::ProviderResponse::Text(text) => {
+                            println!("{}", text);
+                            conversation.push(Content {
+                                role: "model".to_string(),
+                                parts: vec![Part {
+                                    text: Some(text),
+                                    function_call: None,
+                                    function_response: None,
+                                }],
+                            });
+                            break;
+                        }
+                        providers::ProviderResponse::FunctionCall(fc) => {
+                            tracing::info!("Executing tool: {}", fc.name);
+                            println!("[Calling tool: {}]", fc.name);
+
+                            // Add function call to conversation
+                            conversation.push(Content {
+                                role: "model".to_string(),
+                                parts: vec![Part {
+                                    text: None,
+                                    function_call: Some(api::FunctionCall {
+                                        name: fc.name.clone(),
+                                        args: fc.arguments.clone(),
+                                    }),
+                                    function_response: None,
+                                }],
+                            });
+
+                            // Execute the tool
+                            match tool_registry
+                                .execute_tool(&fc.name, fc.arguments.clone())
+                                .await
+                            {
+                                Ok(result) => {
+                                    tracing::debug!("Tool result: {}", result);
+                                    conversation.push(Content {
+                                        role: "function".to_string(),
+                                        parts: vec![Part {
+                                            text: None,
+                                            function_call: None,
+                                            function_response: Some(api::FunctionResponse {
+                                                name: fc.name.clone(),
+                                                response: result,
+                                            }),
+                                        }],
+                                    });
+                                }
+                                Err(e) => {
+                                    eprintln!("Tool execution error: {e}");
+                                    conversation.push(Content {
+                                        role: "function".to_string(),
+                                        parts: vec![Part {
+                                            text: None,
+                                            function_call: None,
+                                            function_response: Some(api::FunctionResponse {
+                                                name: fc.name,
+                                                response: serde_json::json!({"error": e.to_string()}),
+                                            }),
+                                        }],
+                                    });
+                                }
+                            }
+                        }
+                        providers::ProviderResponse::TextWithFunctionCall {
+                            text,
+                            function_call,
+                        } => {
+                            println!("{}", text);
+                            tracing::info!("Executing tool: {}", function_call.name);
+                            println!("[Calling tool: {}]", function_call.name);
+
+                            // Add to conversation
+                            conversation.push(Content {
+                                role: "model".to_string(),
+                                parts: vec![
+                                    Part {
+                                        text: Some(text),
+                                        function_call: None,
+                                        function_response: None,
+                                    },
+                                    Part {
+                                        text: None,
+                                        function_call: Some(api::FunctionCall {
+                                            name: function_call.name.clone(),
+                                            args: function_call.arguments.clone(),
+                                        }),
+                                        function_response: None,
+                                    },
+                                ],
+                            });
+
+                            // Execute the tool
+                            match tool_registry
+                                .execute_tool(&function_call.name, function_call.arguments.clone())
+                                .await
+                            {
+                                Ok(result) => {
+                                    tracing::debug!("Tool result: {}", result);
+                                    conversation.push(Content {
+                                        role: "function".to_string(),
+                                        parts: vec![Part {
+                                            text: None,
+                                            function_call: None,
+                                            function_response: Some(api::FunctionResponse {
+                                                name: function_call.name,
+                                                response: result,
+                                            }),
+                                        }],
+                                    });
+                                }
+                                Err(e) => {
+                                    eprintln!("Tool execution error: {e}");
+                                    conversation.push(Content {
+                                        role: "function".to_string(),
+                                        parts: vec![Part {
+                                            text: None,
+                                            function_call: None,
+                                            function_response: Some(api::FunctionResponse {
+                                                name: function_call.name,
+                                                response: serde_json::json!({"error": e.to_string()}),
+                                            }),
+                                        }],
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error: {e}");
+                    break;
+                }
+            }
+
+            if iteration == MAX_TOOL_ITERATIONS - 1 {
+                eprintln!("Warning: Maximum tool iterations reached");
+            }
+        }
+    } else {
+        // Noop mode
+        println!("You said: {input}");
+        println!("(Running in noop mode - no API calls made)");
     }
 }
 
@@ -689,131 +974,6 @@ fn export_session(
     }
 }
 
-async fn handle_user_input(
-    input: &str,
-    client: Option<&GeminiClient>,
-    conversation: &mut Vec<Content>,
-    tool_registry: &ToolRegistry,
-) {
-    if let Some(client) = client {
-        // Add user message to conversation
-        conversation.push(Content {
-            role: "user".to_string(),
-            parts: vec![Part {
-                text: Some(input.to_string()),
-                function_call: None,
-                function_response: None,
-            }],
-        });
-
-        // Make API call with tools - may require multiple iterations for tool calls
-        let tools = tool_registry.get_tool_definitions();
-
-        for iteration in 0..MAX_TOOL_ITERATIONS {
-            match client
-                .send_message_with_tools(conversation, Some(tools.clone()))
-                .await
-            {
-                Ok(response) => {
-                    match &response {
-                        ApiResponse::Text(text) => {
-                            // Simple text response - print and add to conversation
-                            println!("{text}");
-                            conversation.push(GeminiClient::response_to_content(&response));
-                            break;
-                        }
-                        ApiResponse::FunctionCall(fc) => {
-                            // Execute the function and continue the conversation
-                            tracing::info!("Executing tool: {}", fc.name);
-                            println!("[Calling tool: {}]", fc.name);
-
-                            // Add the function call to conversation
-                            conversation.push(GeminiClient::response_to_content(&response));
-
-                            // Execute the tool
-                            match tool_registry.execute_tool(&fc.name, fc.args.clone()).await {
-                                Ok(result) => {
-                                    tracing::debug!("Tool result: {}", result);
-                                    // Add function response to conversation
-                                    let func_response =
-                                        GeminiClient::create_function_response_content(
-                                            &fc.name, result,
-                                        );
-                                    conversation.push(func_response);
-                                    // Continue loop to get model's response to the tool result
-                                }
-                                Err(e) => {
-                                    eprintln!("Tool execution error: {e}");
-                                    // Add error as function response
-                                    let error_response =
-                                        GeminiClient::create_function_response_content(
-                                            &fc.name,
-                                            serde_json::json!({
-                                                "error": e.to_string()
-                                            }),
-                                        );
-                                    conversation.push(error_response);
-                                }
-                            }
-                        }
-                        ApiResponse::TextWithFunctionCall {
-                            text,
-                            function_call,
-                        } => {
-                            // Print the text, then handle the function call
-                            println!("{text}");
-                            tracing::info!("Executing tool: {}", function_call.name);
-                            println!("[Calling tool: {}]", function_call.name);
-
-                            // Add the response to conversation
-                            conversation.push(GeminiClient::response_to_content(&response));
-
-                            // Execute the tool
-                            match tool_registry
-                                .execute_tool(&function_call.name, function_call.args.clone())
-                                .await
-                            {
-                                Ok(result) => {
-                                    tracing::debug!("Tool result: {}", result);
-                                    let func_response =
-                                        GeminiClient::create_function_response_content(
-                                            &function_call.name,
-                                            result,
-                                        );
-                                    conversation.push(func_response);
-                                }
-                                Err(e) => {
-                                    eprintln!("Tool execution error: {e}");
-                                    let error_response =
-                                        GeminiClient::create_function_response_content(
-                                            &function_call.name,
-                                            serde_json::json!({
-                                                "error": e.to_string()
-                                            }),
-                                        );
-                                    conversation.push(error_response);
-                                }
-                            }
-                        }
-                    }
-                }
-                Err(e) => {
-                    eprintln!("Error: {e}");
-                    break;
-                }
-            }
-
-            if iteration == MAX_TOOL_ITERATIONS - 1 {
-                eprintln!("Warning: Maximum tool iterations reached");
-            }
-        }
-    } else {
-        // Noop mode - echo input back
-        println!("You said: {input}");
-        println!("(Running in noop mode - no API calls made)");
-    }
-}
-
 fn print_help(self_modification_enabled: bool) {
     println!("Available commands:");
     println!("  /help          - Show this help message");
@@ -836,9 +996,17 @@ fn print_help(self_modification_enabled: bool) {
     println!("  /tokens        - Show token usage and context capacity");
 
     println!();
-    println!("CLI options for session continuation:");
+    println!("CLI options:");
+    println!("  -p, --provider <name>  - Use specific provider (ollama, gemini, openai)");
+    println!("  -m, --model <name>     - Use specific model");
+    println!("  --ollama-url <url>     - Ollama server URL");
     println!("  -C, --continue <name>  - Start with a specific session");
     println!("  --continue-last        - Start with the most recent session");
+
+    println!();
+    println!("Provider auto-detection (default):");
+    println!("  1. Ollama (if running at localhost:11434)");
+    println!("  2. Gemini (if GEMINI_API_KEY set)");
 
     if self_modification_enabled {
         println!();

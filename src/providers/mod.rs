@@ -6,12 +6,16 @@
 #![allow(dead_code)]
 
 pub mod gemini;
+pub mod ollama;
 pub mod types;
 
 use anyhow::Result;
 use async_trait::async_trait;
+use reqwest::Client;
+use std::time::Duration;
 
 pub use gemini::GeminiProvider;
+pub use ollama::OllamaProvider;
 pub use types::*;
 
 /// Provider trait for LLM backends
@@ -133,12 +137,77 @@ pub fn create_provider(config: ProviderConfig) -> Result<Box<dyn Provider>> {
                 config.timeout_secs,
             )?))
         }
-        ProviderType::Ollama => {
-            anyhow::bail!("Ollama provider not yet implemented")
-        }
+        ProviderType::Ollama => Ok(Box::new(OllamaProvider::new(
+            config.model,
+            config.base_url,
+            config.timeout_secs,
+        )?)),
         ProviderType::OpenAI => {
             anyhow::bail!("OpenAI provider not yet implemented")
         }
+    }
+}
+
+/// Check if Ollama is available at the given URL
+pub async fn is_ollama_available(base_url: Option<&str>) -> bool {
+    let url = base_url.unwrap_or("http://localhost:11434");
+    let client = match Client::builder().timeout(Duration::from_secs(2)).build() {
+        Ok(c) => c,
+        Err(_) => return false,
+    };
+
+    match client.get(format!("{}/api/tags", url)).send().await {
+        Ok(resp) => resp.status().is_success(),
+        Err(_) => false,
+    }
+}
+
+/// Auto-detect the best available provider
+///
+/// Priority order:
+/// 1. Ollama (if running locally)
+/// 2. Gemini (if API key available)
+/// 3. None
+pub async fn detect_provider(
+    gemini_api_key: Option<String>,
+    ollama_url: Option<String>,
+) -> Option<ProviderConfig> {
+    // Check Ollama first (preferred for local/private use)
+    if is_ollama_available(ollama_url.as_deref()).await {
+        tracing::info!(
+            "Detected Ollama at {}",
+            ollama_url.as_deref().unwrap_or("localhost:11434")
+        );
+        return Some(ProviderConfig {
+            provider_type: ProviderType::Ollama,
+            api_key: None,
+            base_url: ollama_url,
+            model: "llama3.2".to_string(), // Good default model
+            timeout_secs: 120,             // Ollama can be slower
+        });
+    }
+
+    // Fall back to Gemini if API key available
+    if let Some(api_key) = gemini_api_key {
+        tracing::info!("Using Gemini provider");
+        return Some(ProviderConfig {
+            provider_type: ProviderType::Gemini,
+            api_key: Some(api_key),
+            base_url: None,
+            model: "gemini-2.0-flash-exp".to_string(),
+            timeout_secs: 30,
+        });
+    }
+
+    None
+}
+
+/// Get default model for a provider type
+pub fn default_model_for_provider(provider_type: ProviderType) -> &'static str {
+    match provider_type {
+        ProviderType::Ollama => "llama3.2",
+        ProviderType::Gemini => "gemini-2.0-flash-exp",
+        ProviderType::OpenAI => "gpt-4o",
     }
 }
 

@@ -1,4 +1,9 @@
 //! Gemini API client implementation
+//!
+//! This module provides the direct Gemini API client. For multi-provider support,
+//! see the `providers` module.
+
+#![allow(dead_code)]
 
 use anyhow::{bail, Result};
 use reqwest::Client;
