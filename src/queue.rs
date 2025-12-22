@@ -4,11 +4,11 @@
 //! the REPL via file-based JSON queues, similar to Efrit's queue system.
 //!
 //! Queue structure:
-//! ```
+//! ```text
 //! ~/.gemini-repl/queues/
-//! ├── input/       # Drop JSON request files here
-//! ├── output/      # Responses are written here
-//! └── archive/     # Processed requests are moved here
+//! +-- input/       # Drop JSON request files here
+//! +-- output/      # Responses are written here
+//! +-- archive/     # Processed requests are moved here
 //! ```
 //!
 //! Request format:

@@ -4,18 +4,18 @@
 //! at ~/.gemini-repl/, inspired by Efrit and Continue CLI.
 //!
 //! Directory structure:
-//! ```
+//! ```text
 //! ~/.gemini-repl/
-//! ├── config.yaml       # Main configuration
-//! ├── sessions/         # Saved conversation sessions
-//! ├── memory/           # Persistent facts
-//! ├── queues/           # File-based I/O for inter-agent communication
-//! │   ├── input/        # Incoming requests
-//! │   ├── output/       # Outgoing responses
-//! │   └── archive/      # Processed requests
-//! ├── cache/            # Temporary cache
-//! ├── logs/             # Debug logs
-//! └── permissions.yaml  # Tool permission policies
+//! +-- config.yaml       # Main configuration
+//! +-- sessions/         # Saved conversation sessions
+//! +-- memory/           # Persistent facts
+//! +-- queues/           # File-based I/O for inter-agent communication
+//! |   +-- input/        # Incoming requests
+//! |   +-- output/       # Outgoing responses
+//! |   +-- archive/      # Processed requests
+//! +-- cache/            # Temporary cache
+//! +-- logs/             # Debug logs
+//! +-- permissions.yaml  # Tool permission policies
 //! ```
 
 #![allow(dead_code)]
