@@ -18,6 +18,7 @@ mod tools;
 mod utils;
 
 use api::{Content, Part};
+use context::ContextManager;
 use logging::{init_logging, is_debug_mode};
 use providers::{
     create_provider, default_model_for_provider, detect_provider, Provider, ProviderConfig,
@@ -209,6 +210,12 @@ async fn run_repl_v2(
         .map(|p| p.model().to_string())
         .unwrap_or_else(|| "unknown".to_string());
 
+    // Create context manager with provider's token limit
+    let context_manager = provider
+        .as_ref()
+        .map(|p| ContextManager::new(p.max_context_tokens()))
+        .unwrap_or_default();
+
     // Handle session continuation
     if let Some(session_name) = &args.continue_session {
         match session_manager.load(session_name) {
@@ -293,6 +300,7 @@ async fn run_repl_v2(
                         provider.as_deref(),
                         &mut conversation,
                         &tool_registry,
+                        &context_manager,
                     )
                     .await;
                 }
@@ -440,6 +448,7 @@ async fn handle_user_input_v2(
     provider: Option<&dyn Provider>,
     conversation: &mut Vec<Content>,
     tool_registry: &ToolRegistry,
+    context_manager: &ContextManager,
 ) {
     if let Some(provider) = provider {
         // Add user message to conversation
@@ -451,6 +460,24 @@ async fn handle_user_input_v2(
                 function_response: None,
             }],
         });
+
+        // Check if context needs trimming and apply sliding window
+        if context_manager.needs_compaction(conversation) {
+            let msgs_to_drop = context_manager.messages_to_drop(conversation);
+            if msgs_to_drop > 0 {
+                println!(
+                    "[Context limit reached: trimming {} old message(s)]",
+                    msgs_to_drop
+                );
+                context_manager.trim_to_limit(conversation);
+            }
+        } else if context_manager.needs_warning(conversation) {
+            let usage = context_manager.usage_percentage(conversation);
+            println!(
+                "[Context {:.0}% full - consider using /reset or wait for auto-trim]",
+                usage * 100.0
+            );
+        }
 
         // Convert to provider messages
         let messages: Vec<providers::Message> = conversation
