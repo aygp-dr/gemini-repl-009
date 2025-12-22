@@ -10,6 +10,7 @@ mod api;
 mod context;
 mod errors;
 mod logging;
+mod memory;
 mod models;
 mod providers;
 mod self_modification;
@@ -20,6 +21,7 @@ mod utils;
 use api::{Content, Part};
 use context::ContextManager;
 use logging::{init_logging, is_debug_mode};
+use memory::{FactCategory, Memory, MemoryManager};
 use providers::{
     create_provider, default_model_for_provider, detect_provider, Provider, ProviderConfig,
     ProviderType,
@@ -94,8 +96,12 @@ async fn main() -> Result<()> {
     // Initialize session manager
     let session_manager = SessionManager::new()?;
 
+    // Initialize memory manager
+    let memory_manager = MemoryManager::new()?;
+    let memory = memory_manager.load()?;
+
     // Run the REPL
-    run_repl_v2(provider, &args, tool_registry, session_manager).await?;
+    run_repl_v2(provider, &args, tool_registry, session_manager, memory_manager, memory).await?;
 
     tracing::info!("Gemini REPL shutting down");
     Ok(())
@@ -193,11 +199,14 @@ fn print_welcome_v2(args: &Args, provider: Option<&dyn Provider>) {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn run_repl_v2(
     provider: Option<Box<dyn Provider>>,
     args: &Args,
     tool_registry: ToolRegistry,
     session_manager: SessionManager,
+    memory_manager: MemoryManager,
+    mut memory: Memory,
 ) -> Result<()> {
     // Conversation history
     let mut conversation: Vec<Content> = Vec::new();
@@ -215,6 +224,11 @@ async fn run_repl_v2(
         .as_ref()
         .map(|p| ContextManager::new(p.max_context_tokens()))
         .unwrap_or_default();
+
+    // Show memory info if any facts are stored
+    if !memory.is_empty() {
+        println!("Loaded {} remembered fact(s). Use /memory to view.", memory.len());
+    }
 
     // Handle session continuation
     if let Some(session_name) = &args.continue_session {
@@ -288,6 +302,8 @@ async fn run_repl_v2(
                     &tool_registry,
                     &session_manager,
                     &mut current_session,
+                    &memory_manager,
+                    &mut memory,
                     args.enable_self_modification,
                 ) {
                     if should_break {
@@ -322,6 +338,7 @@ async fn run_repl_v2(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn handle_command_v2(
     trimmed: &str,
     model: &str,
@@ -329,6 +346,8 @@ fn handle_command_v2(
     tool_registry: &ToolRegistry,
     session_manager: &SessionManager,
     current_session: &mut Option<String>,
+    memory_manager: &MemoryManager,
+    memory: &mut Memory,
     self_modification_enabled: bool,
 ) -> Option<bool> {
     match trimmed {
@@ -433,6 +452,24 @@ fn handle_command_v2(
                 conversation,
                 current_session,
             );
+            Some(false)
+        }
+        "/memory" => {
+            print_memory(memory);
+            Some(false)
+        }
+        input if input.starts_with("/remember") => {
+            let args_str = input.strip_prefix("/remember").unwrap().trim();
+            handle_remember(args_str, memory, memory_manager);
+            Some(false)
+        }
+        input if input.starts_with("/forget") => {
+            let key = input.strip_prefix("/forget").unwrap().trim();
+            handle_forget(key, memory, memory_manager);
+            Some(false)
+        }
+        "/memory-clear" => {
+            handle_memory_clear(memory, memory_manager);
             Some(false)
         }
         input if input.starts_with('/') => {
@@ -1063,6 +1100,13 @@ fn print_help(self_modification_enabled: bool) {
     println!("  --continue-last        - Start with the most recent session");
 
     println!();
+    println!("Memory (persistent facts):");
+    println!("  /memory        - List all remembered facts");
+    println!("  /remember <key> <value> - Remember a fact (optional: --category)");
+    println!("  /forget <key>  - Forget a fact");
+    println!("  /memory-clear  - Clear all remembered facts");
+
+    println!();
     println!("Provider auto-detection (default):");
     println!("  1. Ollama (if running at localhost:11434)");
     println!("  2. Gemini (if GEMINI_API_KEY set)");
@@ -1077,4 +1121,91 @@ fn print_help(self_modification_enabled: bool) {
     println!("Signal handling:");
     println!("  Ctrl+C         - Cancel current input");
     println!("  Ctrl+D         - Exit the REPL");
+}
+
+fn print_memory(memory: &Memory) {
+    if memory.is_empty() {
+        println!("No remembered facts. Use /remember to add facts.");
+        return;
+    }
+
+    println!("Remembered facts ({}):", memory.len());
+    for fact in memory.list_facts() {
+        println!(
+            "  [{}] {}: {}",
+            fact.category, fact.key, fact.content
+        );
+    }
+}
+
+fn handle_remember(args_str: &str, memory: &mut Memory, memory_manager: &MemoryManager) {
+    // Parse: /remember [--category cat] key value...
+    let parts: Vec<&str> = args_str.split_whitespace().collect();
+
+    if parts.len() < 2 {
+        println!("Usage: /remember <key> <value>");
+        println!("       /remember --category tech <key> <value>");
+        println!("Categories: general (default), preference, project, technical");
+        return;
+    }
+
+    let (category, key, value) = if parts[0] == "--category" || parts[0] == "-c" {
+        if parts.len() < 4 {
+            println!("Usage: /remember --category <category> <key> <value>");
+            return;
+        }
+        let cat: FactCategory = match parts[1].parse() {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("{}", e);
+                return;
+            }
+        };
+        (cat, parts[2], parts[3..].join(" "))
+    } else {
+        (FactCategory::General, parts[0], parts[1..].join(" "))
+    };
+
+    memory.add_fact(key, &value, category);
+
+    if let Err(e) = memory_manager.save(memory) {
+        eprintln!("Error saving memory: {}", e);
+        return;
+    }
+
+    println!("Remembered: {} = {} [{}]", key, value, category);
+}
+
+fn handle_forget(key: &str, memory: &mut Memory, memory_manager: &MemoryManager) {
+    if key.is_empty() {
+        println!("Usage: /forget <key>");
+        return;
+    }
+
+    if memory.remove_fact(key).is_some() {
+        if let Err(e) = memory_manager.save(memory) {
+            eprintln!("Error saving memory: {}", e);
+            return;
+        }
+        println!("Forgot: {}", key);
+    } else {
+        println!("No fact found with key: {}", key);
+    }
+}
+
+fn handle_memory_clear(memory: &mut Memory, memory_manager: &MemoryManager) {
+    if memory.is_empty() {
+        println!("Memory is already empty");
+        return;
+    }
+
+    let count = memory.len();
+    *memory = Memory::new();
+
+    if let Err(e) = memory_manager.clear() {
+        eprintln!("Error clearing memory: {}", e);
+        return;
+    }
+
+    println!("Cleared {} fact(s) from memory", count);
 }
