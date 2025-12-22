@@ -5,8 +5,13 @@
 
 #![allow(dead_code)]
 
+pub mod compaction;
 pub mod tokenizer;
 
+pub use compaction::{
+    can_summarize, create_summary_message, create_summary_prompt,
+    identify_summarization_candidates,
+};
 pub use tokenizer::{TokenCounter, TokenStats};
 
 use crate::api::Content;
@@ -154,6 +159,72 @@ impl ContextManager {
     pub fn messages_to_drop(&self, conversation: &[Content]) -> usize {
         let trimmed = self.apply_sliding_window(conversation);
         conversation.len().saturating_sub(trimmed.len())
+    }
+
+    /// Get messages that should be summarized (older messages that would be dropped)
+    ///
+    /// Returns the messages that should be summarized and the remaining messages
+    /// that should be kept verbatim.
+    pub fn get_messages_to_summarize(&self, conversation: &[Content]) -> (Vec<Content>, Vec<Content>) {
+        let keep_recent = 6; // Keep at least 3 user/assistant pairs
+        let candidates = identify_summarization_candidates(conversation, keep_recent);
+
+        if candidates.is_empty() || !self.needs_compaction(conversation) {
+            return (Vec::new(), conversation.to_vec());
+        }
+
+        let to_summarize: Vec<Content> = candidates
+            .iter()
+            .filter_map(|&i| conversation.get(i).cloned())
+            .collect();
+
+        let to_keep: Vec<Content> = conversation
+            .iter()
+            .enumerate()
+            .filter(|(i, _)| !candidates.contains(i))
+            .map(|(_, c)| c.clone())
+            .collect();
+
+        (to_summarize, to_keep)
+    }
+
+    /// Apply a summary to the conversation
+    ///
+    /// Replaces the messages that were summarized with a summary message
+    pub fn apply_summary(
+        &self,
+        summary_text: &str,
+        remaining_messages: Vec<Content>,
+    ) -> Vec<Content> {
+        let summary_msg = create_summary_message(summary_text);
+        let mut result = Vec::with_capacity(remaining_messages.len() + 1);
+
+        // Insert summary after system messages but before conversation
+        let mut summary_inserted = false;
+        for msg in remaining_messages {
+            if msg.role != "system" && !summary_inserted {
+                result.push(summary_msg.clone());
+                summary_inserted = true;
+            }
+            result.push(msg);
+        }
+
+        // If no non-system messages, add summary at end
+        if !summary_inserted {
+            result.push(summary_msg);
+        }
+
+        result
+    }
+
+    /// Check if summarization would be beneficial
+    pub fn should_summarize(&self, conversation: &[Content]) -> bool {
+        if !self.needs_compaction(conversation) {
+            return false;
+        }
+
+        let (to_summarize, _) = self.get_messages_to_summarize(conversation);
+        can_summarize(&to_summarize)
     }
 }
 

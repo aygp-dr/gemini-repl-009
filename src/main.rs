@@ -461,8 +461,40 @@ async fn handle_user_input_v2(
             }],
         });
 
-        // Check if context needs trimming and apply sliding window
-        if context_manager.needs_compaction(conversation) {
+        // Check if context needs trimming
+        if context_manager.should_summarize(conversation) {
+            // Try to summarize older messages first
+            let (to_summarize, remaining) = context_manager.get_messages_to_summarize(conversation);
+            if !to_summarize.is_empty() {
+                println!(
+                    "[Summarizing {} older message(s) to preserve context...]",
+                    to_summarize.len()
+                );
+
+                // Generate summary using the provider
+                let summary_prompt = context::create_summary_prompt(&to_summarize);
+                let summary_msg = providers::Message::user(&summary_prompt);
+
+                match provider.generate(&[summary_msg], None).await {
+                    Ok(providers::ProviderResponse::Text(summary)) => {
+                        *conversation = context_manager.apply_summary(&summary, remaining);
+                        println!("[Context summarized successfully]");
+                    }
+                    Ok(_) => {
+                        // Fallback to simple truncation
+                        println!("[Summarization returned unexpected result, using truncation]");
+                        context_manager.trim_to_limit(conversation);
+                    }
+                    Err(e) => {
+                        // Fallback to simple truncation
+                        tracing::warn!("Summarization failed, using truncation: {}", e);
+                        println!("[Summarization failed, using truncation]");
+                        context_manager.trim_to_limit(conversation);
+                    }
+                }
+            }
+        } else if context_manager.needs_compaction(conversation) {
+            // Fallback to simple truncation if summarization not appropriate
             let msgs_to_drop = context_manager.messages_to_drop(conversation);
             if msgs_to_drop > 0 {
                 println!(
