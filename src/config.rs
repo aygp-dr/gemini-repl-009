@@ -74,6 +74,7 @@ impl AppDirs {
             self.queue_archive_dir(),
             self.cache_dir(),
             self.logs_dir(),
+            self.projects_dir(),
         ];
 
         for dir in dirs {
@@ -127,6 +128,41 @@ impl AppDirs {
     /// Logs directory
     pub fn logs_dir(&self) -> PathBuf {
         self.root.join("logs")
+    }
+
+    /// Projects directory (per-directory conversation history)
+    pub fn projects_dir(&self) -> PathBuf {
+        self.root.join("projects")
+    }
+
+    /// Get project-specific directory for current working directory
+    pub fn project_dir(&self, cwd: &std::path::Path) -> PathBuf {
+        // Encode the path as a safe directory name
+        let encoded = Self::encode_path(cwd);
+        self.projects_dir().join(encoded)
+    }
+
+    /// Encode a path as a safe directory name
+    fn encode_path(path: &std::path::Path) -> String {
+        use std::collections::hash_map::DefaultHasher;
+        use std::hash::{Hash, Hasher};
+
+        // Create a hash-based short name with readable prefix
+        let path_str = path.to_string_lossy();
+
+        // Get the last component for readability
+        let name = path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("unknown");
+
+        // Hash the full path for uniqueness
+        let mut hasher = DefaultHasher::new();
+        path_str.hash(&mut hasher);
+        let hash = hasher.finish();
+
+        // Format: name-hash (e.g., "gemini-repl-009-a1b2c3d4")
+        format!("{}-{:08x}", name.chars().take(32).collect::<String>(), hash as u32)
     }
 
     /// Main config file path

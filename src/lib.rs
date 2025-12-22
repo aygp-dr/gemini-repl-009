@@ -11,6 +11,7 @@ pub mod logging;
 pub mod memory;
 pub mod models;
 pub mod output;
+pub mod project_session;
 pub mod providers;
 pub mod queue;
 pub mod self_modification;

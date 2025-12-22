@@ -14,6 +14,7 @@ mod logging;
 mod memory;
 mod models;
 mod output;
+mod project_session;
 mod providers;
 mod queue;
 mod self_modification;
@@ -24,6 +25,7 @@ mod utils;
 use api::{Content, Part};
 use config::AppDirs;
 use context::ContextManager;
+use project_session::ProjectSessionManager;
 use logging::{init_logging, is_debug_mode};
 use memory::{FactCategory, Memory, MemoryManager};
 use providers::{
@@ -84,6 +86,14 @@ struct Args {
     /// Read prompt from stdin (for piping)
     #[arg(long)]
     stdin: bool,
+
+    /// Continue the conversation for the current directory
+    #[arg(short = 'c', long = "project-continue")]
+    project_continue: bool,
+
+    /// Auto-save conversation to project history
+    #[arg(long, default_value = "true")]
+    project_save: bool,
 }
 
 #[tokio::main]
@@ -134,8 +144,21 @@ async fn main() -> Result<()> {
     // Initialize queue manager
     let queue_manager = QueueManager::new(app_dirs.clone());
 
+    // Initialize project session manager
+    let project_session_manager = ProjectSessionManager::new(app_dirs.clone())?;
+
     // Run the REPL
-    run_repl_v2(provider, &args, tool_registry, session_manager, memory_manager, memory, queue_manager).await?;
+    run_repl_v2(
+        provider,
+        &args,
+        tool_registry,
+        session_manager,
+        memory_manager,
+        memory,
+        queue_manager,
+        project_session_manager,
+    )
+    .await?;
 
     tracing::info!("Gemini REPL shutting down");
     Ok(())
@@ -368,6 +391,7 @@ async fn run_repl_v2(
     memory_manager: MemoryManager,
     mut memory: Memory,
     queue_manager: QueueManager,
+    project_session_manager: ProjectSessionManager,
 ) -> Result<()> {
     // Conversation history
     let mut conversation: Vec<Content> = Vec::new();
@@ -437,6 +461,33 @@ async fn run_repl_v2(
                 eprintln!("Starting new session instead.");
             }
         }
+    } else if args.project_continue {
+        // Continue project-specific conversation
+        if project_session_manager.has_conversation() {
+            match project_session_manager.load_conversation() {
+                Ok(loaded) => {
+                    let metadata = project_session_manager.get_metadata().unwrap_or_else(|_| {
+                        project_session::ConversationMetadata {
+                            project_dir: std::path::PathBuf::new(),
+                            cwd: std::path::PathBuf::new(),
+                            message_count: loaded.len(),
+                            last_modified: None,
+                        }
+                    });
+                    println!(
+                        "Continuing project conversation ({} messages)",
+                        metadata.message_count
+                    );
+                    conversation = loaded;
+                }
+                Err(e) => {
+                    eprintln!("Error loading project conversation: {}", e);
+                    eprintln!("Starting new conversation.");
+                }
+            }
+        } else {
+            println!("No previous conversation for this directory. Starting new.");
+        }
     }
 
     // Initialize readline
@@ -473,6 +524,7 @@ async fn run_repl_v2(
                     }
                 } else {
                     // Handle user input with provider
+                    let conv_len_before = conversation.len();
                     handle_user_input_v2(
                         trimmed,
                         provider.as_deref(),
@@ -481,6 +533,15 @@ async fn run_repl_v2(
                         &context_manager,
                     )
                     .await;
+
+                    // Auto-save new messages to project if enabled
+                    if args.project_save && conversation.len() > conv_len_before {
+                        for msg in &conversation[conv_len_before..] {
+                            if let Err(e) = project_session_manager.append_message(msg) {
+                                tracing::warn!("Failed to save message to project: {}", e);
+                            }
+                        }
+                    }
                 }
             }
             Err(ReadlineError::Interrupted) => {
