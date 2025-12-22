@@ -7,12 +7,14 @@ use rustyline::DefaultEditor;
 use std::env;
 
 mod api;
+mod config;
 mod context;
 mod errors;
 mod logging;
 mod memory;
 mod models;
 mod providers;
+mod queue;
 mod self_modification;
 mod session;
 mod tools;
