@@ -143,26 +143,12 @@ impl AppDirs {
     }
 
     /// Encode a path as a safe directory name
+    ///
+    /// Follows Claude Code's convention: replace '/' with '-'
+    /// Example: /home/user/project -> -home-user-project
     fn encode_path(path: &std::path::Path) -> String {
-        use std::collections::hash_map::DefaultHasher;
-        use std::hash::{Hash, Hasher};
-
-        // Create a hash-based short name with readable prefix
         let path_str = path.to_string_lossy();
-
-        // Get the last component for readability
-        let name = path
-            .file_name()
-            .and_then(|n| n.to_str())
-            .unwrap_or("unknown");
-
-        // Hash the full path for uniqueness
-        let mut hasher = DefaultHasher::new();
-        path_str.hash(&mut hasher);
-        let hash = hasher.finish();
-
-        // Format: name-hash (e.g., "gemini-repl-009-a1b2c3d4")
-        format!("{}-{:08x}", name.chars().take(32).collect::<String>(), hash as u32)
+        path_str.replace('/', "-")
     }
 
     /// Main config file path
