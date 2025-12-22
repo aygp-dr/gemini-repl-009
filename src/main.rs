@@ -76,6 +76,14 @@ struct Args {
     /// Continue the most recent session
     #[arg(long)]
     continue_last: bool,
+
+    /// Execute a single prompt and exit (non-interactive mode)
+    #[arg(short = 'e', long = "exec")]
+    exec: Option<String>,
+
+    /// Read prompt from stdin (for piping)
+    #[arg(long)]
+    stdin: bool,
 }
 
 #[tokio::main]
@@ -102,6 +110,11 @@ async fn main() -> Result<()> {
     if args.enable_self_modification {
         tracing::info!("Self-modification features enabled");
         tool_registry.initialize_self_modification_tools()?;
+    }
+
+    // Handle single-shot execution modes
+    if args.exec.is_some() || args.stdin {
+        return run_single_shot(&args, provider, tool_registry).await;
     }
 
     // Print welcome message
@@ -189,6 +202,139 @@ async fn initialize_provider(args: &Args) -> Option<Box<dyn Provider>> {
     }
 
     None
+}
+
+/// Run in single-shot mode (--exec or --stdin)
+async fn run_single_shot(
+    args: &Args,
+    provider: Option<Box<dyn Provider>>,
+    tool_registry: ToolRegistry,
+) -> Result<()> {
+    // Get the prompt from --exec or stdin
+    let prompt = if let Some(exec_prompt) = &args.exec {
+        exec_prompt.clone()
+    } else if args.stdin {
+        use std::io::{self, BufRead};
+        let stdin = io::stdin();
+        let lines: Vec<String> = stdin.lock().lines().filter_map(|l| l.ok()).collect();
+        if lines.is_empty() {
+            output::emit::error("No input provided via stdin");
+            return Ok(());
+        }
+        lines.join("\n")
+    } else {
+        return Ok(());
+    };
+
+    // Check for provider
+    let Some(provider) = provider else {
+        output::emit::error_with_code(
+            "E1001",
+            "No provider available",
+            Some("Start ollama or set GEMINI_API_KEY"),
+        );
+        return Ok(());
+    };
+
+    // Create a minimal conversation
+    let mut conversation: Vec<Content> = Vec::new();
+    conversation.push(Content {
+        role: "user".to_string(),
+        parts: vec![Part {
+            text: Some(prompt.clone()),
+            function_call: None,
+            function_response: None,
+        }],
+    });
+
+    // Convert to provider messages
+    let messages: Vec<providers::Message> = vec![providers::Message::user(&prompt)];
+
+    // Get tool definitions
+    let api_tools = tool_registry.get_tool_definitions();
+    let provider_tools: Vec<providers::ToolDefinition> = api_tools
+        .iter()
+        .filter_map(|t| {
+            let name = t.get("name")?.as_str()?.to_string();
+            let description = t.get("description")?.as_str()?.to_string();
+            let parameters = t.get("parameters")?.clone();
+            Some(providers::ToolDefinition {
+                name,
+                description,
+                parameters,
+            })
+        })
+        .collect();
+
+    // Generate response (simplified - no tool loop for single-shot)
+    match provider.generate(&messages, Some(&provider_tools)).await {
+        Ok(response) => {
+            match response {
+                providers::ProviderResponse::Text(text) => {
+                    if output::is_json_mode() {
+                        output::OutputMessage::Response {
+                            content: text,
+                            tokens: None,
+                        }
+                        .print();
+                    } else {
+                        println!("{}", text);
+                    }
+                }
+                providers::ProviderResponse::FunctionCall(fc) => {
+                    if output::is_json_mode() {
+                        output::OutputMessage::ToolCall {
+                            name: fc.name.clone(),
+                            status: "requested".to_string(),
+                        }
+                        .print();
+                    } else {
+                        println!("[Tool call requested: {}]", fc.name);
+                    }
+                    // Execute the tool
+                    match tool_registry.execute_tool(&fc.name, fc.arguments).await {
+                        Ok(result) => {
+                            if output::is_json_mode() {
+                                output::OutputMessage::ToolResult {
+                                    name: fc.name,
+                                    success: true,
+                                    output: Some(result.to_string()),
+                                }
+                                .print();
+                            } else {
+                                println!("{}", result);
+                            }
+                        }
+                        Err(e) => {
+                            output::emit::error(&format!("Tool error: {}", e));
+                        }
+                    }
+                }
+                providers::ProviderResponse::TextWithFunctionCall { text, function_call } => {
+                    if output::is_json_mode() {
+                        output::OutputMessage::Response {
+                            content: text,
+                            tokens: None,
+                        }
+                        .print();
+                        output::OutputMessage::ToolCall {
+                            name: function_call.name,
+                            status: "requested".to_string(),
+                        }
+                        .print();
+                    } else {
+                        println!("{}", text);
+                        println!("[Tool call: {}]", function_call.name);
+                    }
+                }
+            }
+        }
+        Err(e) => {
+            output::emit::error(&e.to_string());
+        }
+    }
+
+    Ok(())
 }
 
 fn print_welcome_v2(args: &Args, provider: Option<&dyn Provider>) {
