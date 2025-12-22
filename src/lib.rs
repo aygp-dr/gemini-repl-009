@@ -10,6 +10,7 @@ pub mod errors;
 pub mod logging;
 pub mod memory;
 pub mod models;
+pub mod output;
 pub mod providers;
 pub mod queue;
 pub mod self_modification;

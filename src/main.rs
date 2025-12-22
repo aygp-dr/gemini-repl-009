@@ -13,6 +13,7 @@ mod errors;
 mod logging;
 mod memory;
 mod models;
+mod output;
 mod providers;
 mod queue;
 mod self_modification;
@@ -60,6 +61,10 @@ struct Args {
     #[arg(short, long)]
     debug: bool,
 
+    /// Output in JSON format (for scripting)
+    #[arg(long)]
+    json: bool,
+
     /// Enable self-modification features
     #[arg(long)]
     enable_self_modification: bool,
@@ -76,6 +81,11 @@ struct Args {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
+
+    // Set JSON output mode if requested
+    if args.json {
+        output::set_json_mode(true);
+    }
 
     // Initialize logging with our custom module
     init_logging(args.debug || is_debug_mode())?;
@@ -182,31 +192,24 @@ async fn initialize_provider(args: &Args) -> Option<Box<dyn Provider>> {
 }
 
 fn print_welcome_v2(args: &Args, provider: Option<&dyn Provider>) {
-    println!(
-        "Gemini REPL v{} - Type /help for commands, /exit to quit",
-        env!("CARGO_PKG_VERSION")
-    );
-
     let noop_mode = env::var("NOOP_MODE")
         .map(|v| v.to_lowercase() == "true" || v == "1")
         .unwrap_or(false);
 
-    if noop_mode {
-        println!("Running in NOOP mode (no API calls will be made)");
-    } else if let Some(p) = provider {
-        println!(
-            "Connected to {} (model: {})",
-            p.name().to_uppercase(),
-            p.model()
-        );
-        if args.enable_self_modification {
-            println!("Self-modification features: ENABLED");
-        }
+    let mode = if noop_mode {
+        "noop"
+    } else if args.enable_self_modification {
+        "self_modification"
     } else {
-        println!("Note: No provider available.");
-        println!("  - For Ollama: Start ollama serve");
-        println!("  - For Gemini: Set GEMINI_API_KEY or use --api-key");
-        println!("Running in noop mode");
+        "normal"
+    };
+
+    output::emit::welcome(env!("CARGO_PKG_VERSION"), mode);
+
+    if let Some(p) = provider {
+        output::emit::provider(p.name(), p.model(), true);
+    } else if !noop_mode {
+        output::emit::provider("none", "none", false);
     }
 }
 
