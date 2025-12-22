@@ -21,6 +21,7 @@ mod tools;
 mod utils;
 
 use api::{Content, Part};
+use config::AppDirs;
 use context::ContextManager;
 use logging::{init_logging, is_debug_mode};
 use memory::{FactCategory, Memory, MemoryManager};
@@ -28,6 +29,7 @@ use providers::{
     create_provider, default_model_for_provider, detect_provider, Provider, ProviderConfig,
     ProviderType,
 };
+use queue::{QueueManager, QueueRequest};
 use session::{ExportFormat, Session, SessionManager, SessionStats};
 use tools::ToolRegistry;
 
@@ -95,6 +97,10 @@ async fn main() -> Result<()> {
     // Print welcome message
     print_welcome_v2(&args, provider.as_deref());
 
+    // Initialize app directories
+    let app_dirs = AppDirs::new()?;
+    tracing::debug!("App directory: {:?}", app_dirs.root());
+
     // Initialize session manager
     let session_manager = SessionManager::new()?;
 
@@ -102,8 +108,11 @@ async fn main() -> Result<()> {
     let memory_manager = MemoryManager::new()?;
     let memory = memory_manager.load()?;
 
+    // Initialize queue manager
+    let queue_manager = QueueManager::new(app_dirs.clone());
+
     // Run the REPL
-    run_repl_v2(provider, &args, tool_registry, session_manager, memory_manager, memory).await?;
+    run_repl_v2(provider, &args, tool_registry, session_manager, memory_manager, memory, queue_manager).await?;
 
     tracing::info!("Gemini REPL shutting down");
     Ok(())
@@ -209,6 +218,7 @@ async fn run_repl_v2(
     session_manager: SessionManager,
     memory_manager: MemoryManager,
     mut memory: Memory,
+    queue_manager: QueueManager,
 ) -> Result<()> {
     // Conversation history
     let mut conversation: Vec<Content> = Vec::new();
@@ -306,6 +316,7 @@ async fn run_repl_v2(
                     &mut current_session,
                     &memory_manager,
                     &mut memory,
+                    &queue_manager,
                     args.enable_self_modification,
                 ) {
                     if should_break {
@@ -350,6 +361,7 @@ fn handle_command_v2(
     current_session: &mut Option<String>,
     memory_manager: &MemoryManager,
     memory: &mut Memory,
+    queue_manager: &QueueManager,
     self_modification_enabled: bool,
 ) -> Option<bool> {
     match trimmed {
@@ -472,6 +484,15 @@ fn handle_command_v2(
         }
         "/memory-clear" => {
             handle_memory_clear(memory, memory_manager);
+            Some(false)
+        }
+        "/queue" => {
+            print_queue_status(queue_manager);
+            Some(false)
+        }
+        input if input.starts_with("/queue-submit") => {
+            let args_str = input.strip_prefix("/queue-submit").unwrap().trim();
+            handle_queue_submit(args_str, queue_manager);
             Some(false)
         }
         input if input.starts_with('/') => {
@@ -1109,6 +1130,12 @@ fn print_help(self_modification_enabled: bool) {
     println!("  /memory-clear  - Clear all remembered facts");
 
     println!();
+    println!("Queue (inter-agent communication):");
+    println!("  /queue         - Show pending queue requests");
+    println!("  /queue-submit <prompt> - Submit a test request");
+    println!("  Queue dir: ~/.gemini-repl/queues/");
+
+    println!();
     println!("Provider auto-detection (default):");
     println!("  1. Ollama (if running at localhost:11434)");
     println!("  2. Gemini (if GEMINI_API_KEY set)");
@@ -1210,4 +1237,50 @@ fn handle_memory_clear(memory: &mut Memory, memory_manager: &MemoryManager) {
     }
 
     println!("Cleared {} fact(s) from memory", count);
+}
+
+fn print_queue_status(queue_manager: &QueueManager) {
+    match queue_manager.poll_requests() {
+        Ok(requests) => {
+            if requests.is_empty() {
+                println!("No pending requests in queue");
+            } else {
+                println!("Pending queue requests ({}):", requests.len());
+                for (path, req) in &requests {
+                    println!(
+                        "  {} - {:?}: {}",
+                        req.id.chars().take(8).collect::<String>(),
+                        req.request_type,
+                        path.file_name()
+                            .and_then(|n| n.to_str())
+                            .unwrap_or("unknown")
+                    );
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Error polling queue: {}", e);
+        }
+    }
+}
+
+fn handle_queue_submit(args_str: &str, queue_manager: &QueueManager) {
+    if args_str.is_empty() {
+        println!("Usage: /queue-submit <prompt>");
+        println!("Submits a test request to the queue");
+        return;
+    }
+
+    let request = QueueRequest::prompt(args_str);
+    let id = request.id.clone();
+
+    match queue_manager.submit_request(&request) {
+        Ok(path) => {
+            println!("Submitted request: {}", id.chars().take(8).collect::<String>());
+            println!("  File: {:?}", path);
+        }
+        Err(e) => {
+            eprintln!("Error submitting request: {}", e);
+        }
+    }
 }
