@@ -84,14 +84,15 @@
 ```
 [ ] Streaming response display
 [ ] Circuit breaker for tool loops
-[ ] Git tools (status, diff, log, commit)
-[ ] Code search (ripgrep integration)
+[x] Git tools (status, diff, log, branch, blame) - b466882
+[x] Code search (ripgrep integration) - 23a25c9
 [ ] Enhanced permission system
 [ ] Todo/task management
 ```
 
 **Effort:** 2-3 weeks
 **Impact:** Agentic coding parity with Claude Code
+**Progress:** 2/6 complete
 
 ### Phase 2: Emacs Integration (P1)
 
