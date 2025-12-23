@@ -1,0 +1,28 @@
+Session: 2025-12-22 - Core Agent Tools Implementation
+
+## Summary
+Implemented Phase 1 core functionality tools for gemini-repl:
+- Git tools (5): status, diff, log, branch, blame
+- Search tools (3): code_search, glob_files, search_preview
+
+## Commits in Session
+- b466882: feat(tools): add ripgrep-based code search tools
+- 23a25c9: feat(tools): add git tools for version control operations
+- ab8f29a: docs(strategy): reprioritize phases
+- 80bb0ca: docs(strategy): feature parity analysis
+- 8104d7c: refactor(config): Claude Code path encoding
+
+## Tool Count
+Default tools: 3 → 11 (file + git + search)
+
+## Remaining Phase 1
+- [ ] Streaming response display
+- [ ] Circuit breaker for tool loops
+- [ ] Enhanced permission system
+- [ ] Todo/task management
+
+## Notes
+- All tools are read-only and safe by default
+- Git tools registered in initialize_default_tools()
+- Search tools require ripgrep (rg) installed
+- Follows Claude Code naming conventions for project dirs
