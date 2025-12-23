@@ -79,22 +79,11 @@
 
 ## Gap Analysis: Path to Parity
 
-### Phase 1: CLI Polish (P0/P1)
+### Phase 1: Core Agent Functionality (P0)
 
 ```
-[ ] Shell completions (bash, zsh, fish)
-[ ] Man page generation
-[ ] Color output with --color/--no-color
 [ ] Streaming response display
 [ ] Circuit breaker for tool loops
-```
-
-**Effort:** 1-2 weeks
-**Impact:** Professional CLI experience
-
-### Phase 2: Tool Expansion (P1)
-
-```
 [ ] Git tools (status, diff, log, commit)
 [ ] Code search (ripgrep integration)
 [ ] Enhanced permission system
@@ -102,15 +91,39 @@
 ```
 
 **Effort:** 2-3 weeks
-**Impact:** Agentic coding parity
+**Impact:** Agentic coding parity with Claude Code
 
-### Phase 3: Advanced Features (P2)
+### Phase 2: Emacs Integration (P1)
+
+```
+[ ] elisp package (gemini-repl.el)
+[ ] Queue-based communication (Efrit-compatible)
+[ ] Buffer display for responses
+[ ] Region-aware context passing
+[ ] Org-mode integration
+```
+
+**Effort:** 2-3 weeks
+**Impact:** Emacs-native AI assistant
+
+### Phase 3: CLI Polish (P2)
+
+```
+[ ] Shell completions (bash, zsh, fish)
+[ ] Man page generation
+[ ] Color output with --color/--no-color
+[ ] Progress indicators
+```
+
+**Effort:** 1 week
+**Impact:** Professional CLI experience
+
+### Phase 4: Advanced Features (P3)
 
 ```
 [ ] Web search/fetch tools
 [ ] Image reading (multimodal)
 [ ] Checkpoint/restore
-[ ] Progress indicators
 [ ] Audit logging
 [ ] Hooks system
 ```
@@ -118,7 +131,7 @@
 **Effort:** 3-4 weeks
 **Impact:** Feature completeness
 
-### Phase 4: Ecosystem (P3)
+### Phase 5: Ecosystem (P4)
 
 ```
 [ ] MCP server support
