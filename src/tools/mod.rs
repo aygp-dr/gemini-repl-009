@@ -15,12 +15,14 @@ use std::path::PathBuf;
 pub mod code_analysis;
 pub mod ed_tools;
 pub mod file_tools;
+pub mod git_tools;
 pub mod rust_tools;
 pub mod self_awareness;
 
 use code_analysis::{AnalyzeRustCodeTool, FindFunctionTool, FindStructTool};
 use ed_tools::EdTool;
 use file_tools::{EditFileTool, ListFilesTool, ReadFileTool, WriteFileTool};
+use git_tools::{GitBlameTool, GitBranchTool, GitDiffTool, GitLogTool, GitStatusTool};
 use rust_tools::{CargoBuildTool, CargoCheckTool, CargoTestTool, ClippyTool, RustfmtTool};
 use self_awareness::{ExplainArchitectureTool, GetCurrentCapabilitiesTool, ProjectMapTool};
 
@@ -94,6 +96,13 @@ impl ToolRegistry {
         self.register_tool(Box::new(WriteFileTool::new(self.workspace.clone())))?;
         self.register_tool(Box::new(ListFilesTool::new(self.workspace.clone())))?;
 
+        // Git tools (read-only, safe for all users)
+        self.register_tool(Box::new(GitStatusTool::new(self.workspace.clone())))?;
+        self.register_tool(Box::new(GitDiffTool::new(self.workspace.clone())))?;
+        self.register_tool(Box::new(GitLogTool::new(self.workspace.clone())))?;
+        self.register_tool(Box::new(GitBranchTool::new(self.workspace.clone())))?;
+        self.register_tool(Box::new(GitBlameTool::new(self.workspace.clone())))?;
+
         Ok(())
     }
 
@@ -149,6 +158,9 @@ impl ToolRegistry {
             .map(|(name, tool)| {
                 let category = match name.as_str() {
                     "read_file" | "write_file" | "edit_file" | "list_files" => "file_operations",
+                    "git_status" | "git_diff" | "git_log" | "git_branch" | "git_blame" => {
+                        "git_tools"
+                    }
                     "analyze_rust_code" | "find_function" | "find_struct" => "code_analysis",
                     "cargo_build" | "cargo_test" | "cargo_check" | "clippy" | "rustfmt" => {
                         "rust_tools"
