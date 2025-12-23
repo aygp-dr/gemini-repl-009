@@ -23,7 +23,7 @@ mod tools;
 mod utils;
 
 use api::{Content, Part};
-use config::AppDirs;
+use config::{AppDirs, PermissionAction, Permissions};
 use context::ContextManager;
 use project_session::ProjectSessionManager;
 use logging::{init_logging, is_debug_mode};
@@ -38,6 +38,91 @@ use tools::ToolRegistry;
 
 /// Maximum number of tool call iterations to prevent infinite loops
 const MAX_TOOL_ITERATIONS: usize = 10;
+
+/// Tools that are considered safe (read-only operations)
+const SAFE_TOOLS: &[&str] = &[
+    "read_file",
+    "list_files",
+    "git_status",
+    "git_diff",
+    "git_log",
+    "git_branch",
+    "git_blame",
+    "code_search",
+    "glob_files",
+    "search_preview",
+    "project_map",
+    "get_current_capabilities",
+    "explain_architecture",
+];
+
+/// Check if a tool execution should proceed based on permissions
+fn check_tool_permission(
+    tool_name: &str,
+    args: &serde_json::Value,
+    permissions: &Permissions,
+    yolo_mode: bool,
+    confirm_mode: bool,
+) -> Result<bool, String> {
+    // YOLO mode skips all checks
+    if yolo_mode {
+        return Ok(true);
+    }
+
+    // Check configured permissions first
+    let action = permissions.check(tool_name, None);
+
+    match action {
+        PermissionAction::Allow => Ok(true),
+        PermissionAction::Deny => Err(format!("Tool '{}' is denied by permissions", tool_name)),
+        PermissionAction::Ask => {
+            // If confirm mode is on, always ask
+            // If safe tool and not in confirm mode, allow
+            if !confirm_mode && SAFE_TOOLS.contains(&tool_name) {
+                return Ok(true);
+            }
+
+            // Prompt for confirmation
+            prompt_tool_confirmation(tool_name, args)
+        }
+    }
+}
+
+/// Prompt user for tool execution confirmation
+fn prompt_tool_confirmation(tool_name: &str, args: &serde_json::Value) -> Result<bool, String> {
+    use std::io::{self, Write};
+
+    // Format args for display
+    let args_display = if args.is_object() && args.as_object().map(|o| o.is_empty()).unwrap_or(true) {
+        String::new()
+    } else {
+        format!(" with args: {}", serde_json::to_string_pretty(args).unwrap_or_default())
+    };
+
+    println!("\n[Permission required]");
+    println!("Tool: {}{}", tool_name, args_display);
+    print!("Allow execution? [y/N/always/never]: ");
+    io::stdout().flush().ok();
+
+    let mut input = String::new();
+    if io::stdin().read_line(&mut input).is_err() {
+        return Err("Failed to read input".to_string());
+    }
+
+    let response = input.trim().to_lowercase();
+    match response.as_str() {
+        "y" | "yes" => Ok(true),
+        "always" => {
+            println!("(Use 'gemini-repl /permissions allow {}' to save this)", tool_name);
+            Ok(true)
+        }
+        "never" => {
+            println!("(Use 'gemini-repl /permissions deny {}' to save this)", tool_name);
+            Err(format!("Tool '{}' denied by user", tool_name))
+        }
+        _ => Err(format!("Tool '{}' denied by user", tool_name)),
+    }
+}
 
 #[derive(Parser, Debug)]
 #[command(name = "gemini-repl")]
@@ -94,6 +179,14 @@ struct Args {
     /// Auto-save conversation to project history
     #[arg(long, default_value = "true")]
     project_save: bool,
+
+    /// Skip all tool execution confirmations (dangerous!)
+    #[arg(long, alias = "dangerously-skip-permissions")]
+    yolo: bool,
+
+    /// Always ask for confirmation before tool execution
+    #[arg(long)]
+    confirm_tools: bool,
 }
 
 #[tokio::main]
@@ -410,6 +503,10 @@ async fn run_repl_v2(
         .map(|p| ContextManager::new(p.max_context_tokens()))
         .unwrap_or_default();
 
+    // Load permissions
+    let app_dirs = AppDirs::new()?;
+    let permissions = Permissions::load(&app_dirs).unwrap_or_default();
+
     // Show memory info if any facts are stored
     if !memory.is_empty() {
         println!("Loaded {} remembered fact(s). Use /memory to view.", memory.len());
@@ -531,6 +628,9 @@ async fn run_repl_v2(
                         &mut conversation,
                         &tool_registry,
                         &context_manager,
+                        &permissions,
+                        args.yolo,
+                        args.confirm_tools,
                     )
                     .await;
 
@@ -719,6 +819,9 @@ async fn handle_user_input_v2(
     conversation: &mut Vec<Content>,
     tool_registry: &ToolRegistry,
     context_manager: &ContextManager,
+    permissions: &Permissions,
+    yolo_mode: bool,
+    confirm_tools: bool,
 ) {
     if let Some(provider) = provider {
         // Add user message to conversation
@@ -862,27 +965,56 @@ async fn handle_user_input_v2(
                                 }],
                             });
 
-                            // Execute the tool
-                            match tool_registry
-                                .execute_tool(&fc.name, fc.arguments.clone())
-                                .await
-                            {
-                                Ok(result) => {
-                                    tracing::debug!("Tool result: {}", result);
-                                    conversation.push(Content {
-                                        role: "function".to_string(),
-                                        parts: vec![Part {
-                                            text: None,
-                                            function_call: None,
-                                            function_response: Some(api::FunctionResponse {
-                                                name: fc.name.clone(),
-                                                response: result,
-                                            }),
-                                        }],
-                                    });
+                            // Check permissions before executing
+                            let permission_result = check_tool_permission(
+                                &fc.name,
+                                &fc.arguments,
+                                permissions,
+                                yolo_mode,
+                                confirm_tools,
+                            );
+
+                            match permission_result {
+                                Ok(true) => {
+                                    // Execute the tool
+                                    match tool_registry
+                                        .execute_tool(&fc.name, fc.arguments.clone())
+                                        .await
+                                    {
+                                        Ok(result) => {
+                                            tracing::debug!("Tool result: {}", result);
+                                            conversation.push(Content {
+                                                role: "function".to_string(),
+                                                parts: vec![Part {
+                                                    text: None,
+                                                    function_call: None,
+                                                    function_response: Some(api::FunctionResponse {
+                                                        name: fc.name.clone(),
+                                                        response: result,
+                                                    }),
+                                                }],
+                                            });
+                                        }
+                                        Err(e) => {
+                                            eprintln!("Tool execution error: {e}");
+                                            conversation.push(Content {
+                                                role: "function".to_string(),
+                                                parts: vec![Part {
+                                                    text: None,
+                                                    function_call: None,
+                                                    function_response: Some(api::FunctionResponse {
+                                                        name: fc.name,
+                                                        response: serde_json::json!({"error": e.to_string()}),
+                                                    }),
+                                                }],
+                                            });
+                                        }
+                                    }
                                 }
-                                Err(e) => {
-                                    eprintln!("Tool execution error: {e}");
+                                Ok(false) | Err(_) => {
+                                    // Permission denied
+                                    let msg = permission_result.err().unwrap_or_else(|| "User declined".to_string());
+                                    println!("[Permission denied: {}]", msg);
                                     conversation.push(Content {
                                         role: "function".to_string(),
                                         parts: vec![Part {
@@ -890,7 +1022,7 @@ async fn handle_user_input_v2(
                                             function_call: None,
                                             function_response: Some(api::FunctionResponse {
                                                 name: fc.name,
-                                                response: serde_json::json!({"error": e.to_string()}),
+                                                response: serde_json::json!({"error": msg}),
                                             }),
                                         }],
                                     });
@@ -925,27 +1057,56 @@ async fn handle_user_input_v2(
                                 ],
                             });
 
-                            // Execute the tool
-                            match tool_registry
-                                .execute_tool(&function_call.name, function_call.arguments.clone())
-                                .await
-                            {
-                                Ok(result) => {
-                                    tracing::debug!("Tool result: {}", result);
-                                    conversation.push(Content {
-                                        role: "function".to_string(),
-                                        parts: vec![Part {
-                                            text: None,
-                                            function_call: None,
-                                            function_response: Some(api::FunctionResponse {
-                                                name: function_call.name,
-                                                response: result,
-                                            }),
-                                        }],
-                                    });
+                            // Check permissions before executing
+                            let permission_result = check_tool_permission(
+                                &function_call.name,
+                                &function_call.arguments,
+                                permissions,
+                                yolo_mode,
+                                confirm_tools,
+                            );
+
+                            match permission_result {
+                                Ok(true) => {
+                                    // Execute the tool
+                                    match tool_registry
+                                        .execute_tool(&function_call.name, function_call.arguments.clone())
+                                        .await
+                                    {
+                                        Ok(result) => {
+                                            tracing::debug!("Tool result: {}", result);
+                                            conversation.push(Content {
+                                                role: "function".to_string(),
+                                                parts: vec![Part {
+                                                    text: None,
+                                                    function_call: None,
+                                                    function_response: Some(api::FunctionResponse {
+                                                        name: function_call.name,
+                                                        response: result,
+                                                    }),
+                                                }],
+                                            });
+                                        }
+                                        Err(e) => {
+                                            eprintln!("Tool execution error: {e}");
+                                            conversation.push(Content {
+                                                role: "function".to_string(),
+                                                parts: vec![Part {
+                                                    text: None,
+                                                    function_call: None,
+                                                    function_response: Some(api::FunctionResponse {
+                                                        name: function_call.name,
+                                                        response: serde_json::json!({"error": e.to_string()}),
+                                                    }),
+                                                }],
+                                            });
+                                        }
+                                    }
                                 }
-                                Err(e) => {
-                                    eprintln!("Tool execution error: {e}");
+                                Ok(false) | Err(_) => {
+                                    // Permission denied
+                                    let msg = permission_result.err().unwrap_or_else(|| "User declined".to_string());
+                                    println!("[Permission denied: {}]", msg);
                                     conversation.push(Content {
                                         role: "function".to_string(),
                                         parts: vec![Part {
@@ -953,7 +1114,7 @@ async fn handle_user_input_v2(
                                             function_call: None,
                                             function_response: Some(api::FunctionResponse {
                                                 name: function_call.name,
-                                                response: serde_json::json!({"error": e.to_string()}),
+                                                response: serde_json::json!({"error": msg}),
                                             }),
                                         }],
                                     });
