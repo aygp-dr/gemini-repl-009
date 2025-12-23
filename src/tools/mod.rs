@@ -17,6 +17,7 @@ pub mod ed_tools;
 pub mod file_tools;
 pub mod git_tools;
 pub mod rust_tools;
+pub mod search_tools;
 pub mod self_awareness;
 
 use code_analysis::{AnalyzeRustCodeTool, FindFunctionTool, FindStructTool};
@@ -24,6 +25,7 @@ use ed_tools::EdTool;
 use file_tools::{EditFileTool, ListFilesTool, ReadFileTool, WriteFileTool};
 use git_tools::{GitBlameTool, GitBranchTool, GitDiffTool, GitLogTool, GitStatusTool};
 use rust_tools::{CargoBuildTool, CargoCheckTool, CargoTestTool, ClippyTool, RustfmtTool};
+use search_tools::{CodeSearchTool, GlobFilesTool, SearchPreviewTool};
 use self_awareness::{ExplainArchitectureTool, GetCurrentCapabilitiesTool, ProjectMapTool};
 
 /// Tool trait that all tools must implement
@@ -103,6 +105,11 @@ impl ToolRegistry {
         self.register_tool(Box::new(GitBranchTool::new(self.workspace.clone())))?;
         self.register_tool(Box::new(GitBlameTool::new(self.workspace.clone())))?;
 
+        // Search tools (read-only, safe for all users)
+        self.register_tool(Box::new(CodeSearchTool::new(self.workspace.clone())))?;
+        self.register_tool(Box::new(GlobFilesTool::new(self.workspace.clone())))?;
+        self.register_tool(Box::new(SearchPreviewTool::new(self.workspace.clone())))?;
+
         Ok(())
     }
 
@@ -161,6 +168,7 @@ impl ToolRegistry {
                     "git_status" | "git_diff" | "git_log" | "git_branch" | "git_blame" => {
                         "git_tools"
                     }
+                    "code_search" | "glob_files" | "search_preview" => "search_tools",
                     "analyze_rust_code" | "find_function" | "find_struct" => "code_analysis",
                     "cargo_build" | "cargo_test" | "cargo_check" | "clippy" | "rustfmt" => {
                         "rust_tools"
