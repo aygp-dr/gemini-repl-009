@@ -30,11 +30,18 @@ pub enum OutputMessage {
     /// User prompt echo (in noop mode)
     UserInput { content: String },
     /// Assistant response
-    Response { content: String, tokens: Option<u32> },
+    Response {
+        content: String,
+        tokens: Option<u32>,
+    },
     /// Tool call notification
     ToolCall { name: String, status: String },
     /// Tool result
-    ToolResult { name: String, success: bool, output: Option<String> },
+    ToolResult {
+        name: String,
+        success: bool,
+        output: Option<String>,
+    },
     /// Session info
     Session(SessionInfo),
     /// Session list
@@ -48,11 +55,19 @@ pub enum OutputMessage {
     /// Queue status
     QueueStatus(QueueStatusInfo),
     /// Command result
-    CommandResult { command: String, success: bool, message: String },
+    CommandResult {
+        command: String,
+        success: bool,
+        message: String,
+    },
     /// Warning message
     Warning { message: String },
     /// Error message
-    Error { code: Option<String>, message: String, hint: Option<String> },
+    Error {
+        code: Option<String>,
+        message: String,
+        hint: Option<String>,
+    },
     /// Info message
     Info { message: String },
     /// Context info
@@ -216,7 +231,11 @@ impl OutputMessage {
             OutputMessage::ToolCall { name, status } => {
                 println!("[{}: {}]", name, status);
             }
-            OutputMessage::ToolResult { name, success, output } => {
+            OutputMessage::ToolResult {
+                name,
+                success,
+                output,
+            } => {
                 if *success {
                     if let Some(out) = output {
                         println!("[{} completed]: {}", name, out);
@@ -226,10 +245,7 @@ impl OutputMessage {
                 }
             }
             OutputMessage::Session(info) => {
-                println!(
-                    "Session '{}' ({} messages)",
-                    info.name, info.message_count
-                );
+                println!("Session '{}' ({} messages)", info.name, info.message_count);
             }
             OutputMessage::SessionList { sessions } => {
                 if sessions.is_empty() {
@@ -242,25 +258,23 @@ impl OutputMessage {
                     }
                 }
             }
-            OutputMessage::Memory(info) => {
-                match info.action.as_str() {
-                    "added" => {
-                        println!(
-                            "Remembered: {} = {} [{}]",
-                            info.key.as_deref().unwrap_or(""),
-                            info.value.as_deref().unwrap_or(""),
-                            info.category.as_deref().unwrap_or("general")
-                        );
-                    }
-                    "removed" => {
-                        println!("Forgot: {}", info.key.as_deref().unwrap_or(""));
-                    }
-                    "cleared" => {
-                        println!("Memory cleared");
-                    }
-                    _ => {}
+            OutputMessage::Memory(info) => match info.action.as_str() {
+                "added" => {
+                    println!(
+                        "Remembered: {} = {} [{}]",
+                        info.key.as_deref().unwrap_or(""),
+                        info.value.as_deref().unwrap_or(""),
+                        info.category.as_deref().unwrap_or("general")
+                    );
                 }
-            }
+                "removed" => {
+                    println!("Forgot: {}", info.key.as_deref().unwrap_or(""));
+                }
+                "cleared" => {
+                    println!("Memory cleared");
+                }
+                _ => {}
+            },
             OutputMessage::MemoryList { facts } => {
                 if facts.is_empty() {
                     println!("No remembered facts. Use /remember to add facts.");
@@ -307,7 +321,11 @@ impl OutputMessage {
                     }
                 }
             }
-            OutputMessage::CommandResult { command, success, message } => {
+            OutputMessage::CommandResult {
+                command,
+                success,
+                message,
+            } => {
                 if *success {
                     println!("{}", message);
                 } else {
@@ -317,7 +335,11 @@ impl OutputMessage {
             OutputMessage::Warning { message } => {
                 println!("Warning: {}", message);
             }
-            OutputMessage::Error { code, message, hint } => {
+            OutputMessage::Error {
+                code,
+                message,
+                hint,
+            } => {
                 if let Some(c) = code {
                     eprintln!("Error [{}]: {}", c, message);
                 } else {
@@ -373,6 +395,7 @@ impl OutputMessage {
 }
 
 /// Convenience functions for common output patterns
+#[allow(dead_code)]
 pub mod emit {
     use super::*;
 

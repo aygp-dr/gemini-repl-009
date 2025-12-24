@@ -154,10 +154,8 @@ impl Provider for GeminiProvider {
         messages: &[Message],
         tools: Option<&[ToolDefinition]>,
     ) -> Result<ProviderResponse> {
-        let url = format!(
-            "{}/models/{}:generateContent?key={}",
-            self.base_url, self.model, self.api_key
-        );
+        // Use header for API key instead of URL parameter for security
+        let url = format!("{}/models/{}:generateContent", self.base_url, self.model);
 
         let contents = Self::to_gemini_content(messages);
         let system_instruction = Self::extract_system_instruction(messages).or_else(|| {
@@ -180,12 +178,23 @@ impl Provider for GeminiProvider {
             system_instruction,
         };
 
-        tracing::debug!(
-            "Sending request to Gemini API: {}",
-            serde_json::to_string_pretty(&request)?
-        );
+        // Only serialize for debug logging when debug level is enabled
+        if tracing::enabled!(tracing::Level::DEBUG) {
+            tracing::debug!(
+                "Sending request to Gemini API (model={}): {}",
+                self.model,
+                serde_json::to_string_pretty(&request)?
+            );
+        }
 
-        let response = self.client.post(&url).json(&request).send().await?;
+        // Send request with API key in header (not URL) for security
+        let response = self
+            .client
+            .post(&url)
+            .header("x-goog-api-key", &self.api_key)
+            .json(&request)
+            .send()
+            .await?;
 
         if !response.status().is_success() {
             let status = response.status();

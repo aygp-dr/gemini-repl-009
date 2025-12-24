@@ -9,8 +9,7 @@ pub mod compaction;
 pub mod tokenizer;
 
 pub use compaction::{
-    can_summarize, create_summary_message, create_summary_prompt,
-    identify_summarization_candidates,
+    can_summarize, create_summary_message, create_summary_prompt, identify_summarization_candidates,
 };
 pub use tokenizer::{TokenCounter, TokenStats};
 
@@ -118,7 +117,10 @@ impl ContextManager {
             .partition(|c| c.role == "system");
 
         // Calculate tokens used by system messages
-        let system_tokens: usize = system_msgs.iter().map(|c| self.counter.count_message(c)).sum();
+        let system_tokens: usize = system_msgs
+            .iter()
+            .map(|c| self.counter.count_message(c))
+            .sum();
 
         // Calculate available tokens for conversation
         let available_tokens = self.max_tokens.saturating_sub(system_tokens);
@@ -165,7 +167,10 @@ impl ContextManager {
     ///
     /// Returns the messages that should be summarized and the remaining messages
     /// that should be kept verbatim.
-    pub fn get_messages_to_summarize(&self, conversation: &[Content]) -> (Vec<Content>, Vec<Content>) {
+    pub fn get_messages_to_summarize(
+        &self,
+        conversation: &[Content],
+    ) -> (Vec<Content>, Vec<Content>) {
         let keep_recent = 6; // Keep at least 3 user/assistant pairs
         let candidates = identify_summarization_candidates(conversation, keep_recent);
 
@@ -317,13 +322,11 @@ mod tests {
         // Should have fewer messages
         assert!(trimmed.len() < conversation.len());
         // Should keep recent messages
-        assert!(
-            trimmed
-                .last()
-                .and_then(|c| c.parts.first()?.text.as_ref())
-                .map(|t| t.contains("three"))
-                .unwrap_or(false)
-        );
+        assert!(trimmed
+            .last()
+            .and_then(|c| c.parts.first()?.text.as_ref())
+            .map(|t| t.contains("three"))
+            .unwrap_or(false));
     }
 
     #[test]
@@ -370,7 +373,7 @@ mod tests {
         cm.trim_to_limit(&mut conversation);
 
         // If compaction was needed, length should be reduced
-        if cm.needs_compaction(&vec![
+        if cm.needs_compaction(&[
             make_message("user", "A long message that takes up space"),
             make_message("model", "A long response that takes up space"),
             make_message("user", "Another long message for context"),

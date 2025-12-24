@@ -126,26 +126,42 @@ impl Tool for CodeSearchTool {
             }));
         }
 
-        let pattern = params.get("pattern")
+        let pattern = params
+            .get("pattern")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("pattern parameter is required"))?;
 
         let path = params.get("path").and_then(|v| v.as_str());
         let file_type = params.get("file_type").and_then(|v| v.as_str());
         let glob = params.get("glob").and_then(|v| v.as_str());
-        let ignore_case = params.get("ignore_case").and_then(|v| v.as_bool()).unwrap_or(false);
-        let word = params.get("word").and_then(|v| v.as_bool()).unwrap_or(false);
+        let ignore_case = params
+            .get("ignore_case")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+        let word = params
+            .get("word")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
         let context = params.get("context").and_then(|v| v.as_i64());
         let max_count = params.get("max_count").and_then(|v| v.as_i64());
-        let files_only = params.get("files_only").and_then(|v| v.as_bool()).unwrap_or(false);
-        let count = params.get("count").and_then(|v| v.as_bool()).unwrap_or(false);
-        let hidden = params.get("hidden").and_then(|v| v.as_bool()).unwrap_or(false);
-        let no_ignore = params.get("no_ignore").and_then(|v| v.as_bool()).unwrap_or(false);
+        let files_only = params
+            .get("files_only")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+        let count = params
+            .get("count")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+        let hidden = params
+            .get("hidden")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+        let no_ignore = params
+            .get("no_ignore")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
 
-        let mut args: Vec<String> = vec![
-            "--color=never".to_string(),
-            "--line-number".to_string(),
-        ];
+        let mut args: Vec<String> = vec!["--color=never".to_string(), "--line-number".to_string()];
 
         if ignore_case {
             args.push("-i".to_string());
@@ -285,13 +301,17 @@ impl Tool for GlobFilesTool {
             }));
         }
 
-        let pattern = params.get("pattern")
+        let pattern = params
+            .get("pattern")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("pattern parameter is required"))?;
 
         let path = params.get("path").and_then(|v| v.as_str());
         let file_type = params.get("file_type").and_then(|v| v.as_str());
-        let hidden = params.get("hidden").and_then(|v| v.as_bool()).unwrap_or(false);
+        let hidden = params
+            .get("hidden")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
         let max_depth = params.get("max_depth").and_then(|v| v.as_i64());
 
         let mut args: Vec<String> = vec![
@@ -391,11 +411,13 @@ impl Tool for SearchPreviewTool {
             }));
         }
 
-        let pattern = params.get("pattern")
+        let pattern = params
+            .get("pattern")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("pattern parameter is required"))?;
 
-        let replacement = params.get("replacement")
+        let replacement = params
+            .get("replacement")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("replacement parameter is required"))?;
 
@@ -452,9 +474,21 @@ mod tests {
         let dir = tempdir().unwrap();
 
         // Create some test files
-        fs::write(dir.path().join("main.rs"), "fn main() {\n    println!(\"hello\");\n}\n").unwrap();
-        fs::write(dir.path().join("lib.rs"), "pub fn add(a: i32, b: i32) -> i32 {\n    a + b\n}\n").unwrap();
-        fs::write(dir.path().join("test.py"), "def hello():\n    print('hello')\n").unwrap();
+        fs::write(
+            dir.path().join("main.rs"),
+            "fn main() {\n    println!(\"hello\");\n}\n",
+        )
+        .unwrap();
+        fs::write(
+            dir.path().join("lib.rs"),
+            "pub fn add(a: i32, b: i32) -> i32 {\n    a + b\n}\n",
+        )
+        .unwrap();
+        fs::write(
+            dir.path().join("test.py"),
+            "def hello():\n    print('hello')\n",
+        )
+        .unwrap();
         fs::create_dir(dir.path().join("src")).unwrap();
         fs::write(dir.path().join("src/utils.rs"), "pub fn util_fn() {}\n").unwrap();
 
@@ -470,9 +504,12 @@ mod tests {
         let dir = setup_test_dir();
         let tool = CodeSearchTool::new(dir.path().to_path_buf());
 
-        let result = tool.execute(json!({
-            "pattern": "fn"
-        })).await.unwrap();
+        let result = tool
+            .execute(json!({
+                "pattern": "fn"
+            }))
+            .await
+            .unwrap();
 
         assert!(!result["is_empty"].as_bool().unwrap());
         assert!(result["match_count"].as_i64().unwrap() > 0);
@@ -487,10 +524,13 @@ mod tests {
         let dir = setup_test_dir();
         let tool = CodeSearchTool::new(dir.path().to_path_buf());
 
-        let result = tool.execute(json!({
-            "pattern": "def",
-            "file_type": "py"
-        })).await.unwrap();
+        let result = tool
+            .execute(json!({
+                "pattern": "def",
+                "file_type": "py"
+            }))
+            .await
+            .unwrap();
 
         assert!(!result["is_empty"].as_bool().unwrap());
     }
@@ -504,9 +544,12 @@ mod tests {
         let dir = setup_test_dir();
         let tool = CodeSearchTool::new(dir.path().to_path_buf());
 
-        let result = tool.execute(json!({
-            "pattern": "xyznonexistent123"
-        })).await.unwrap();
+        let result = tool
+            .execute(json!({
+                "pattern": "xyznonexistent123"
+            }))
+            .await
+            .unwrap();
 
         assert!(result["is_empty"].as_bool().unwrap());
     }
@@ -520,10 +563,13 @@ mod tests {
         let dir = setup_test_dir();
         let tool = CodeSearchTool::new(dir.path().to_path_buf());
 
-        let result = tool.execute(json!({
-            "pattern": "fn",
-            "files_only": true
-        })).await.unwrap();
+        let result = tool
+            .execute(json!({
+                "pattern": "fn",
+                "files_only": true
+            }))
+            .await
+            .unwrap();
 
         assert!(result["file_count"].as_i64().unwrap() > 0);
     }
@@ -537,9 +583,12 @@ mod tests {
         let dir = setup_test_dir();
         let tool = GlobFilesTool::new(dir.path().to_path_buf());
 
-        let result = tool.execute(json!({
-            "pattern": "*.rs"
-        })).await.unwrap();
+        let result = tool
+            .execute(json!({
+                "pattern": "*.rs"
+            }))
+            .await
+            .unwrap();
 
         assert!(!result["is_empty"].as_bool().unwrap());
         assert!(result["count"].as_i64().unwrap() >= 2); // main.rs, lib.rs
@@ -554,9 +603,12 @@ mod tests {
         let dir = setup_test_dir();
         let tool = GlobFilesTool::new(dir.path().to_path_buf());
 
-        let result = tool.execute(json!({
-            "pattern": "**/*.rs"
-        })).await.unwrap();
+        let result = tool
+            .execute(json!({
+                "pattern": "**/*.rs"
+            }))
+            .await
+            .unwrap();
 
         assert!(result["count"].as_i64().unwrap() >= 3); // main.rs, lib.rs, src/utils.rs
     }
@@ -570,10 +622,13 @@ mod tests {
         let dir = setup_test_dir();
         let tool = SearchPreviewTool::new(dir.path().to_path_buf());
 
-        let result = tool.execute(json!({
-            "pattern": "hello",
-            "replacement": "world"
-        })).await.unwrap();
+        let result = tool
+            .execute(json!({
+                "pattern": "hello",
+                "replacement": "world"
+            }))
+            .await
+            .unwrap();
 
         assert!(result["preview"].as_str().unwrap().contains("world"));
         assert!(result["note"].as_str().unwrap().contains("preview"));

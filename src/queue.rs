@@ -235,7 +235,11 @@ impl QueueManager {
     }
 
     /// Wait for a response (for external use)
-    pub fn wait_for_response(&self, request_id: &str, timeout_secs: u64) -> Result<Option<QueueResponse>> {
+    pub fn wait_for_response(
+        &self,
+        request_id: &str,
+        timeout_secs: u64,
+    ) -> Result<Option<QueueResponse>> {
         let filename = format!("{}.json", request_id);
         let response_path = self.dirs.queue_output_dir().join(&filename);
 

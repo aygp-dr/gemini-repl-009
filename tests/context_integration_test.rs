@@ -29,11 +29,17 @@ fn make_long_conversation(pairs: usize) -> Vec<Content> {
     for i in 0..pairs {
         conversation.push(make_message(
             "user",
-            &format!("This is user message number {} with some additional text to increase token count.", i),
+            &format!(
+                "This is user message number {} with some additional text to increase token count.",
+                i
+            ),
         ));
         conversation.push(make_message(
             "model",
-            &format!("This is the assistant response to message {} with detailed explanation.", i),
+            &format!(
+                "This is the assistant response to message {} with detailed explanation.",
+                i
+            ),
         ));
     }
     conversation
@@ -192,9 +198,10 @@ fn test_sliding_window_keeps_recent_messages() {
 #[test]
 fn test_sliding_window_preserves_system_messages() {
     let cm = ContextManager::new(100); // Small limit
-    let mut conversation = vec![
-        make_message("system", "You are a helpful coding assistant."),
-    ];
+    let mut conversation = vec![make_message(
+        "system",
+        "You are a helpful coding assistant.",
+    )];
     conversation.extend(make_long_conversation(10));
 
     let result = cm.apply_sliding_window(&conversation);
@@ -317,22 +324,19 @@ fn test_identify_summarization_candidates() {
     assert!(!candidates.contains(&0));
 
     // Should not include last 4 messages
-    let last_four_start = conversation.len() - 4;
-    for i in last_four_start..conversation.len() {
-        // Find the non-system index
-        let non_system_indices: Vec<usize> = conversation
-            .iter()
-            .enumerate()
-            .filter(|(_, c)| c.role != "system")
-            .map(|(i, _)| i)
-            .collect();
+    // Find the non-system indices
+    let non_system_indices: Vec<usize> = conversation
+        .iter()
+        .enumerate()
+        .filter(|(_, c)| c.role != "system")
+        .map(|(idx, _)| idx)
+        .collect();
 
-        // Last 4 non-system messages should not be candidates
-        if non_system_indices.len() > 4 {
-            let keep_start = non_system_indices.len() - 4;
-            for j in keep_start..non_system_indices.len() {
-                assert!(!candidates.contains(&non_system_indices[j]));
-            }
+    // Last 4 non-system messages should not be candidates
+    if non_system_indices.len() > 4 {
+        let keep_start = non_system_indices.len() - 4;
+        for idx in non_system_indices.iter().skip(keep_start) {
+            assert!(!candidates.contains(idx));
         }
     }
 }
@@ -366,21 +370,23 @@ fn test_apply_summary_insertion() {
 
     // Should have summary message inserted
     let has_summary = result.iter().any(|c| {
-        c.role == "system" &&
-        c.parts.first()
-            .and_then(|p| p.text.as_ref())
-            .map(|t| t.contains("Previous conversation summary"))
-            .unwrap_or(false)
+        c.role == "system"
+            && c.parts
+                .first()
+                .and_then(|p| p.text.as_ref())
+                .map(|t| t.contains("Previous conversation summary"))
+                .unwrap_or(false)
     });
     assert!(has_summary);
 
     // Original system message should still exist
     let has_original_system = result.iter().any(|c| {
-        c.role == "system" &&
-        c.parts.first()
-            .and_then(|p| p.text.as_ref())
-            .map(|t| t.contains("You are helpful"))
-            .unwrap_or(false)
+        c.role == "system"
+            && c.parts
+                .first()
+                .and_then(|p| p.text.as_ref())
+                .map(|t| t.contains("You are helpful"))
+                .unwrap_or(false)
     });
     assert!(has_original_system);
 }
@@ -395,8 +401,8 @@ fn test_should_summarize_conditions() {
     let should = cm.should_summarize(&conversation);
 
     // This depends on whether compaction is needed and there are enough messages
-    // The test verifies the logic doesn't crash
-    assert!(should || !should); // Always passes, but exercises the code
+    // The test verifies the logic doesn't crash and returns a valid boolean
+    let _ = should; // Suppress unused warning
 }
 
 // ============================================================================
@@ -431,10 +437,7 @@ fn test_only_system_messages() {
 #[test]
 fn test_status_string_format() {
     let cm = ContextManager::new(1000);
-    let conversation = vec![
-        make_message("user", "Hello"),
-        make_message("model", "Hi!"),
-    ];
+    let conversation = vec![make_message("user", "Hello"), make_message("model", "Hi!")];
 
     let status = cm.status(&conversation);
     assert!(status.contains("/ 1000 tokens"));

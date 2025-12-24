@@ -81,6 +81,12 @@ pub struct ToolRegistry {
     workspace: PathBuf,
 }
 
+impl Default for ToolRegistry {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ToolRegistry {
     /// Create a new tool registry
     pub fn new() -> Self {
@@ -293,18 +299,38 @@ pub mod security {
             return false;
         }
 
-        // Check for sensitive files
+        // Check path components for sensitive directories
+        for component in path.components() {
+            if let Component::Normal(os_str) = component {
+                let name = os_str.to_string_lossy();
+                let name_lower = name.to_lowercase();
+                // Block sensitive directories anywhere in path
+                if name_lower == ".git"
+                    || name_lower == ".ssh"
+                    || name_lower == ".gnupg"
+                    || name_lower == ".aws"
+                    || name_lower == ".kube"
+                    || name_lower == ".docker"
+                {
+                    return false;
+                }
+            }
+        }
+
+        // Check for sensitive files (by filename)
         if let Some(file_name) = path.file_name() {
             let name = file_name.to_string_lossy();
             let name_lower = name.to_lowercase();
             if name_lower.starts_with(".env")
-                || name_lower == ".git"
                 || name_lower.contains("secret")
                 || name_lower.contains("password")
                 || name_lower.contains("credential")
-                || name_lower == ".ssh"
-                || name_lower == ".gnupg"
-                || name_lower == ".aws"
+                || name_lower == ".npmrc"
+                || name_lower == ".netrc"
+                || name_lower.ends_with(".pem")
+                || name_lower.ends_with(".key")
+                || name_lower.starts_with("id_rsa")
+                || name_lower.starts_with("id_ed25519")
             {
                 return false;
             }

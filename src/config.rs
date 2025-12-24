@@ -250,8 +250,8 @@ impl AppConfig {
         let content = fs::read_to_string(&config_path)
             .with_context(|| format!("Failed to read config: {:?}", config_path))?;
 
-        let config: AppConfig = serde_yaml::from_str(&content)
-            .with_context(|| "Failed to parse config.yaml")?;
+        let config: AppConfig =
+            serde_yaml::from_str(&content).with_context(|| "Failed to parse config.yaml")?;
 
         Ok(config)
     }
@@ -446,8 +446,17 @@ mod tests {
         perms.save(&app_dirs).unwrap();
         let loaded = Permissions::load(&app_dirs).unwrap();
 
-        assert_eq!(loaded.check("Bash", Some("git status")), PermissionAction::Allow);
-        assert_eq!(loaded.check("Bash", Some("rm -rf /")), PermissionAction::Deny);
-        assert_eq!(loaded.check("Bash", Some("echo hello")), PermissionAction::Ask);
+        assert_eq!(
+            loaded.check("Bash", Some("git status")),
+            PermissionAction::Allow
+        );
+        assert_eq!(
+            loaded.check("Bash", Some("rm -rf /")),
+            PermissionAction::Deny
+        );
+        assert_eq!(
+            loaded.check("Bash", Some("echo hello")),
+            PermissionAction::Ask
+        );
     }
 }

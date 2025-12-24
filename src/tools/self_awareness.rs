@@ -101,6 +101,7 @@ impl Tool for ProjectMapTool {
 }
 
 /// Tool for getting current capabilities
+#[derive(Default)]
 pub struct GetCurrentCapabilitiesTool;
 
 impl GetCurrentCapabilitiesTool {

@@ -245,8 +245,8 @@ impl MemoryManager {
         let content = fs::read_to_string(&self.memory_file)
             .with_context(|| format!("Failed to read memory file: {:?}", self.memory_file))?;
 
-        let memory: Memory = serde_json::from_str(&content)
-            .with_context(|| "Failed to parse memory file")?;
+        let memory: Memory =
+            serde_json::from_str(&content).with_context(|| "Failed to parse memory file")?;
 
         Ok(memory)
     }
@@ -361,9 +361,18 @@ mod tests {
 
     #[test]
     fn test_fact_category_parsing() {
-        assert_eq!("general".parse::<FactCategory>().unwrap(), FactCategory::General);
-        assert_eq!("pref".parse::<FactCategory>().unwrap(), FactCategory::Preference);
-        assert_eq!("TECHNICAL".parse::<FactCategory>().unwrap(), FactCategory::Technical);
+        assert_eq!(
+            "general".parse::<FactCategory>().unwrap(),
+            FactCategory::General
+        );
+        assert_eq!(
+            "pref".parse::<FactCategory>().unwrap(),
+            FactCategory::Preference
+        );
+        assert_eq!(
+            "TECHNICAL".parse::<FactCategory>().unwrap(),
+            FactCategory::Technical
+        );
         assert!("invalid".parse::<FactCategory>().is_err());
     }
 }

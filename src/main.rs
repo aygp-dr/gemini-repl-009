@@ -25,9 +25,9 @@ mod utils;
 use api::{Content, Part};
 use config::{AppDirs, PermissionAction, Permissions};
 use context::ContextManager;
-use project_session::ProjectSessionManager;
 use logging::{init_logging, is_debug_mode};
 use memory::{FactCategory, Memory, MemoryManager};
+use project_session::ProjectSessionManager;
 use providers::{
     create_provider, default_model_for_provider, detect_provider, Provider, ProviderConfig,
     ProviderType,
@@ -93,10 +93,14 @@ fn prompt_tool_confirmation(tool_name: &str, args: &serde_json::Value) -> Result
     use std::io::{self, Write};
 
     // Format args for display
-    let args_display = if args.is_object() && args.as_object().map(|o| o.is_empty()).unwrap_or(true) {
+    let args_display = if args.is_object() && args.as_object().map(|o| o.is_empty()).unwrap_or(true)
+    {
         String::new()
     } else {
-        format!(" with args: {}", serde_json::to_string_pretty(args).unwrap_or_default())
+        format!(
+            " with args: {}",
+            serde_json::to_string_pretty(args).unwrap_or_default()
+        )
     };
 
     println!("\n[Permission required]");
@@ -113,11 +117,17 @@ fn prompt_tool_confirmation(tool_name: &str, args: &serde_json::Value) -> Result
     match response.as_str() {
         "y" | "yes" => Ok(true),
         "always" => {
-            println!("(Use 'gemini-repl /permissions allow {}' to save this)", tool_name);
+            println!(
+                "(Use 'gemini-repl /permissions allow {}' to save this)",
+                tool_name
+            );
             Ok(true)
         }
         "never" => {
-            println!("(Use 'gemini-repl /permissions deny {}' to save this)", tool_name);
+            println!(
+                "(Use 'gemini-repl /permissions deny {}' to save this)",
+                tool_name
+            );
             Err(format!("Tool '{}' denied by user", tool_name))
         }
         _ => Err(format!("Tool '{}' denied by user", tool_name)),
@@ -332,7 +342,7 @@ async fn run_single_shot(
     } else if args.stdin {
         use std::io::{self, BufRead};
         let stdin = io::stdin();
-        let lines: Vec<String> = stdin.lock().lines().filter_map(|l| l.ok()).collect();
+        let lines: Vec<String> = stdin.lock().lines().map_while(Result::ok).collect();
         if lines.is_empty() {
             output::emit::error("No input provided via stdin");
             return Ok(());
@@ -353,15 +363,14 @@ async fn run_single_shot(
     };
 
     // Create a minimal conversation
-    let mut conversation: Vec<Content> = Vec::new();
-    conversation.push(Content {
+    let _conversation: Vec<Content> = vec![Content {
         role: "user".to_string(),
         parts: vec![Part {
             text: Some(prompt.clone()),
             function_call: None,
             function_response: None,
         }],
-    });
+    }];
 
     // Convert to provider messages
     let messages: Vec<providers::Message> = vec![providers::Message::user(&prompt)];
@@ -426,7 +435,10 @@ async fn run_single_shot(
                         }
                     }
                 }
-                providers::ProviderResponse::TextWithFunctionCall { text, function_call } => {
+                providers::ProviderResponse::TextWithFunctionCall {
+                    text,
+                    function_call,
+                } => {
                     if output::is_json_mode() {
                         output::OutputMessage::Response {
                             content: text,
@@ -509,7 +521,10 @@ async fn run_repl_v2(
 
     // Show memory info if any facts are stored
     if !memory.is_empty() {
-        println!("Loaded {} remembered fact(s). Use /memory to view.", memory.len());
+        println!(
+            "Loaded {} remembered fact(s). Use /memory to view.",
+            memory.len()
+        );
     }
 
     // Handle session continuation
@@ -813,6 +828,7 @@ fn handle_command_v2(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn handle_user_input_v2(
     input: &str,
     provider: Option<&dyn Provider>,
@@ -988,10 +1004,12 @@ async fn handle_user_input_v2(
                                                 parts: vec![Part {
                                                     text: None,
                                                     function_call: None,
-                                                    function_response: Some(api::FunctionResponse {
-                                                        name: fc.name.clone(),
-                                                        response: result,
-                                                    }),
+                                                    function_response: Some(
+                                                        api::FunctionResponse {
+                                                            name: fc.name.clone(),
+                                                            response: result,
+                                                        },
+                                                    ),
                                                 }],
                                             });
                                         }
@@ -1013,7 +1031,9 @@ async fn handle_user_input_v2(
                                 }
                                 Ok(false) | Err(_) => {
                                     // Permission denied
-                                    let msg = permission_result.err().unwrap_or_else(|| "User declined".to_string());
+                                    let msg = permission_result
+                                        .err()
+                                        .unwrap_or_else(|| "User declined".to_string());
                                     println!("[Permission denied: {}]", msg);
                                     conversation.push(Content {
                                         role: "function".to_string(),
@@ -1070,7 +1090,10 @@ async fn handle_user_input_v2(
                                 Ok(true) => {
                                     // Execute the tool
                                     match tool_registry
-                                        .execute_tool(&function_call.name, function_call.arguments.clone())
+                                        .execute_tool(
+                                            &function_call.name,
+                                            function_call.arguments.clone(),
+                                        )
                                         .await
                                     {
                                         Ok(result) => {
@@ -1080,10 +1103,12 @@ async fn handle_user_input_v2(
                                                 parts: vec![Part {
                                                     text: None,
                                                     function_call: None,
-                                                    function_response: Some(api::FunctionResponse {
-                                                        name: function_call.name,
-                                                        response: result,
-                                                    }),
+                                                    function_response: Some(
+                                                        api::FunctionResponse {
+                                                            name: function_call.name,
+                                                            response: result,
+                                                        },
+                                                    ),
                                                 }],
                                             });
                                         }
@@ -1105,7 +1130,9 @@ async fn handle_user_input_v2(
                                 }
                                 Ok(false) | Err(_) => {
                                     // Permission denied
-                                    let msg = permission_result.err().unwrap_or_else(|| "User declined".to_string());
+                                    let msg = permission_result
+                                        .err()
+                                        .unwrap_or_else(|| "User declined".to_string());
                                     println!("[Permission denied: {}]", msg);
                                     conversation.push(Content {
                                         role: "function".to_string(),
@@ -1531,10 +1558,7 @@ fn print_memory(memory: &Memory) {
 
     println!("Remembered facts ({}):", memory.len());
     for fact in memory.list_facts() {
-        println!(
-            "  [{}] {}: {}",
-            fact.category, fact.key, fact.content
-        );
+        println!("  [{}] {}: {}", fact.category, fact.key, fact.content);
     }
 }
 
@@ -1647,7 +1671,10 @@ fn handle_queue_submit(args_str: &str, queue_manager: &QueueManager) {
 
     match queue_manager.submit_request(&request) {
         Ok(path) => {
-            println!("Submitted request: {}", id.chars().take(8).collect::<String>());
+            println!(
+                "Submitted request: {}",
+                id.chars().take(8).collect::<String>()
+            );
             println!("  File: {:?}", path);
         }
         Err(e) => {

@@ -55,7 +55,10 @@ pub fn create_summary_prompt(messages: &[Content]) -> String {
         } else if let Some(fc) = msg.parts.first().and_then(|p| p.function_call.as_ref()) {
             prompt.push_str(&format!("{}: [Called function {}]\n\n", role, fc.name));
         } else if let Some(fr) = msg.parts.first().and_then(|p| p.function_response.as_ref()) {
-            prompt.push_str(&format!("{}: [Function {} returned result]\n\n", role, fr.name));
+            prompt.push_str(&format!(
+                "{}: [Function {} returned result]\n\n",
+                role, fr.name
+            ));
         }
     }
 
@@ -68,10 +71,7 @@ pub fn create_summary_message(summary_text: &str) -> Content {
     Content {
         role: "system".to_string(),
         parts: vec![Part {
-            text: Some(format!(
-                "[Previous conversation summary]\n{}",
-                summary_text
-            )),
+            text: Some(format!("[Previous conversation summary]\n{}", summary_text)),
             function_call: None,
             function_response: None,
         }],
@@ -175,10 +175,7 @@ mod tests {
 
     #[test]
     fn test_identify_summarization_candidates_not_enough() {
-        let conversation = vec![
-            make_message("user", "Hello"),
-            make_message("model", "Hi"),
-        ];
+        let conversation = vec![make_message("user", "Hello"), make_message("model", "Hi")];
 
         let candidates = identify_summarization_candidates(&conversation, 4);
         assert!(candidates.is_empty());
@@ -186,10 +183,7 @@ mod tests {
 
     #[test]
     fn test_can_summarize() {
-        let messages = vec![
-            make_message("user", "Hello"),
-            make_message("model", "Hi"),
-        ];
+        let messages = vec![make_message("user", "Hello"), make_message("model", "Hi")];
         assert!(can_summarize(&messages));
 
         let single = vec![make_message("user", "Hello")];

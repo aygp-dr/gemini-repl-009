@@ -86,8 +86,14 @@ impl Tool for GitStatusTool {
             }));
         }
 
-        let short = params.get("short").and_then(|v| v.as_bool()).unwrap_or(false);
-        let branch = params.get("branch").and_then(|v| v.as_bool()).unwrap_or(true);
+        let short = params
+            .get("short")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+        let branch = params
+            .get("branch")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(true);
 
         let mut args = vec!["status"];
         if short {
@@ -104,7 +110,12 @@ impl Tool for GitStatusTool {
 
         let staged: Vec<&str> = porcelain
             .lines()
-            .filter(|l| l.starts_with("M ") || l.starts_with("A ") || l.starts_with("D ") || l.starts_with("R "))
+            .filter(|l| {
+                l.starts_with("M ")
+                    || l.starts_with("A ")
+                    || l.starts_with("D ")
+                    || l.starts_with("R ")
+            })
             .collect();
 
         let unstaged: Vec<&str> = porcelain
@@ -112,10 +123,7 @@ impl Tool for GitStatusTool {
             .filter(|l| l.starts_with(" M") || l.starts_with(" D"))
             .collect();
 
-        let untracked: Vec<&str> = porcelain
-            .lines()
-            .filter(|l| l.starts_with("??"))
-            .collect();
+        let untracked: Vec<&str> = porcelain.lines().filter(|l| l.starts_with("??")).collect();
 
         Ok(json!({
             "output": output.trim(),
@@ -192,11 +200,20 @@ impl Tool for GitDiffTool {
             }));
         }
 
-        let staged = params.get("staged").and_then(|v| v.as_bool()).unwrap_or(false);
+        let staged = params
+            .get("staged")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
         let file = params.get("file").and_then(|v| v.as_str());
         let commit = params.get("commit").and_then(|v| v.as_str());
-        let stat = params.get("stat").and_then(|v| v.as_bool()).unwrap_or(false);
-        let name_only = params.get("name_only").and_then(|v| v.as_bool()).unwrap_or(false);
+        let stat = params
+            .get("stat")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+        let name_only = params
+            .get("name_only")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
 
         let mut args = vec!["diff"];
 
@@ -304,7 +321,10 @@ impl Tool for GitLogTool {
         }
 
         let count = params.get("count").and_then(|v| v.as_i64()).unwrap_or(10);
-        let oneline = params.get("oneline").and_then(|v| v.as_bool()).unwrap_or(true);
+        let oneline = params
+            .get("oneline")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(true);
         let file = params.get("file").and_then(|v| v.as_str());
         let author = params.get("author").and_then(|v| v.as_str());
         let since = params.get("since").and_then(|v| v.as_str());
@@ -406,7 +426,8 @@ impl Tool for GitBlameTool {
             }));
         }
 
-        let file = params.get("file")
+        let file = params
+            .get("file")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("file parameter is required"))?;
 
@@ -483,7 +504,10 @@ impl Tool for GitBranchTool {
         }
 
         let all = params.get("all").and_then(|v| v.as_bool()).unwrap_or(false);
-        let verbose = params.get("verbose").and_then(|v| v.as_bool()).unwrap_or(false);
+        let verbose = params
+            .get("verbose")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
 
         let mut args = vec!["branch"];
         if all {

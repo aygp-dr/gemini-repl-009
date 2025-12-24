@@ -28,7 +28,9 @@ fn test_queue_picks_up_request() {
     // Submit a request
     let request = QueueRequest::prompt("Test prompt");
     let request_id = request.id.clone();
-    manager.submit_request(&request).expect("Failed to submit request");
+    manager
+        .submit_request(&request)
+        .expect("Failed to submit request");
 
     // Poll for requests
     let requests = manager.poll_requests().expect("Failed to poll");
@@ -69,7 +71,9 @@ fn test_queue_response_writing() {
     let (dir, manager) = setup_test_queue();
 
     let response = QueueResponse::success("test-123", "Hello, world!");
-    let path = manager.write_response(&response).expect("Failed to write response");
+    let path = manager
+        .write_response(&response)
+        .expect("Failed to write response");
 
     // Verify file exists
     assert!(path.exists());
@@ -186,12 +190,12 @@ fn test_queue_wait_for_response_timeout() {
 
 #[test]
 fn test_queue_wait_for_response_success() {
-    let (_dir, manager) = setup_test_queue();
+    let (_dir, _manager) = setup_test_queue();
 
     let request_id = "test-wait-123";
 
     // Spawn a thread to write the response after a delay
-    let manager_clone = {
+    let _manager_clone = {
         let (dir, mgr) = setup_test_queue();
         // Write directly to simulate external response
         let response = QueueResponse::success(request_id, "Delayed response");

@@ -31,6 +31,7 @@ pub struct ConversationEntry {
 }
 
 /// Project session manager
+#[allow(dead_code)]
 pub struct ProjectSessionManager {
     /// App directories
     dirs: AppDirs,
@@ -40,6 +41,7 @@ pub struct ProjectSessionManager {
     project_dir: PathBuf,
 }
 
+#[allow(dead_code)]
 impl ProjectSessionManager {
     /// Create a new project session manager for the current directory
     pub fn new(dirs: AppDirs) -> Result<Self> {
@@ -236,6 +238,7 @@ impl ProjectSessionManager {
 }
 
 /// Metadata about the current conversation
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct ConversationMetadata {
     pub project_dir: PathBuf,
@@ -245,6 +248,7 @@ pub struct ConversationMetadata {
 }
 
 /// Information about an archived conversation
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct ArchiveInfo {
     pub name: String,
@@ -254,10 +258,11 @@ pub struct ArchiveInfo {
 }
 
 // Use a simple random implementation to avoid adding rand crate
+#[allow(dead_code)]
 mod rand {
-    pub fn random<T: Default>() -> T
+    pub fn random<T>() -> T
     where
-        T: From<u32>,
+        T: Default + From<u32>,
     {
         use std::time::{SystemTime, UNIX_EPOCH};
         let nanos = SystemTime::now()

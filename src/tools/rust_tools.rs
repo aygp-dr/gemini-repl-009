@@ -199,6 +199,7 @@ impl Tool for CargoTestTool {
 }
 
 /// Tool for running rustfmt
+#[derive(Default)]
 pub struct RustfmtTool;
 
 impl RustfmtTool {
