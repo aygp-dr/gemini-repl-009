@@ -1,5 +1,5 @@
 # Makefile for Gemini REPL
-.PHONY: help build test clippy fmt check clean run dev install bench docs
+.PHONY: help build test clippy fmt check clean run repl dev install bench docs
 
 # Default target
 help: ## Show this help message
@@ -51,6 +51,8 @@ clean: ## Clean build artifacts
 # Running
 run: ## Run the application with default features
 	cargo run
+
+repl: run ## Alias for run - start the REPL
 
 run-noop: ## Run in noop mode (no API calls)
 	NOOP_MODE=true cargo run
