@@ -2,11 +2,13 @@
 
 use anyhow::Result;
 use clap::Parser;
+use rustyline::config::Configurer;
 use rustyline::error::ReadlineError;
-use rustyline::DefaultEditor;
+use rustyline::{CompletionType, Editor};
 use std::env;
 
 mod api;
+mod commands;
 mod config;
 mod context;
 mod errors;
@@ -602,8 +604,10 @@ async fn run_repl_v2(
         }
     }
 
-    // Initialize readline
-    let mut rl = DefaultEditor::new()?;
+    // Initialize readline with slash command completion
+    let mut rl = Editor::new()?;
+    rl.set_helper(Some(commands::SlashCommandHelper::new()));
+    rl.set_completion_type(CompletionType::List);
 
     // Main REPL loop
     loop {
